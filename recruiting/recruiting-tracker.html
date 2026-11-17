@@ -26,7 +26,7 @@ header h1 { margin: 0; font-size: 18px; }
 main { max-width: 1280px; margin: 0 auto; padding: 16px; }
 section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
 h2 { font-size: 16px; margin: 0 0 10px; }
-button, .btn { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--text);
+button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--text);
   border-radius: 7px; padding: 6px 11px; cursor: pointer; white-space: nowrap; }
 button:hover { border-color: var(--accent); }
 button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
@@ -45,47 +45,52 @@ label > input, label > select, label > textarea { margin-top: 3px; color: var(--
 .muted { color: var(--muted); }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
-th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); cursor: default; }
-th.sortable { cursor: pointer; }
-td .sub { font-size: 12px; color: var(--muted); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+td .sub, .sub { font-size: 12px; color: var(--muted); }
 td select { width: auto; padding: 3px 5px; }
 .actions { display: flex; flex-wrap: wrap; gap: 4px; }
 .badge { display: inline-block; font-size: 12px; padding: 1px 7px; border-radius: 10px; background: var(--chip); }
 .badge.overdue { background: var(--bad-bg); color: var(--bad); }
-.badge.today { background: var(--warn-bg); color: var(--warn); }
-.badge.verify { background: var(--warn-bg); color: var(--warn); }
-.badge.yes { background: var(--ok-bg); color: var(--ok); }
-.due-list { display: grid; gap: 8px; }
+.badge.today, .badge.verify { background: var(--warn-bg); color: var(--warn); }
+.badge.yes, .badge.open { background: var(--ok-bg); color: var(--ok); }
+.due-list, .queue-list { display: grid; gap: 8px; }
 .due-item { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
   border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.card { border: 1px solid var(--line); border-radius: 9px; padding: 10px; }
+.card h4 { margin: 0 0 4px; font-size: 15px; }
+.warns { margin: 6px 0; padding: 0; list-style: none; }
+.warns li { font-size: 13px; color: var(--warn); background: var(--warn-bg); border-radius: 6px; padding: 3px 8px; margin-bottom: 4px; }
 .empty { padding: 14px; text-align: center; color: var(--muted); }
 details summary { cursor: pointer; font-weight: 600; }
 dialog { border: 1px solid var(--line); border-radius: 12px; padding: 0; background: var(--panel); color: var(--text);
-  width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 32px); }
+  width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 32px); }
 dialog::backdrop { background: rgba(0,0,0,.45); }
 .dlg-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .dlg-head h3 { margin: 0; font-size: 16px; }
 .dlg-body { padding: 14px; overflow: auto; }
 .dlg-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; padding: 12px 14px; border-top: 1px solid var(--line); }
 pre.out { white-space: pre-wrap; word-wrap: break-word; background: var(--bg); border: 1px solid var(--line);
-  border-radius: 8px; padding: 10px; font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace; max-height: 50vh; overflow: auto; }
+  border-radius: 8px; padding: 10px; font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace; max-height: 50vh; overflow: auto; margin: 6px 0; }
+.row { display: flex; gap: 8px; align-items: flex-end; }
+.row > label { flex: 1; }
 #toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg);
-  padding: 8px 14px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 10; }
+  padding: 8px 14px; border-radius: 8px; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 10; max-width: calc(100vw - 32px); }
 #toast.show { opacity: 1; }
 .count { font-weight: 400; color: var(--muted); font-size: 14px; }
 a { color: var(--accent); }
+.update-item { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding: 6px 0; font-size: 14px; }
 
-/* Phone: table rows become cards */
 @media (max-width: 760px) {
   main { padding: 12px 16px; }
-  table, thead, tbody, tr, td { display: block; width: 100%; }
-  thead { display: none; }
-  tr { border: 1px solid var(--line); border-radius: 9px; margin-bottom: 10px; padding: 6px 8px; }
-  td { border: 0; padding: 4px 0; display: flex; gap: 8px; }
-  td::before { content: attr(data-label); flex: 0 0 96px; font-size: 12px; color: var(--muted); padding-top: 2px; }
-  td.school-cell::before { content: none; }
-  td.school-cell { font-size: 16px; display: block; }
+  #programTable, #programTable thead, #programTable tbody, #programTable tr, #programTable td { display: block; width: 100%; }
+  #programTable thead { display: none; }
+  #programTable tr { border: 1px solid var(--line); border-radius: 9px; margin-bottom: 10px; padding: 6px 8px; }
+  #programTable td { border: 0; padding: 4px 0; display: flex; gap: 8px; }
+  #programTable td::before { content: attr(data-label); flex: 0 0 96px; font-size: 12px; color: var(--muted); padding-top: 2px; }
+  #programTable td.school-cell::before { content: none; }
+  #programTable td.school-cell { font-size: 16px; display: block; }
   .toolbar select, .toolbar button { flex: 1 1 auto; }
+  .row { flex-direction: column; align-items: stretch; }
 }
 </style>
 </head>
@@ -93,7 +98,8 @@ a { color: var(--accent); }
 <header>
   <h1>Recruiting Tracker</h1>
   <div class="toolbar">
-    <button id="btnAdd" class="primary">+ Add program</button>
+    <button id="btnQueue" class="primary">Send queue</button>
+    <button id="btnAdd">+ Add program</button>
     <button id="btnExportJson">Export JSON</button>
     <button id="btnExportCsv">Export CSV</button>
     <button id="btnImport">Import</button>
@@ -105,8 +111,20 @@ a { color: var(--accent); }
   <section id="profileSection">
     <details id="profileDetails">
       <summary>My profile <span class="count" id="profileStatus"></span></summary>
-      <p class="muted">These details fill every email draft and AI prompt. They are saved in this browser only.</p>
+      <p class="muted">These details fill every email and AI prompt. They are saved in this browser only.</p>
       <div class="grid" id="profileForm"></div>
+    </details>
+  </section>
+
+  <section id="updatesSection">
+    <details id="updatesDetails">
+      <summary>My latest news <span class="count" id="updatesStatus"></span></summary>
+      <p class="muted">Add news whenever something changes: new velo, a new video, a showcase date, a good outing. Each follow-up email carries your newest item, and the app tracks which coaches have already seen it.</p>
+      <div class="row">
+        <label>New item<input id="updText" placeholder="e.g. Touched 88 at the PBR Arizona showcase on Jan 10. New bullpen video: https://..."></label>
+        <button id="btnAddUpdate" class="primary">Add</button>
+      </div>
+      <div id="updList" style="margin-top:8px"></div>
     </details>
   </section>
 
@@ -122,13 +140,14 @@ a { color: var(--accent); }
       <select id="fDiv" aria-label="Filter by division"><option value="">All divisions</option></select>
       <select id="sort" aria-label="Sort">
         <option value="follow">Sort: next follow-up</option>
+        <option value="opening">Sort: most pitchers leaving</option>
         <option value="school">Sort: school A-Z</option>
         <option value="state">Sort: state</option>
         <option value="status">Sort: status</option>
       </select>
     </div>
     <h2>Programs <span class="count" id="rowCount"></span></h2>
-    <table>
+    <table id="programTable">
       <thead><tr>
         <th>School</th><th>Coaches</th><th>Status</th><th>Emailed</th><th>Replied</th><th>Next follow-up</th><th>Actions</th>
       </tr></thead>
@@ -138,7 +157,6 @@ a { color: var(--accent); }
   </section>
 </main>
 
-<!-- Edit dialog -->
 <dialog id="dlgEdit">
   <form method="dialog" id="editForm">
     <div class="dlg-head"><h3 id="editTitle">Program</h3><button type="button" class="small" data-close>Close</button></div>
@@ -152,66 +170,83 @@ a { color: var(--accent); }
   </form>
 </dialog>
 
-<!-- Output dialog (email draft / AI prompt) -->
 <dialog id="dlgOut">
   <div class="dlg-head"><h3 id="outTitle">Draft</h3><button type="button" class="small" data-close>Close</button></div>
   <div class="dlg-body">
-    <label id="persoWrap">One-line personalization for this school
-      <input type="text" id="outPerso" placeholder="e.g. I watched your series against X and liked how your staff attacks hitters early.">
-    </label>
-    <p class="muted" id="outHint" style="margin:8px 0"></p>
+    <div class="row" id="persoWrap">
+      <label>Personal line for this coach (written from this school's facts; edit freely)
+        <textarea id="outPerso" rows="3"></textarea>
+      </label>
+      <button type="button" id="btnNewLine" title="Write a different version">New line</button>
+    </div>
+    <ul class="warns" id="outWarns"></ul>
+    <p class="muted" id="outHint" style="margin:6px 0"></p>
     <pre class="out" id="outText"></pre>
   </div>
   <div class="dlg-foot">
     <button type="button" id="btnCopySubject">Copy subject</button>
-    <button type="button" class="primary" id="btnCopyOut">Copy</button>
+    <button type="button" id="btnCopyOut">Copy</button>
+    <button type="button" id="btnGmail">Open in Gmail</button>
+    <button type="button" id="btnMailApp">Open in mail app</button>
+    <button type="button" class="primary" id="btnMarkSent">Mark sent</button>
+  </div>
+</dialog>
+
+<dialog id="dlgQueue">
+  <div class="dlg-head"><h3>Send queue</h3><button type="button" class="small" data-close>Close</button></div>
+  <div class="dlg-body">
+    <p class="muted" style="margin-top:0">Follow-ups that are due come first, then new schools, ordered by most pitchers leaving. Each email is already personalized. Open it, read it once, send it from your own account, then click "Mark sent".</p>
+    <label style="max-width:260px">New schools per batch
+      <select id="batchSize"><option>3</option><option>5</option><option>8</option><option>10</option></select>
+    </label>
+    <div class="queue-list" id="queueList" style="margin-top:10px"></div>
   </div>
 </dialog>
 
 <div id="toast" role="status"></div>
 
 <script type="text/csv" id="seedCsv">
-School,Division,Conference,State,Head coach,Pitching or recruiting coach,Coach email,Source URL,Date checked,Date emailed,Status,Replied,Next follow-up,Follow-ups sent,Personalization,Notes,ID
-Pomona-Pitzer Colleges,NCAA D3,SCIAC,CA,Frank Pericolosi,Michael Surina (Asst. Coach / Recruiting Coordinator),Michael.Surina@pomona.edu,https://sagehens.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach email on page: frank.pericolosi@pomona.edu. Page lists no pitching coach title.,
-Claremont-Mudd-Scripps,NCAA D3,SCIAC,CA,Bill Walkenbach,Quinn Heiner (Asst. Coach / Recruiting Coordinator),quinn.heiner@cms.claremont.edu,https://cmsathletics.org/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: bill.walkenbach@cms.claremont.edu. Keith Walker (keith.walker@cms.claremont.edu) may work with pitchers per his bio; page title is only 'Assistant Coach', verify.",
-Chapman University,NCAA D3,SCIAC,CA,Scott Laverty,Dave Edwards (Assoc. Head Coach / Pitching Coach),baseball@chapman.edu,https://athletics.chapman.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Page lists one shared program inbox (baseball@chapman.edu) for all coaches.,
-California Lutheran University,NCAA D3,SCIAC,CA,Erik Scherer,Collin Crowl (Recruiting Coordinator),ccrowl@callutheran.edu,https://clusports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: escherer@callutheran.edu. Pitching Development: Joey Romano (no email on page).,
-University of Redlands,NCAA D3,SCIAC,CA,Aaron Holley,Chris Hernandez (Asst. Coach / Recruiting Coordinator),chris_hernandez@redlands.edu,https://goredlands.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: aaron_holley@redlands.edu.,
-Occidental College,NCAA D3,SCIAC,CA,Luke Wetmore,Cameron McMullen (Asst. Coach / Recruiting Coordinator),cmcmullen@oxy.edu,https://oxyathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: wetmorel@oxy.edu.,
-Whitworth University,NCAA D3,Northwest Conference,WA,CJ Perry,,cperry@whitworth.edu,https://whitworthpirates.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page names no pitching coach or recruiting coordinator; verify who handles pitchers.,
-University of Puget Sound,NCAA D3,Northwest Conference,WA,Jeff Halstead,AJ Morioka (Asst. Coach / Recruiting Coordinator),amorioka@pugetsound.edu,https://loggerathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jhalstead@pugetsound.edu. Pitching coach: Michael Johnson (no email on page).,
-Linfield University,NCAA D3,Northwest Conference,OR,Jordan Harlow,,jharlow@linfield.edu,https://golinfieldwildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Aug 2026 news says Ethan Krupp will run the pitching staff for 2027, but he is not on the staff page yet; verify.",
-George Fox University,NCAA D3,Northwest Conference,OR,Kevin Kopple,,kkopple@georgefox.edu,https://athletics.georgefox.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. All assistants titled 'Assistant Coach'; Brandon Rupp (brupp@georgefox.edu) is described as pitching assistant in his bio, verify.",
-Trinity University,NCAA D3,SAA,TX,Tim Scannell,Dave Smith (Pitching Coach),dsmith4@trinity.edu,https://trinitytigers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tscannel@trinity.edu.,
-Point Loma Nazarene University,NCAA D2,PacWest,CA,Justin James,Jack Gonzales (Pitching Coach),jgonzal2@pointloma.edu,https://plnusealions.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: justinjames@pointloma.edu.,
-Westmont College,NCAA D2,PacWest,CA,Paul Svagdis,,psvagdis@westmont.edu,https://athletics.westmont.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. No pitching coach title on page (older bios name Rick Hubbard; he is not listed now); verify. Program inbox on page: baseball@westmont.edu.,
-Azusa Pacific University,NCAA D2,PacWest,CA,Kirk Nieuwenhuis,Jerry Peña (Asst. Coach / Recruiting Coordinator),gpena@apu.edu,https://athletics.apu.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: knieuwenhuis@apu.edu. Pitching coach: Bobby O'Neill (no email on page).,
-Cal Poly Pomona,NCAA D2,CCAA,CA,Randy Betten,,rbetten@cpp.edu,https://broncoathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Associate head coach Jenzen Torres: jenzentorres@cpp.edu. Page gives no pitching or recruiting title; verify.,
-Chico State,NCAA D2,CCAA,CA,Dave Taylor,,dmtaylor@csuchico.edu,https://chicowildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Baseball Coach' only; verify who handles pitchers.,
-Colorado Mesa University,NCAA D2,RMAC,CO,Chris Hanks,Jeff Rodgers (Pitching Coach),chanks@coloradomesa.edu,https://cmumavericks.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",
-Regis University,NCAA D2,RMAC,CO,Matt Lautz,,rlautz@regis.edu,https://regisrangers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's (new head coach, July 2026). Page lists Mike Newton with a personal gmail address; not used. Verify pitching coach.",
-Central Washington University,NCAA D2,GNAC,WA,Aaron Vaughn,Garrison Becker (Pitching Coach / Recruiting Coordinator),Garrison.Becker@cwu.edu,https://wildcatsports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach (new 2026): Aaron.Vaughn@cwu.edu.,
-Western Oregon University,NCAA D2,GNAC,OR,Kellen Walker,,,https://wouwolves.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access. Head coach name from search results citing wouwolves.com; email not checked, so left blank.",
-Angelo State University,NCAA D2,Lone Star Conference,TX,Kevin Brooks,,kevin.brooks@angelo.edu,https://angelosports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Adam Foster (adam.foster@angelo.edu) is the pitching coach per his bio but titled 'Assistant Coach' on the page; verify.,
-Lewis-Clark State College,NAIA,Cascade Collegiate Conference,ID,Jeremiah Robbins,,jwrobbins@lcsc.edu,https://lcwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page lists assistants with no pitching or recruiting title; verify.,
-College of Idaho,NAIA,Cascade Collegiate Conference,ID,Shawn Humberger,Oliver Massie (Asst. Pitching Coach),shumberger@collegeofidaho.edu,https://yoteathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's. Assoc. head coach Brian Schweiger: bschweiger@collegeofidaho.edu.",
-Oregon Tech,NAIA,Cascade Collegiate Conference,OR,Ricky Walker,John Kemp (Pitching Coach / Recruiting Coordinator),ricky.walker@oit.edu,https://oregontechowls.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"John Kemp has no email on page, so email is the head coach's.",
-Corban University,NAIA,Cascade Collegiate Conference,OR,Ryan Harris,,rharris@corban.edu,https://corbanwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Coach' only; verify.,
-Bushnell University,NAIA,Cascade Collegiate Conference,OR,Jamie Womack,Ethan Stacy (Hitting Coach / Recruiting Coordinator),estacy@bushnell.edu,https://bushnellbeacons.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jawomack@bushnell.edu. Pitching coach: Cameron Kundig (no email on page).,
-Arizona Christian University,NAIA,GSAC,AZ,Joe McDonald,Jacob Carson (Pitching Coach),joe.mcdonald@arizonachristian.edu,https://acufirestorm.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",
-Ottawa University Arizona,NAIA,GSAC,AZ,Tim Montez,Tanner Wickham (Asst. Head Coach / Recruiting Coordinator),tanner.wickham@ottawa.edu,https://ouazspirit.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tim.montez@ottawa.edu. Pitching coach: Artie Cox (no email on page).,
-The Master's University,NAIA,GSAC,CA,Monte Brooks,Rob Winslow (Pitching Coach),rwinslow@masters.edu,https://gomustangs.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: mbrooks@masters.edu. Recruiting coordinator Sean Harris is listed with a personal gmail; not used.,
-Hope International University,NAIA,GSAC,CA,Larry Mahoney,Steven Phillips (Sr. Assoc. Head Coach / Exec. Director of Recruiting),sphillips@hiu.edu,https://hiuroyals.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: lmmahoney@hiu.edu. Pitching development: Vince Payne, vmpayne@hiu.edu.",
-Texas Wesleyan University,NAIA,Sooner Athletic Conference,TX,Bobby Garza,,robertgarza@txwes.edu,https://ramsports.net/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Conference from news (SAC), verify.",
-Yavapai College,JUCO,ACCAC (NJCAA),AZ,Marc MacMillan,"Chris Jimenez (pitchers/catchers, Recruiting Coordinator)",,https://goroughriders.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing goroughriders.com; email left blank.,
-Central Arizona College,JUCO,ACCAC (NJCAA),AZ,,,,https://vaquerosports.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access, and sources conflict on the head coach (Sean Cashman vs. John 'JoJo' Howie). Left blank.",
-Orange Coast College,JUCO,Orange Empire Conference (CCCAA),CA,Nate Johnson,,,https://occpirateathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing the official site; email left blank.,
-Cypress College,JUCO,Orange Empire Conference (CCCAA),CA,Anthony Hutting,Steve Lambright (Pitching Coach),,https://cypresschargers.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing cypresschargers.com; email left blank.,
-Lower Columbia College,JUCO,NWAC,WA,Kurt Lupinski,,,https://lccreddevils.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing lccreddevils.com; email left blank.,
-Linn-Benton Community College,JUCO,NWAC,OR,Andy Peterson,,,https://athletics.linnbenton.edu/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results; email left blank.,
-McLennan Community College,JUCO,NJCAA Region V,TX,Tyler Johnson,Peter Stark (Asst. / Pitching Coach),,https://mclennanathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing mclennanathletics.com; email left blank.,
-College of Southern Idaho,JUCO,Scenic West (NJCAA),ID,Boomer Walker,Bruer Webster (Asst. Coach / Recruiting Coordinator),bwebster2@csi.edu,https://athletics.csi.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: bwalker@csi.edu.,
-Salt Lake Community College,JUCO,Scenic West (NJCAA),UT,David Nelson,Glen Spencer (Recruiting Coordinator / Defense),david.nelson@slcc.edu,https://slccbruins.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Recruiting coordinator has no email on page, so email is the head coach's. Page still lists Dusty Nielsen, who news says left for Utah Valley; verify.",
+School,Division,Conference,State,Head coach,Pitching or recruiting coach,Coach email,Source URL,Date checked,Date emailed,Status,Replied,Next follow-up,Follow-ups sent,Personalization,Notes,Roster season,Pitchers on roster,Pitchers leaving,Roster URL,Program fact,Business major,ID
+Pomona-Pitzer Colleges,NCAA D3,SCIAC,CA,Frank Pericolosi,Michael Surina (Asst. Coach / Recruiting Coordinator),Michael.Surina@pomona.edu,https://sagehens.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach email on page: frank.pericolosi@pomona.edu. Page lists no pitching coach title. No undergraduate business major (economics instead); check fit.,2026,17,8,https://sagehens.com/sports/baseball/roster,Coach Pericolosi is the winningest coach in program history.,no (economics instead),
+Claremont-Mudd-Scripps,NCAA D3,SCIAC,CA,Bill Walkenbach,Quinn Heiner (Asst. Coach / Recruiting Coordinator),quinn.heiner@cms.claremont.edu,https://cmsathletics.org/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: bill.walkenbach@cms.claremont.edu. Keith Walker (keith.walker@cms.claremont.edu) may work with pitchers per his bio; page title is only 'Assistant Coach', verify. No undergraduate business major (economics instead); check fit.",2026,24,14,https://cmsathletics.org/sports/baseball/roster,Your back-to-back 35-15 seasons in 2025 and 2026 stood out to me.,no (economics instead),
+Chapman University,NCAA D3,SCIAC,CA,Scott Laverty,Dave Edwards (Assoc. Head Coach / Pitching Coach),baseball@chapman.edu,https://athletics.chapman.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Page lists one shared program inbox (baseball@chapman.edu) for all coaches.,2026,13,5,https://athletics.chapman.edu/sports/baseball/roster,Your 2019 Division III national championship is a big reason Chapman is on my list.,"likely, verify",
+California Lutheran University,NCAA D3,SCIAC,CA,Erik Scherer,Collin Crowl (Recruiting Coordinator),ccrowl@callutheran.edu,https://clusports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: escherer@callutheran.edu. Pitching Development: Joey Romano (no email on page).,2026,17,8,https://clusports.com/sports/baseball/roster,I like that Coach Scherer played for the Kingsmen before leading the program.,"likely, verify",
+University of Redlands,NCAA D3,SCIAC,CA,Aaron Holley,Chris Hernandez (Asst. Coach / Recruiting Coordinator),chris_hernandez@redlands.edu,https://goredlands.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: aaron_holley@redlands.edu.,2026,14,7,https://goredlands.com/sports/baseball/roster,Congratulations on your staff being named 2026 SCIAC Coaching Staff of the Year.,"likely, verify",
+Occidental College,NCAA D3,SCIAC,CA,Luke Wetmore,Cameron McMullen (Asst. Coach / Recruiting Coordinator),cmcmullen@oxy.edu,https://oxyathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: wetmorel@oxy.edu. No undergraduate business major (economics instead); check fit.,2026,19,10,https://oxyathletics.com/sports/baseball/roster,,no (economics instead),
+Whitworth University,NCAA D3,Northwest Conference,WA,CJ Perry,,cperry@whitworth.edu,https://whitworthpirates.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page names no pitching coach or recruiting coordinator; verify who handles pitchers.,2026,19,5,https://whitworthpirates.com/sports/baseball/roster,Congratulations on the 2025 NWC tournament championship.,"likely, verify",
+University of Puget Sound,NCAA D3,Northwest Conference,WA,Jeff Halstead,AJ Morioka (Asst. Coach / Recruiting Coordinator),amorioka@pugetsound.edu,https://loggerathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jhalstead@pugetsound.edu. Pitching coach: Michael Johnson (no email on page).,2026,26,18,https://loggerathletics.com/sports/baseball/roster,I noticed Kai Correa and Craig Driver both came through Puget Sound baseball before coaching in the majors.,"likely, verify",
+Linfield University,NCAA D3,Northwest Conference,OR,Jordan Harlow,,jharlow@linfield.edu,https://golinfieldwildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Aug 2026 news says Ethan Krupp will run the pitching staff for 2027, but he is not on the staff page yet; verify.",2026,16,6,https://golinfieldwildcats.com/sports/baseball/roster,I know Coach Harlow played on Linfield's 2013 national championship team.,"likely, verify",
+George Fox University,NCAA D3,Northwest Conference,OR,Kevin Kopple,,kkopple@georgefox.edu,https://athletics.georgefox.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. All assistants titled 'Assistant Coach'; Brandon Rupp (brupp@georgefox.edu) is described as pitching assistant in his bio, verify.",,,,,I noticed your program has earned the ABCA Team Academic Excellence Award every year under Coach Kopple.,"likely, verify",
+Trinity University,NCAA D3,SAA,TX,Tim Scannell,Dave Smith (Pitching Coach),dsmith4@trinity.edu,https://trinitytigers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tscannel@trinity.edu.,2026,17,7,https://trinitytigers.com/sports/baseball/roster,I know Coach Scannell was the 2016 ABCA Division III National Coach of the Year.,"likely, verify",
+Point Loma Nazarene University,NCAA D2,PacWest,CA,Justin James,Jack Gonzales (Pitching Coach),jgonzal2@pointloma.edu,https://plnusealions.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: justinjames@pointloma.edu.,2026,13,7,https://plnusealions.com/sports/baseball/roster,Five straight NCAA West Regional appearances is a big reason PLNU is near the top of my list.,"likely, verify",
+Westmont College,NCAA D2,PacWest,CA,Paul Svagdis,,psvagdis@westmont.edu,https://athletics.westmont.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. No pitching coach title on page (older bios name Rick Hubbard; he is not listed now); verify. Program inbox on page: baseball@westmont.edu.,2026,27,5,https://athletics.westmont.edu/sports/baseball/roster,,"likely, verify",
+Azusa Pacific University,NCAA D2,PacWest,CA,Kirk Nieuwenhuis,Jerry Peña (Asst. Coach / Recruiting Coordinator),gpena@apu.edu,https://athletics.apu.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: knieuwenhuis@apu.edu. Pitching coach: Bobby O'Neill (no email on page).,2026,20,14,https://athletics.apu.edu/sports/baseball/roster,I followed your 2023 run to the first PacWest tournament title.,"likely, verify",
+Cal Poly Pomona,NCAA D2,CCAA,CA,Randy Betten,,rbetten@cpp.edu,https://broncoathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Associate head coach Jenzen Torres: jenzentorres@cpp.edu. Page gives no pitching or recruiting title; verify.,2027,21,7,https://broncoathletics.com/sports/baseball/roster,Congratulations to Coach Torres on being named 2026 ABCA Division II National Assistant Coach of the Year.,"likely, verify",
+Chico State,NCAA D2,CCAA,CA,Dave Taylor,,dmtaylor@csuchico.edu,https://chicowildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Baseball Coach' only; verify who handles pitchers.,2027,10,5,https://chicowildcats.com/sports/baseball/roster,I know Coach Taylor is the winningest coach in Chico State history and was the Wildcats' pitching coach before that.,"likely, verify",
+Colorado Mesa University,NCAA D2,RMAC,CO,Chris Hanks,Jeff Rodgers (Pitching Coach),chanks@coloradomesa.edu,https://cmumavericks.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,24,14,https://cmumavericks.com/sports/baseball/roster,"Coach Hanks passing 1,000 wins says a lot about how consistent your program is.","likely, verify",
+Regis University,NCAA D2,RMAC,CO,Matt Lautz,,rlautz@regis.edu,https://regisrangers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's (new head coach, July 2026). Page lists Mike Newton with a personal gmail address; not used. Verify pitching coach.",2027,30,7,https://regisrangers.com/sports/baseball/roster,Congratulations to Coach Lautz on being named head coach this summer.,"likely, verify",
+Central Washington University,NCAA D2,GNAC,WA,Aaron Vaughn,Garrison Becker (Pitching Coach / Recruiting Coordinator),Garrison.Becker@cwu.edu,https://wildcatsports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach (new 2026): Aaron.Vaughn@cwu.edu.,2027,21,6,https://wildcatsports.com/sports/baseball/roster,I noticed Coach Vaughn pitched for the Wildcats before taking over as head coach.,"likely, verify",
+Western Oregon University,NCAA D2,GNAC,OR,Kellen Walker,,,https://wouwolves.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access. Head coach name from search results citing wouwolves.com; email not checked, so left blank.",,,,,Five GNAC regular-season titles under Coach Walker caught my attention.,"likely, verify",
+Angelo State University,NCAA D2,Lone Star Conference,TX,Kevin Brooks,,kevin.brooks@angelo.edu,https://angelosports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Adam Foster (adam.foster@angelo.edu) is the pitching coach per his bio but titled 'Assistant Coach' on the page; verify.,2026,24,12,https://angelosports.com/sports/baseball/roster,Your 2023 Division II national championship is a big reason Angelo State is on my list.,"likely, verify",
+Lewis-Clark State College,NAIA,Cascade Collegiate Conference,ID,Jeremiah Robbins,,jwrobbins@lcsc.edu,https://lcwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page lists assistants with no pitching or recruiting title; verify.,,,,,Congratulations on your 45-9 season in 2026.,"likely, verify",
+College of Idaho,NAIA,Cascade Collegiate Conference,ID,Shawn Humberger,Oliver Massie (Asst. Pitching Coach),shumberger@collegeofidaho.edu,https://yoteathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's. Assoc. head coach Brian Schweiger: bschweiger@collegeofidaho.edu.",2026,24,9,https://yoteathletics.com/sports/baseball/roster,Coach Humberger passing 700 wins says a lot about the program.,"likely, verify",
+Oregon Tech,NAIA,Cascade Collegiate Conference,OR,Ricky Walker,John Kemp (Pitching Coach / Recruiting Coordinator),ricky.walker@oit.edu,https://oregontechowls.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"John Kemp has no email on page, so email is the head coach's.",2027,23,5,https://oregontechowls.com/sports/baseball/roster,Your 2024 team's 39 wins and first NAIA tournament trip caught my attention.,"likely, verify",
+Corban University,NAIA,Cascade Collegiate Conference,OR,Ryan Harris,,rharris@corban.edu,https://corbanwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Coach' only; verify.,2026,20,12,https://corbanwarriors.com/sports/baseball/roster,,"likely, verify",
+Bushnell University,NAIA,Cascade Collegiate Conference,OR,Jamie Womack,Ethan Stacy (Hitting Coach / Recruiting Coordinator),estacy@bushnell.edu,https://bushnellbeacons.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jawomack@bushnell.edu. Pitching coach: Cameron Kundig (no email on page).,2027,25,6,https://bushnellbeacons.com/sports/baseball/roster,,"likely, verify",
+Arizona Christian University,NAIA,GSAC,AZ,Joe McDonald,Jacob Carson (Pitching Coach),joe.mcdonald@arizonachristian.edu,https://acufirestorm.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,20,17,https://acufirestorm.com/sports/baseball/roster,Your 2024 NAIA World Series run caught my attention.,"likely, verify",
+Ottawa University Arizona,NAIA,GSAC,AZ,Tim Montez,Tanner Wickham (Asst. Head Coach / Recruiting Coordinator),tanner.wickham@ottawa.edu,https://ouazspirit.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tim.montez@ottawa.edu. Pitching coach: Artie Cox (no email on page).,2026,24,20,https://ouazspirit.com/sports/baseball/roster,,"likely, verify",
+The Master's University,NAIA,GSAC,CA,Monte Brooks,Rob Winslow (Pitching Coach),rwinslow@masters.edu,https://gomustangs.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: mbrooks@masters.edu. Recruiting coordinator Sean Harris is listed with a personal gmail; not used.,2026,21,16,https://gomustangs.com/sports/baseball/roster,Coach Brooks reaching nearly 900 wins over 30 seasons says a lot about the program.,"likely, verify",
+Hope International University,NAIA,GSAC,CA,Larry Mahoney,Steven Phillips (Sr. Assoc. Head Coach / Exec. Director of Recruiting),sphillips@hiu.edu,https://hiuroyals.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: lmmahoney@hiu.edu. Pitching development: Vince Payne, vmpayne@hiu.edu.",2027,16,11,https://hiuroyals.com/sports/baseball/roster,Congratulations on the 2024 NAIA national championship.,"likely, verify",
+Texas Wesleyan University,NAIA,Sooner Athletic Conference,TX,Bobby Garza,,robertgarza@txwes.edu,https://ramsports.net/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Conference from news (SAC), verify.",2026,11,9,https://ramsports.net/sports/baseball/roster,Congratulations on your 42-12 season and SAC regular-season title in 2026.,"likely, verify",
+Yavapai College,JUCO,ACCAC (NJCAA),AZ,Marc MacMillan,"Chris Jimenez (pitchers/catchers, Recruiting Coordinator)",,https://goroughriders.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing goroughriders.com; email left blank.,,,,,Your history at the JUCO World Series is a big reason Yavapai is on my list.,"likely, verify",
+Central Arizona College,JUCO,ACCAC (NJCAA),AZ,,,,https://vaquerosports.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access, and sources conflict on the head coach (Sean Cashman vs. John 'JoJo' Howie). Left blank.",,,,,Your 2022 NJCAA national championship caught my attention.,"likely, verify",
+Orange Coast College,JUCO,Orange Empire Conference (CCCAA),CA,Nate Johnson,,,https://occpirateathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing the official site; email left blank.,,,,,,"likely, verify",
+Cypress College,JUCO,Orange Empire Conference (CCCAA),CA,Anthony Hutting,Steve Lambright (Pitching Coach),,https://cypresschargers.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing cypresschargers.com; email left blank.,,,,,,"likely, verify",
+Lower Columbia College,JUCO,NWAC,WA,Kurt Lupinski,,,https://lccreddevils.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing lccreddevils.com; email left blank.,,,,,Congratulations on another NWAC championship this year.,"likely, verify",
+Linn-Benton Community College,JUCO,NWAC,OR,Andy Peterson,,,https://athletics.linnbenton.edu/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results; email left blank.,,,,,Congratulations to Coach Peterson on being named 2024 NWAC Coach of the Year.,"likely, verify",
+McLennan Community College,JUCO,NJCAA Region V,TX,Tyler Johnson,Peter Stark (Asst. / Pitching Coach),,https://mclennanathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing mclennanathletics.com; email left blank.,,,,,Your 2021 NJCAA national championship caught my attention.,"likely, verify",
+College of Southern Idaho,JUCO,Scenic West (NJCAA),ID,Boomer Walker,Bruer Webster (Asst. Coach / Recruiting Coordinator),bwebster2@csi.edu,https://athletics.csi.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: bwalker@csi.edu.,2027,22,3,https://athletics.csi.edu/sports/baseball/roster,,"likely, verify",
+Salt Lake Community College,JUCO,Scenic West (NJCAA),UT,David Nelson,Glen Spencer (Recruiting Coordinator / Defense),david.nelson@slcc.edu,https://slccbruins.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Recruiting coordinator has no email on page, so email is the head coach's. Page still lists Dusty Nielsen, who news says left for Utah Valley; verify.",2027,25,14,https://slccbruins.com/sports/baseball/roster,Your JUCO World Series championship under Coach Nelson is a big reason SLCC is on my list.,"likely, verify",
 </script>
 
 <script>
@@ -231,7 +266,10 @@ var COLS = [
   ["head_coach", "Head coach"], ["pitching_coach", "Pitching or recruiting coach"], ["coach_email", "Coach email"],
   ["source_url", "Source URL"], ["date_checked", "Date checked"], ["date_emailed", "Date emailed"],
   ["status", "Status"], ["replied", "Replied"], ["next_followup", "Next follow-up"],
-  ["followups_sent", "Follow-ups sent"], ["personalization", "Personalization"], ["notes", "Notes"], ["id", "ID"]
+  ["followups_sent", "Follow-ups sent"], ["personalization", "Personalization"], ["notes", "Notes"],
+  ["roster_season", "Roster season"], ["roster_pitchers", "Pitchers on roster"], ["roster_leaving", "Pitchers leaving"],
+  ["roster_url", "Roster URL"], ["program_fact", "Program fact"], ["business_major", "Business major"],
+  ["last_update_id", "Last update sent"], ["id", "ID"]
 ];
 
 var PROFILE_FIELDS = [
@@ -242,19 +280,19 @@ var PROFILE_FIELDS = [
   ["video", "Highlight video link"], ["phone", "Phone"], ["email", "Email"],
   ["hs_coach", "HS or club coach name + contact"], ["schedule", "Upcoming events / showcases"]
 ];
-var PROFILE_DEFAULTS = { grad_year: "2027", hand: "RHP", gpa: "3.5+", major: "Business" };
+var PROFILE_DEFAULTS = { grad_year: "2027", hand: "RHP", gpa: "", major: "Business" };
 
 // ---------- state ----------
 var state = load();
-
 function load() {
-  var empty = { programs: [], profile: Object.assign({}, PROFILE_DEFAULTS), ui: {} };
+  var empty = { programs: [], profile: Object.assign({}, PROFILE_DEFAULTS), updates: [], ui: {} };
   try {
     var raw = localStorage.getItem(STORE_KEY);
     if (!raw) return empty;
     var s = JSON.parse(raw);
     s.programs = Array.isArray(s.programs) ? s.programs.map(normalize) : [];
     s.profile = Object.assign({}, PROFILE_DEFAULTS, s.profile || {});
+    s.updates = Array.isArray(s.updates) ? s.updates : [];
     s.ui = s.ui || {};
     return s;
   } catch (e) { return empty; }
@@ -264,28 +302,22 @@ function save() {
   catch (e) { toast("Could not save: browser storage is blocked or full. Export a backup."); }
 }
 
-// ---------- date helpers (local dates as YYYY-MM-DD) ----------
+// ---------- dates (local YYYY-MM-DD) ----------
 function pad(n) { return (n < 10 ? "0" : "") + n; }
 function fmt(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
 function today() { return fmt(new Date()); }
 function parseDate(s) {
   var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(s || "").trim());
   if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
-  m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(s || "").trim()); // US style from spreadsheets
+  m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(s || "").trim());
   if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
   return null;
 }
 function cleanDate(s) { var d = parseDate(s); return d ? fmt(d) : ""; }
 function addDays(s, n) { var d = parseDate(s); if (!d) return ""; d.setDate(d.getDate() + n); return fmt(d); }
-function niceDate(s) {
-  var d = parseDate(s); if (!d) return "";
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-}
-function daysFromToday(s) {
-  var d = parseDate(s), t = parseDate(today());
-  if (!d) return null;
-  return Math.round((d - t) / 86400000);
-}
+function niceDate(s) { var d = parseDate(s); return d ? d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : ""; }
+function shortDate(s) { var d = parseDate(s); return d ? d.toLocaleDateString(undefined, { month: "long", day: "numeric" }) : ""; }
+function daysFromToday(s) { var d = parseDate(s), t = parseDate(today()); return d ? Math.round((d - t) / 86400000) : null; }
 
 // ---------- program model ----------
 function uid() { return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -298,12 +330,13 @@ function normalize(p) {
   o.replied = /^(y|yes|true|1)$/i.test(o.replied) ? "yes" : "no";
   ["date_checked", "date_emailed", "next_followup"].forEach(function (k) { o[k] = cleanDate(o[k]); });
   o.followups_sent = String(parseInt(o.followups_sent, 10) || 0);
+  o.variant = parseInt(p.variant, 10) || 0;
   return o;
 }
 function normDivision(v) {
   var s = String(v || "").toUpperCase().replace(/\s+/g, "");
-  if (/D(IV)?2|DII$|DIVISIONII$/.test(s) && !/III/.test(s)) return "NCAA D2";
   if (/D3|DIII|DIVISIONIII/.test(s)) return "NCAA D3";
+  if (/D2|DII|DIVISIONII/.test(s)) return "NCAA D2";
   if (/NAIA/.test(s)) return "NAIA";
   if (/JUCO|NJCAA|CCCAA|NWAC|JC|CC|COMMUNITY/.test(s)) return "JUCO";
   return v ? String(v).trim() : "";
@@ -320,28 +353,197 @@ function isDue(p) {
   return d !== null && d <= 0;
 }
 function find(id) { for (var i = 0; i < state.programs.length; i++) if (state.programs[i].id === id) return state.programs[i]; return null; }
+function num(v) { var n = parseInt(v, 10); return isNaN(n) ? null : n; }
+function openingRatio(p) { var n = num(p.roster_leaving), t = num(p.roster_pitchers); return n !== null && t ? n / t : -1; }
 
 // Follow-up rule: first email -> +10 days. Each logged follow-up -> +14 days from that day.
 function markEmailed(p, date) {
   p.date_emailed = date || today();
   if (p.status === "Not contacted") p.status = "Emailed";
   p.next_followup = addDays(p.date_emailed, FIRST_GAP);
+  if (state.updates[0]) p.last_update_id = state.updates[0].id;
 }
 function logFollowup(p) {
   p.followups_sent = String((parseInt(p.followups_sent, 10) || 0) + 1);
   p.next_followup = addDays(today(), NEXT_GAP);
+  if (state.updates[0]) p.last_update_id = state.updates[0].id;
   var line = "Follow-up #" + p.followups_sent + " sent " + today() + ".";
   p.notes = p.notes ? p.notes + " " + line : line;
+}
+// One click for "I sent whatever the app drafted".
+function markSent(p) { if (!p.date_emailed) markEmailed(p); else logFollowup(p); }
+function isFollowup(p) { return !!p.date_emailed; }
+
+// ---------- writing engine ----------
+// Deterministic per school, so each coach gets different wording, and "New line" moves to the next version.
+function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+function pick(list, p, salt) { return list[(hash(p.school + (salt || "")) + (p.variant || 0)) % list.length]; }
+function pf(k, fallback) { var v = (state.profile[k] || "").trim(); return v || fallback; }
+function handWord() { return /l/i.test(pf("hand", "RHP")) ? "left-handed" : "right-handed"; }
+function cleanName(s) { return String(s || "").replace(/\(.*?\)/g, "").replace(/\bverify\b/ig, "").trim(); }
+function lastName(s) { var parts = cleanName(s).split(/\s+/).filter(Boolean); return parts.length ? parts[parts.length - 1] : ""; }
+function startYear() { var y = parseInt(pf("grad_year", "2027"), 10) || 2027; return y; }
+
+// Who the email goes to: the person whose name matches the email address, else the shared inbox, else the head coach.
+function recipient(p) {
+  var local = (p.coach_email || "").split("@")[0].toLowerCase().replace(/[^a-z]/g, "");
+  var pc = cleanName(p.pitching_coach), hc = cleanName(p.head_coach);
+  function hit(n) { var l = lastName(n).toLowerCase().replace(/[^a-z]/g, ""); return l && local.indexOf(l) >= 0; }
+  if (pc && hit(pc)) return { name: pc, greet: "Coach " + lastName(pc), role: "pitching or recruiting coach" };
+  if (hc && hit(hc)) return { name: hc, greet: "Coach " + lastName(hc), role: "head coach" };
+  if (p.coach_email) return { name: "the coaching staff", greet: hc ? "Coach " + lastName(hc) + " and staff" : "Coaches", role: "program inbox" };
+  if (pc) return { name: pc, greet: "Coach " + lastName(pc), role: "pitching or recruiting coach" };
+  if (hc) return { name: hc, greet: "Coach " + lastName(hc), role: "head coach" };
+  return { name: "the coaching staff", greet: "Coaches", role: "staff" };
+}
+
+function rosterSentence(p) {
+  var n = num(p.roster_leaving), t = num(p.roster_pitchers), season = p.roster_season, arrive = startYear() + 1;
+  if (n === null || !t || !season) return "";
+  var juco = p.division === "JUCO";
+  var cur = parseInt(season, 10) >= startYear();
+  var who = juco ? "sophomores" : (cur ? "seniors or grad students" : "juniors or older");
+  var verb = cur ? "are" : "were";
+  return pick([
+    "I saw that " + n + " of the " + t + " pitchers on your " + season + " roster " + verb + " " + who + ", and I want to be ready to compete for innings in " + arrive + ".",
+    "Your " + season + " roster lists " + t + " pitchers, and " + n + " of them " + verb + " " + who + ". I'd like to be part of the group that pitches for you in " + arrive + ".",
+    "Looking at your " + season + " roster, " + n + " of your " + t + " pitchers " + verb + " " + who + ", so I'd like to show you what I can bring to that staff in " + arrive + "."
+  ], p, "r");
+}
+function fitSentence(p) {
+  var where = p.state ? " in " + p.state : "";
+  return pick([
+    "I'm looking for a " + (p.division || "college") + " program" + where + " where I can develop as a pitcher, and " + p.school + " fits what I want.",
+    p.school + " is near the top of my list because of the level of baseball and the chance to keep developing as a pitcher.",
+    "I've been following " + p.school + " baseball and would like to learn more about how your staff develops pitchers."
+  ], p, "f");
+}
+function autoLine(p) {
+  var fact = (p.program_fact || "").trim(), roster = rosterSentence(p);
+  if (fact && roster) return (hash(p.school + p.variant) % 2) ? fact + " " + roster : roster + " " + fact;
+  return fact || roster || fitSentence(p);
+}
+function personalLine(p) { return (p.personalization || "").trim() || autoLine(p); }
+
+function academicSentence(p) {
+  var gpa = pf("gpa", "[GPA]"), major = pf("major", "[major]");
+  if (/^no/i.test(p.business_major)) return "I have a " + gpa + " GPA, and academics are a big part of my college decision.";
+  if (p.division === "NCAA D3") return "Academics matter as much as baseball to me. I have a " + gpa + " GPA and plan to major in " + major.toLowerCase() + ".";
+  if (p.division === "JUCO") return "I have a " + gpa + " GPA and plan to study " + major.toLowerCase() + " and transfer to a four-year school.";
+  return "I have a " + gpa + " GPA and plan to major in " + major.toLowerCase() + ".";
+}
+function askSentence(p) {
+  if (p.division === "NCAA D3") return "Could you tell me what you look for in pitchers, and how your staff works with admissions for recruited players?";
+  if (p.division === "JUCO") return "Could you tell me how you develop pitchers for the four-year level, and when you expect to finalize your " + startYear() + " class?";
+  if (p.division === "NAIA") return "Could you tell me what you look for in pitchers, and whether you hold any prospect camps I should attend?";
+  return "Could you tell me what you look for in pitchers, and whether your staff will be at any events this winter or summer where you could see me throw?";
+}
+function latestUpdate() { return state.updates[0] || null; }
+function newUpdateFor(p) { var u = latestUpdate(); return u && u.id !== p.last_update_id ? u : null; }
+function signature() {
+  var lines = ["", pf("name", "[Your name]"), pf("phone", "[phone]") + " | " + pf("email", "[email]")];
+  if (pf("hs_coach", "")) lines.push("Coach reference: " + pf("hs_coach", ""));
+  return lines;
+}
+
+function buildSubject(p) {
+  var name = pf("name", "[Your name]"), base = pf("grad_year", "2027") + " " + pf("hand", "RHP") + " " + name + " | " + pf("fb_velo", "[velo]") + " FB";
+  if (isFollowup(p)) return (newUpdateFor(p) ? "Update: " : "Following up: ") + base;
+  return base + (pf("gpa", "") ? " | " + pf("gpa", "") + " GPA" : "") + " | " + p.school;
+}
+function buildBody(p, line) {
+  var r = recipient(p), name = pf("name", "[Your name]"), L = [r.greet + ","];
+  L.push("");
+  if (isFollowup(p)) {
+    var u = newUpdateFor(p);
+    L.push("I emailed you on " + shortDate(p.date_emailed) + " about pitching at " + p.school + ".");
+    L.push("");
+    L.push(u ? "Quick update: " + u.text : "I'm still very interested in " + p.school + " and wanted to follow up on my earlier email.");
+    L.push("");
+    L.push("- Fastball: " + pf("fb_velo", "[velo]") + " | Pitches: " + pf("pitches", "[pitches]"));
+    L.push("- Video: " + pf("video", "[highlight video link]"));
+    if (pf("schedule", "")) L.push("- Where you can see me next: " + pf("schedule", ""));
+    L.push("");
+    L.push(pick(["Thank you for your time. I'd value any feedback on what you'd want to see from me next.",
+                 "I'd appreciate any feedback, and I'm happy to send anything else that would help.",
+                 "Thanks again for your time. Please let me know if there's anything else you'd like to see."], p, "c"));
+    return L.concat(signature()).join("\n");
+  }
+  L.push(pick([
+    "My name is " + name + ", a class of " + pf("grad_year", "2027") + " " + handWord() + " pitcher from " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ".",
+    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + handWord() + " pitcher at " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ".",
+    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + pf("hand", "RHP") + " at " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ", and I'm very interested in " + p.school + " baseball."
+  ], p, "o"));
+  if (line) { L.push(""); L.push(line); }
+  L.push("");
+  L.push(academicSentence(p));
+  L.push("");
+  L.push("- Height/weight: " + pf("height", "[height]") + ", " + pf("weight", "[weight]"));
+  L.push("- Fastball: " + pf("fb_velo", "[velo]"));
+  L.push("- Pitches: " + pf("pitches", "[pitches]"));
+  if (pf("club_team", "")) L.push("- Club team: " + pf("club_team", ""));
+  L.push("- Video: " + pf("video", "[highlight video link]"));
+  if (pf("schedule", "")) L.push("- Where you can see me next: " + pf("schedule", ""));
+  var u = latestUpdate(); if (u) L.push("- Latest: " + u.text);
+  L.push("");
+  L.push(askSentence(p) + " Thank you for your time.");
+  return L.concat(signature()).join("\n");
+}
+function draftFor(p) {
+  var line = isFollowup(p) ? "" : personalLine(p);
+  return { to: p.coach_email, subject: buildSubject(p), body: buildBody(p, line), line: line };
+}
+function warningsFor(p, d) {
+  var w = [];
+  if (!p.coach_email) w.push("No coach email on file. Find it on the school's official staff page.");
+  if (/\[[^\]]+\]/.test(d.subject + d.body)) w.push("Some profile details are missing (shown in [brackets]). Fill in My profile.");
+  if (isVerify(p)) w.push("This school is marked verify. Check the coach and email on the source page first.");
+  if (/^no/i.test(p.business_major)) w.push("This school has no undergraduate business major. Make sure it still fits you.");
+  if (!isFollowup(p) && p.program_fact) w.push("The personal line uses a program fact from the school's site. Confirm it before sending.");
+  if (isFollowup(p) && !newUpdateFor(p)) w.push("You have no new news since your last email to this coach. Follow-ups with news get more replies. Add an item under My latest news.");
+  if (CLOSED.indexOf(p.status) >= 0) w.push("Status is " + p.status + ".");
+  return w;
+}
+function gmailUrl(d) { return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(d.to || "") + "&su=" + encodeURIComponent(d.subject) + "&body=" + encodeURIComponent(d.body); }
+function mailtoUrl(d) { return "mailto:" + encodeURIComponent(d.to || "").replace(/%40/g, "@") + "?subject=" + encodeURIComponent(d.subject) + "&body=" + encodeURIComponent(d.body); }
+
+function buildPrompt(p) {
+  var prof = PROFILE_FIELDS.map(function (f) { return "- " + f[1] + ": " + (state.profile[f[0]] || "(not provided)"); }).join("\n");
+  var r = recipient(p), u = latestUpdate(), roster = rosterSentence(p);
+  return [
+    "Write a short recruiting email from me, a high school baseball pitcher, to a college coach. I will send it myself.",
+    "",
+    "Rules:",
+    "- 120 to 170 words. Plain text. No emojis, no exclamation marks, no flattery.",
+    "- Use only the facts below. Do not invent stats, awards, or anything about the school. If a detail is missing, leave it out.",
+    "- Open with who I am and one specific reason for this school, using the program fact or roster fact below.",
+    "- Put my numbers in a short list and include my video link.",
+    "- End with one clear, low-pressure question that fits the level (" + (p.division || "college") + ").",
+    "- Give me a subject line first, then the email.",
+    "",
+    "About me:", prof,
+    u ? "- Latest news (" + u.date + "): " + u.text : "- Latest news: (none)",
+    "",
+    "The school:",
+    "- School: " + p.school + " (" + [p.division, p.conference, p.state].filter(Boolean).join(", ") + ")",
+    "- Addressed to: " + r.name + " (" + r.role + ")",
+    "- Head coach: " + (p.head_coach || "unknown") + (p.pitching_coach ? "; pitching or recruiting coach: " + cleanName(p.pitching_coach) : ""),
+    "- Program fact (from the school's site): " + (p.program_fact || "(none)"),
+    "- Roster fact (from the official roster): " + (roster || "(none)"),
+    "- Business major offered: " + (p.business_major || "unknown"),
+    "- My own reason for this school: " + (p.personalization || "(none)"),
+    "- Contact history: " + (p.date_emailed ? "first emailed " + p.date_emailed + ", follow-ups sent " + p.followups_sent + ", replied: " + p.replied : "not contacted yet"),
+    "- My notes: " + (p.notes || "(none)"),
+    "",
+    p.date_emailed ? "This is a follow-up: under 100 words, reference my earlier email, and lead with my latest news." : "This is my first email to this coach."
+  ].join("\n");
 }
 
 // ---------- rendering ----------
 var $ = function (id) { return document.getElementById(id); };
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 function safeUrl(u) { return /^https?:\/\//i.test(u) ? u : ""; }
-
-function fillSelect(sel, values) {
-  values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
-}
+function fillSelect(sel, values) { values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); }); }
 
 function filtered() {
   var q = $("q").value.trim().toLowerCase(), fs = $("fStatus").value, fd = $("fDiv").value, sort = $("sort").value;
@@ -349,22 +551,20 @@ function filtered() {
     if (fs && p.status !== fs) return false;
     if (fd && p.division !== fd) return false;
     if (!q) return true;
-    var hay = [p.school, p.conference, p.state, p.head_coach, p.pitching_coach, p.coach_email, p.notes, p.division].join(" ").toLowerCase();
-    return hay.indexOf(q) >= 0;
+    return [p.school, p.conference, p.state, p.head_coach, p.pitching_coach, p.coach_email, p.notes, p.division].join(" ").toLowerCase().indexOf(q) >= 0;
   });
   list.sort(function (a, b) {
     if (sort === "follow") {
-      // Dated rows first (earliest first), undated rows after, then by school.
       if (a.next_followup && b.next_followup && a.next_followup !== b.next_followup) return a.next_followup < b.next_followup ? -1 : 1;
       if (a.next_followup && !b.next_followup) return -1;
       if (!a.next_followup && b.next_followup) return 1;
-    } else if (sort === "state" && a.state !== b.state) { return a.state.localeCompare(b.state); }
+    } else if (sort === "opening" && openingRatio(a) !== openingRatio(b)) { return openingRatio(b) - openingRatio(a); }
+    else if (sort === "state" && a.state !== b.state) { return a.state.localeCompare(b.state); }
     else if (sort === "status" && a.status !== b.status) { return STATUSES.indexOf(a.status) - STATUSES.indexOf(b.status); }
     return a.school.localeCompare(b.school);
   });
   return list;
 }
-
 function followBadge(p) {
   if (!p.next_followup) return '<span class="muted">-</span>';
   var d = daysFromToday(p.next_followup), cls = "", tag = "";
@@ -374,23 +574,27 @@ function followBadge(p) {
   }
   return '<span class="badge ' + cls + '">' + esc(niceDate(p.next_followup)) + tag + "</span>";
 }
-
+function rosterBadge(p) {
+  var n = num(p.roster_leaving), t = num(p.roster_pitchers);
+  if (n === null || !t) return "";
+  var link = safeUrl(p.roster_url) ? ' <a class="sub" href="' + esc(p.roster_url) + '" target="_blank" rel="noopener">roster</a>' : "";
+  return '<div><span class="badge open" title="Pitchers on the ' + esc(p.roster_season) + ' roster who will be gone before fall ' + startYear() + '">' + n + " of " + t + " pitchers leaving</span>" + link + "</div>";
+}
 function render() {
   var list = filtered();
   $("rowCount").textContent = "(" + list.length + " of " + state.programs.length + ")";
-  var html = list.map(function (p) {
+  $("rows").innerHTML = list.map(function (p) {
     var coach2 = p.pitching_coach ? '<div class="sub">P/R: ' + esc(p.pitching_coach) + "</div>" : "";
-    var email = p.coach_email ? '<div class="sub"><a href="mailto:' + esc(p.coach_email) + '">' + esc(p.coach_email) + "</a></div>" : '<div class="sub">no email on file</div>';
+    var email = p.coach_email ? '<div class="sub">' + esc(p.coach_email) + "</div>" : '<div class="sub">no email on file</div>';
     var src = safeUrl(p.source_url) ? ' <a class="sub" href="' + esc(p.source_url) + '" target="_blank" rel="noopener">source</a>' : "";
-    var statusSel = '<select data-act="status" data-id="' + p.id + '">' + STATUSES.map(function (s) {
-      return "<option" + (s === p.status ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select>";
+    var statusSel = '<select data-act="status" data-id="' + p.id + '">' + STATUSES.map(function (s) { return "<option" + (s === p.status ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select>";
     var replied = '<select data-act="replied" data-id="' + p.id + '"><option value="no"' + (p.replied === "no" ? " selected" : "") + '>No</option><option value="yes"' + (p.replied === "yes" ? " selected" : "") + ">Yes</option></select>";
-    var emailBtn = p.date_emailed
-      ? '<button class="small" data-act="followup" data-id="' + p.id + '" title="Log that you sent a follow-up today; next follow-up moves 14 days out">Log follow-up</button>'
-      : '<button class="small" data-act="emailed" data-id="' + p.id + '" title="Log that you sent the first email today; follow-up set 10 days out">Mark emailed</button>';
+    var sentBtn = p.date_emailed
+      ? '<button class="small" data-act="followup" data-id="' + p.id + '" title="Log a follow-up sent today; next one in 14 days">Log follow-up</button>'
+      : '<button class="small" data-act="emailed" data-id="' + p.id + '" title="Log the first email sent today; follow-up in 10 days">Mark emailed</button>';
     return "<tr>" +
       '<td class="school-cell"><strong>' + esc(p.school) + "</strong>" + (isVerify(p) ? ' <span class="badge verify">verify</span>' : "") +
-        '<div class="sub">' + esc([p.division, p.conference, p.state].filter(Boolean).join(" · ")) + "</div></td>" +
+        '<div class="sub">' + esc([p.division, p.conference, p.state].filter(Boolean).join(" · ")) + "</div>" + rosterBadge(p) + "</td>" +
       '<td data-label="Coaches">' + esc(p.head_coach || "-") + coach2 + email + src + "</td>" +
       '<td data-label="Status">' + statusSel + "</td>" +
       '<td data-label="Emailed">' + (p.date_emailed ? esc(niceDate(p.date_emailed)) : '<span class="muted">-</span>') + "</td>" +
@@ -398,46 +602,47 @@ function render() {
       '<td data-label="Next follow-up">' + followBadge(p) + "</td>" +
       '<td data-label="Actions"><div class="actions">' +
         '<button class="small" data-act="draft" data-id="' + p.id + '">Draft email</button>' +
-        '<button class="small" data-act="prompt" data-id="' + p.id + '">Copy AI prompt</button>' +
-        emailBtn +
+        '<button class="small" data-act="prompt" data-id="' + p.id + '">Copy AI prompt</button>' + sentBtn +
         '<button class="small" data-act="edit" data-id="' + p.id + '">Edit</button>' +
       "</div></td></tr>";
   }).join("");
-  $("rows").innerHTML = html;
 
   var empty = $("emptyState");
   if (!state.programs.length) {
     empty.hidden = false;
-    empty.innerHTML = 'No programs yet. Add one, import a CSV or JSON backup' +
+    empty.innerHTML = "No programs yet. Add one, import a CSV or JSON backup" +
       ($("seedCsv").textContent.trim() ? ', or <button id="btnSeed" class="primary">Load the starter list</button>' : "") + ".";
     var b = $("btnSeed"); if (b) b.onclick = loadSeed;
-  } else if (!list.length) {
-    empty.hidden = false; empty.textContent = "No programs match these filters.";
-  } else { empty.hidden = true; }
+  } else if (!list.length) { empty.hidden = false; empty.textContent = "No programs match these filters."; }
+  else empty.hidden = true;
 
-  renderDue();
-  renderProfileStatus();
+  renderDue(); renderProfileStatus(); renderUpdates();
+  $("btnQueue").textContent = "Send queue (" + queue().length + ")";
 }
-
 function renderDue() {
   var due = state.programs.filter(isDue).sort(function (a, b) { return a.next_followup < b.next_followup ? -1 : a.next_followup > b.next_followup ? 1 : 0; });
   $("dueCount").textContent = "(" + due.length + ")";
   if (!due.length) { $("dueList").innerHTML = '<div class="muted">Nothing due. You are caught up.</div>'; return; }
   $("dueList").innerHTML = due.map(function (p) {
     return '<div class="due-item"><div><strong>' + esc(p.school) + "</strong> " + followBadge(p) +
-      '<div class="sub muted">' + esc(p.status) + (p.date_emailed ? " · first emailed " + esc(niceDate(p.date_emailed)) : "") +
-      " · follow-ups sent: " + esc(p.followups_sent) + "</div></div>" +
+      '<div class="sub">' + esc(p.status) + (p.date_emailed ? " · first emailed " + esc(niceDate(p.date_emailed)) : "") +
+      " · follow-ups sent: " + esc(p.followups_sent) + (newUpdateFor(p) ? " · has new news to send" : "") + "</div></div>" +
       '<div class="actions"><button class="small" data-act="draft" data-id="' + p.id + '">Draft email</button>' +
       '<button class="small" data-act="followup" data-id="' + p.id + '">Log follow-up</button>' +
       '<button class="small" data-act="edit" data-id="' + p.id + '">Edit</button></div></div>';
   }).join("");
 }
-
 function renderProfileStatus() {
-  var missing = PROFILE_FIELDS.filter(function (f) { return ["name", "fb_velo", "video", "email"].indexOf(f[0]) >= 0 && !state.profile[f[0]]; });
+  var need = ["name", "fb_velo", "gpa", "video", "email", "high_school"];
+  var missing = PROFILE_FIELDS.filter(function (f) { return need.indexOf(f[0]) >= 0 && !state.profile[f[0]]; });
   $("profileStatus").textContent = missing.length ? "(missing: " + missing.map(function (f) { return f[1].split(" (")[0].toLowerCase(); }).join(", ") + ")" : "(complete)";
 }
-
+function renderUpdates() {
+  $("updatesStatus").textContent = state.updates.length ? "(newest: " + niceDate(state.updates[0].date) + ")" : "(none yet)";
+  $("updList").innerHTML = state.updates.map(function (u, i) {
+    return '<div class="update-item"><div><span class="sub">' + esc(niceDate(u.date)) + (i === 0 ? " · newest, goes in follow-ups" : "") + "</span><div>" + esc(u.text) + '</div></div><button class="small danger" data-upd-del="' + u.id + '">Remove</button></div>';
+  }).join("");
+}
 function buildProfileFormFields() {
   $("profileForm").innerHTML = PROFILE_FIELDS.map(function (f) {
     var wide = f[0] === "schedule" || f[0] === "hs_coach" ? ' class="wide"' : "";
@@ -461,7 +666,11 @@ var EDIT_FIELDS = [
   ["coach_email", "Coach email (only from the official page)", "email"], ["source_url", "Source URL", "url"],
   ["date_checked", "Date checked", "date"], ["status", "Status", "status"], ["replied", "Replied", "replied"],
   ["date_emailed", "Date emailed", "date"], ["next_followup", "Next follow-up", "date"], ["followups_sent", "Follow-ups sent", "number"],
-  ["personalization", "One-line personalization", "wide"], ["notes", "Notes (write \"verify\" to flag)", "textarea"]
+  ["roster_season", "Roster season (e.g. 2027)", "text"], ["roster_pitchers", "Pitchers on roster", "number"],
+  ["roster_leaving", "Pitchers leaving before you arrive", "number"], ["roster_url", "Roster URL", "url"],
+  ["business_major", "Business major offered", "text"],
+  ["program_fact", "Program fact (one true sentence to the coach)", "wide"],
+  ["personalization", "Your own personal line (blank = auto-written)", "wide"], ["notes", "Notes (write \"verify\" to flag)", "textarea"]
 ];
 function openEdit(id) {
   editingId = id;
@@ -470,7 +679,7 @@ function openEdit(id) {
   $("btnDelete").hidden = !id;
   $("editFields").innerHTML = EDIT_FIELDS.map(function (f) {
     var k = f[0], v = esc(p[k]), input;
-    if (f[2] === "division") input = '<select name="' + k + '">' + ['<option value=""></option>'].concat(DIVISIONS.map(function (d) { return "<option" + (d === p.division ? " selected" : "") + ">" + d + "</option>"; })).join("") +
+    if (f[2] === "division") input = '<select name="' + k + '"><option value=""></option>' + DIVISIONS.map(function (d) { return "<option" + (d === p.division ? " selected" : "") + ">" + d + "</option>"; }).join("") +
       (p.division && DIVISIONS.indexOf(p.division) < 0 ? "<option selected>" + v + "</option>" : "") + "</select>";
     else if (f[2] === "status") input = '<select name="' + k + '">' + STATUSES.map(function (s) { return "<option" + (s === p.status ? " selected" : "") + ">" + s + "</option>"; }).join("") + "</select>";
     else if (f[2] === "replied") input = '<select name="' + k + '"><option value="no">No</option><option value="yes"' + (p.replied === "yes" ? " selected" : "") + ">Yes</option></select>";
@@ -499,106 +708,82 @@ function deleteEdit() {
   save(); $("dlgEdit").close(); render(); toast("Deleted.");
 }
 
-// ---------- email draft + AI prompt ----------
-var outMode = null, outId = null, outSubject = "";
-function coachFor(p) {
-  var name = (p.pitching_coach || p.head_coach || "").replace(/\(.*?\)/g, "").replace(/\bverify\b/ig, "").trim();
-  var last = name.split(/\s+/).filter(Boolean).pop();
-  return { full: name, greet: last ? "Coach " + last : "Coach" };
-}
-function pf(k, fallback) { var v = (state.profile[k] || "").trim(); return v || fallback; }
-function handWord() { return /l/i.test(pf("hand", "RHP")) ? "left-handed" : "right-handed"; }
-
-function buildEmail(p) {
-  var c = coachFor(p), name = pf("name", "[Your name]");
-  outSubject = pf("grad_year", "2027") + " " + pf("hand", "RHP") + " " + name + " | " + pf("fb_velo", "[velo]") + " FB | " + pf("gpa", "[GPA]") + " GPA";
-  var lines = [];
-  lines.push(c.greet + ",");
-  lines.push("");
-  lines.push("My name is " + name + ", a class of " + pf("grad_year", "2027") + " " + handWord() + " pitcher at " + pf("high_school", "[high school]") +
-    " in " + pf("hometown", "[city, state]") + ". I am interested in " + p.school + " baseball and in studying " + pf("major", "[major]").toLowerCase() + ".");
-  var perso = (p.personalization || "").trim();
-  if (perso) { lines.push(""); lines.push(perso); }
-  lines.push("");
-  lines.push("A quick snapshot:");
-  lines.push("- Height/weight: " + pf("height", "[height]") + ", " + pf("weight", "[weight]"));
-  lines.push("- Fastball: " + pf("fb_velo", "[velo]"));
-  lines.push("- Pitches: " + pf("pitches", "[pitches]"));
-  lines.push("- GPA: " + pf("gpa", "[GPA]") + ", intended major: " + pf("major", "[major]"));
-  if (pf("club_team", "")) lines.push("- Club team: " + pf("club_team", ""));
-  lines.push("- Video: " + pf("video", "[highlight video link]"));
-  if (pf("schedule", "")) { lines.push(""); lines.push("Where you can see me next: " + pf("schedule", "")); }
-  lines.push("");
-  lines.push("I would like to learn what you look for in pitchers and whether I could be a fit for your program. Thank you for your time.");
-  lines.push("");
-  lines.push(name);
-  lines.push(pf("phone", "[phone]") + " | " + pf("email", "[email]"));
-  if (pf("hs_coach", "")) lines.push("Coach reference: " + pf("hs_coach", ""));
-  return lines.join("\n");
-}
-
-function buildPrompt(p) {
-  var prof = PROFILE_FIELDS.map(function (f) { return "- " + f[1] + ": " + (state.profile[f[0]] || "(not provided)"); }).join("\n");
-  var c = coachFor(p);
-  return [
-    "Write a short recruiting email from me, a high school baseball pitcher, to a college coach. I will send it myself.",
-    "",
-    "Rules:",
-    "- 120 to 170 words. Plain text. No emojis, no exclamation marks, no flattery.",
-    "- Use only the facts below. Do not invent stats, awards, or anything about the school. If a detail is missing, leave it out.",
-    "- Open with who I am and why this school, in 2 sentences. Put my numbers in a short list. Include my video link.",
-    "- End with one clear, low-pressure ask (e.g. what they look for in pitchers, or upcoming camps).",
-    "- Give me a subject line first, then the email.",
-    "",
-    "About me:",
-    prof,
-    "",
-    "The school:",
-    "- School: " + p.school,
-    "- Division / conference / state: " + [p.division, p.conference, p.state].filter(Boolean).join(" / "),
-    "- Addressed to: " + (c.full || "the coaching staff") + (p.pitching_coach ? " (pitching or recruiting coach)" : " (head coach)"),
-    "- Head coach: " + (p.head_coach || "unknown"),
-    "- My personal reason for this school: " + (p.personalization || "(none yet; ask me for one before writing if this is empty)"),
-    "- Contact history: status " + p.status + (p.date_emailed ? ", first emailed " + p.date_emailed : ", not contacted yet") +
-      ", follow-ups sent " + p.followups_sent + ", replied: " + p.replied,
-    "- My notes: " + (p.notes || "(none)"),
-    "",
-    p.date_emailed ? "This is a follow-up, so keep it shorter (under 100 words), reference my earlier email, and add one new thing (new velo, new video, upcoming event)." : "This is my first email to this coach."
-  ].join("\n");
-}
-
+// ---------- draft dialog ----------
+var outMode = null, outId = null;
 function openOut(mode, id) {
   var p = find(id); if (!p) return;
   outMode = mode; outId = id;
-  $("outPerso").value = p.personalization || "";
-  $("outTitle").textContent = (mode === "draft" ? "Email draft: " : "AI prompt: ") + p.school;
-  $("btnCopySubject").hidden = mode !== "draft";
-  $("outHint").textContent = mode === "draft"
-    ? "This app does not send email. Copy the text and send it from your own account" + (p.coach_email ? " to " + p.coach_email : "") + ". Then click \"Mark emailed\"."
-    : "Paste this into Claude. The personalization line above is saved with the school.";
+  $("outTitle").textContent = (mode === "draft" ? (isFollowup(p) ? "Follow-up: " : "Email: ") : "AI prompt: ") + p.school;
+  var draft = mode === "draft";
+  ["btnCopySubject", "btnGmail", "btnMailApp", "btnMarkSent"].forEach(function (b) { $(b).hidden = !draft; });
+  $("persoWrap").hidden = !draft || isFollowup(p);
+  $("outPerso").value = personalLine(p);
+  $("outHint").textContent = draft
+    ? "The app never sends anything. Open the email, read it once, send it from your own account, then click \"Mark sent\"." + (p.coach_email ? " To: " + p.coach_email + " (" + recipient(p).role + ")" : "")
+    : "Copied. Paste it into Claude for another version.";
   refreshOut();
   $("dlgOut").showModal();
 }
 function refreshOut() {
   var p = find(outId); if (!p) return;
-  if (outMode === "draft") { var body = buildEmail(p); $("outText").textContent = "Subject: " + outSubject + "\n\n" + body; }
-  else $("outText").textContent = buildPrompt(p);
+  if (outMode === "draft") {
+    var d = draftFor(p);
+    $("outText").textContent = "Subject: " + d.subject + "\n\n" + d.body;
+    $("outWarns").innerHTML = warningsFor(p, d).map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("");
+  } else { $("outText").textContent = buildPrompt(p); $("outWarns").innerHTML = ""; }
+}
+
+// ---------- send queue ----------
+function queue() {
+  var due = state.programs.filter(isDue).sort(function (a, b) { return a.next_followup < b.next_followup ? -1 : 1; });
+  var size = parseInt(state.ui.batch || "5", 10);
+  var fresh = state.programs.filter(function (p) { return p.status === "Not contacted" && p.coach_email && !isVerify(p); })
+    .sort(function (a, b) { return openingRatio(b) - openingRatio(a) || a.school.localeCompare(b.school); }).slice(0, size);
+  return due.concat(fresh);
+}
+function renderQueue() {
+  var q = queue();
+  $("batchSize").value = state.ui.batch || "5";
+  if (!q.length) { $("queueList").innerHTML = '<div class="empty">Nothing to send. New schools need an email on file and no "verify" flag.</div>'; return; }
+  $("queueList").innerHTML = q.map(function (p) {
+    var d = draftFor(p), w = warningsFor(p, d).filter(function (x) { return !/program fact/.test(x); });
+    return '<div class="card"><h4>' + esc(p.school) + ' <span class="badge">' + (isFollowup(p) ? "follow-up" : "first email") + "</span></h4>" +
+      '<div class="sub">To ' + esc(d.to) + " · " + esc(recipient(p).name) + "</div>" +
+      (w.length ? '<ul class="warns">' + w.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
+      '<details><summary class="sub">Preview</summary><pre class="out">Subject: ' + esc(d.subject) + "\n\n" + esc(d.body) + "</pre></details>" +
+      '<div class="actions" style="margin-top:6px"><button class="small" data-q="gmail" data-id="' + p.id + '">Open in Gmail</button>' +
+      '<button class="small" data-q="mail" data-id="' + p.id + '">Mail app</button>' +
+      '<button class="small" data-act="draft" data-id="' + p.id + '">Edit line</button>' +
+      '<button class="small primary" data-q="sent" data-id="' + p.id + '">Mark sent</button></div></div>';
+  }).join("");
 }
 
 // ---------- clipboard + toast ----------
-function copy(text) {
+function copy(text, msg) {
   function fallback() {
     var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
     document.body.appendChild(ta); ta.select();
     var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
     document.body.removeChild(ta);
-    toast(ok ? "Copied." : "Copy failed. Select the text and copy it by hand.");
+    toast(ok ? (msg || "Copied.") : "Copy failed. Select the text and copy it by hand.");
   }
-  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { toast("Copied."); }, fallback);
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { toast(msg || "Copied."); }, fallback);
   else fallback();
 }
 var toastTimer;
-function toast(msg) { var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2200); }
+function toast(msg) { var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2600); }
+function openMail(p, how) {
+  var d = draftFor(p);
+  if (!d.to) { toast("No coach email on file for " + p.school + "."); return; }
+  if (how === "gmail") window.open(gmailUrl(d), "_blank", "noopener");
+  else window.location.href = mailtoUrl(d);
+  toast("After you send it, click Mark sent.");
+}
+function doMarkSent(p) {
+  var wasFollow = isFollowup(p);
+  markSent(p); save(); render();
+  toast((wasFollow ? "Follow-up logged" : "Marked emailed") + ". Next follow-up " + niceDate(p.next_followup) + ".");
+}
 
 // ---------- CSV ----------
 function csvCell(v) { v = String(v == null ? "" : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
@@ -612,10 +797,8 @@ function parseCsv(text) {
   var rows = [], row = [], cell = "", q = false;
   for (var i = 0; i < text.length; i++) {
     var ch = text[i];
-    if (q) {
-      if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
-      else cell += ch;
-    } else if (ch === '"') q = true;
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
     else if (ch === ",") { row.push(cell); cell = ""; }
     else if (ch === "\n" || ch === "\r") { if (ch === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
     else cell += ch;
@@ -623,14 +806,12 @@ function parseCsv(text) {
   if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
   rows = rows.filter(function (r) { return r.some(function (c) { return c.trim() !== ""; }); });
   if (!rows.length) return [];
-  // Map headers by label or key, case-insensitive.
   var lookup = {};
   COLS.forEach(function (c) { lookup[c[0].toLowerCase()] = c[0]; lookup[c[1].toLowerCase()] = c[0]; });
   var keys = rows[0].map(function (h) { return lookup[h.trim().toLowerCase()] || null; });
   if (keys.indexOf("school") < 0) throw new Error("CSV needs a \"School\" column.");
-  return rows.slice(1).map(function (r) {
-    var o = {}; keys.forEach(function (k, i) { if (k) o[k] = r[i] || ""; }); return o;
-  }).filter(function (o) { return (o.school || "").trim(); });
+  return rows.slice(1).map(function (r) { var o = {}; keys.forEach(function (k, i) { if (k) o[k] = r[i] || ""; }); return o; })
+    .filter(function (o) { return (o.school || "").trim(); });
 }
 
 // ---------- import / export ----------
@@ -640,10 +821,9 @@ function download(name, text, type) {
   setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 function exportJson() {
-  download("recruiting-backup-" + today() + ".json", JSON.stringify({ app: "recruiting-tracker", version: 1, exported: today(), profile: state.profile, programs: state.programs }, null, 2), "application/json");
+  download("recruiting-backup-" + today() + ".json", JSON.stringify({ app: "recruiting-tracker", version: 2, exported: today(), profile: state.profile, updates: state.updates, programs: state.programs }, null, 2), "application/json");
 }
 function exportCsv() { download("recruiting-programs-" + today() + ".csv", toCsv(state.programs), "text/csv"); }
-
 function mergePrograms(incoming, replace) {
   incoming = incoming.map(normalize);
   if (replace) { state.programs = incoming; return { added: incoming.length, updated: 0 }; }
@@ -656,33 +836,42 @@ function mergePrograms(incoming, replace) {
   return { added: added, updated: updated };
 }
 function importText(text, name) {
-  var programs, profile = null;
+  var programs, data = null;
   try {
     if (/\.json$/i.test(name) || /^\s*[\[{]/.test(text)) {
-      var data = JSON.parse(text);
+      data = JSON.parse(text);
       programs = Array.isArray(data) ? data : data.programs;
       if (!Array.isArray(programs)) throw new Error("No programs list in this JSON file.");
-      profile = data.profile || null;
     } else programs = parseCsv(text);
   } catch (e) { toast("Import failed: " + e.message); return; }
   var replace = state.programs.length > 0 && confirm(
     "Import " + programs.length + " programs.\n\nOK = REPLACE everything currently in the app.\nCancel = MERGE (update schools with the same name, add new ones).");
   var r = mergePrograms(programs, replace);
-  if (profile && (replace || !state.profile.name)) state.profile = Object.assign({}, PROFILE_DEFAULTS, profile);
+  if (data && !Array.isArray(data)) {
+    if (data.profile && (replace || !state.profile.name)) state.profile = Object.assign({}, PROFILE_DEFAULTS, data.profile);
+    if (Array.isArray(data.updates) && (replace || !state.updates.length)) state.updates = data.updates;
+  }
   save(); buildProfileFormFields(); render();
   toast("Imported: " + r.added + " added, " + r.updated + " updated.");
 }
 function loadSeed() {
-  try {
-    var r = mergePrograms(parseCsv($("seedCsv").textContent.trim()), false);
-    save(); render(); toast("Loaded " + r.added + " programs.");
-  } catch (e) { toast("Starter list failed: " + e.message); }
+  try { var r = mergePrograms(parseCsv($("seedCsv").textContent.trim()), false); save(); render(); toast("Loaded " + r.added + " programs."); }
+  catch (e) { toast("Starter list failed: " + e.message); }
 }
 
 // ---------- events ----------
-function onAction(e) {
+function onClick(e) {
+  var del = e.target.closest("[data-upd-del]");
+  if (del) { var uid_ = del.getAttribute("data-upd-del"); state.updates = state.updates.filter(function (u) { return u.id !== uid_; }); save(); render(); return; }
+  var qb = e.target.closest("[data-q]");
+  if (qb) {
+    var qp = find(qb.getAttribute("data-id")), how = qb.getAttribute("data-q"); if (!qp) return;
+    if (how === "sent") { doMarkSent(qp); renderQueue(); } else openMail(qp, how);
+    return;
+  }
   var btn = e.target.closest("[data-act]"); if (!btn || btn.tagName === "SELECT") return;
   var id = btn.getAttribute("data-id"), p = find(id), act = btn.getAttribute("data-act");
+  if (!p && act !== "edit") return;
   if (act === "edit") openEdit(id);
   else if (act === "draft") openOut("draft", id);
   else if (act === "prompt") { copy(buildPrompt(p)); openOut("prompt", id); }
@@ -713,10 +902,10 @@ function init() {
   buildProfileForm();
   ["q", "fStatus", "fDiv", "sort"].forEach(function (id) {
     $(id).addEventListener("input", function () {
-      state.ui = { sort: $("sort").value, fStatus: $("fStatus").value, fDiv: $("fDiv").value }; save(); render();
+      state.ui = Object.assign(state.ui || {}, { sort: $("sort").value, fStatus: $("fStatus").value, fDiv: $("fDiv").value }); save(); render();
     });
   });
-  document.body.addEventListener("click", onAction);
+  document.body.addEventListener("click", onClick);
   document.body.addEventListener("change", onChange);
   document.querySelectorAll("[data-close]").forEach(function (b) { b.addEventListener("click", function () { b.closest("dialog").close(); }); });
   $("btnAdd").onclick = function () { openEdit(null); };
@@ -729,17 +918,32 @@ function init() {
     var f = this.files[0]; if (!f) return;
     var r = new FileReader(); r.onload = function () { importText(String(r.result), f.name); }; r.readAsText(f);
   });
-  $("outPerso").addEventListener("input", function () { var p = find(outId); if (!p) return; p.personalization = $("outPerso").value; save(); refreshOut(); });
-  $("btnCopyOut").onclick = function () {
-    var p = find(outId); if (!p) return;
-    copy(outMode === "draft" ? buildEmail(p) : buildPrompt(p));
+  $("btnAddUpdate").onclick = function () {
+    var t = $("updText").value.trim(); if (!t) { toast("Type your news first."); return; }
+    state.updates.unshift({ id: uid(), date: today(), text: t }); $("updText").value = ""; save(); render();
+    toast("Added. Your next follow-ups will include it.");
   };
-  $("btnCopySubject").onclick = function () { var p = find(outId); if (p) { buildEmail(p); copy(outSubject); } };
+  $("outPerso").addEventListener("input", function () {
+    var p = find(outId); if (!p) return;
+    p.personalization = $("outPerso").value.trim() === autoLine(p) ? "" : $("outPerso").value; save(); refreshOut();
+  });
+  $("btnNewLine").onclick = function () {
+    var p = find(outId); if (!p) return;
+    p.variant = (p.variant || 0) + 1; p.personalization = ""; $("outPerso").value = autoLine(p); save(); refreshOut();
+  };
+  $("btnCopyOut").onclick = function () { var p = find(outId); if (p) { var d = draftFor(p); copy(outMode === "draft" ? d.body : buildPrompt(p)); } };
+  $("btnCopySubject").onclick = function () { var p = find(outId); if (p) copy(draftFor(p).subject); };
+  $("btnGmail").onclick = function () { var p = find(outId); if (p) openMail(p, "gmail"); };
+  $("btnMailApp").onclick = function () { var p = find(outId); if (p) openMail(p, "mail"); };
+  $("btnMarkSent").onclick = function () { var p = find(outId); if (p) { doMarkSent(p); $("dlgOut").close(); if ($("dlgQueue").open) renderQueue(); } };
+  $("btnQueue").onclick = function () { renderQueue(); $("dlgQueue").showModal(); };
+  $("batchSize").addEventListener("change", function () { state.ui.batch = this.value; save(); renderQueue(); render(); });
   render();
 }
 
 // Exposed for automated tests only.
-window.__tracker = { state: function () { return state; }, parseCsv: parseCsv, toCsv: toCsv, addDays: addDays, importText: importText };
+window.__tracker = { state: function () { return state; }, parseCsv: parseCsv, toCsv: toCsv, addDays: addDays, importText: importText,
+  draftFor: function (id) { return draftFor(find(id)); }, autoLine: function (id) { return autoLine(find(id)); }, queue: queue };
 init();
 })();
 </script>
