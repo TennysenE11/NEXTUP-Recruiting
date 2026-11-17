@@ -2,7 +2,71 @@
 import csv
 D = "2026-11-17"
 H = ["School","Division","Conference","State","Head coach","Pitching or recruiting coach","Coach email","Source URL",
-     "Date checked","Date emailed","Status","Replied","Next follow-up","Follow-ups sent","Personalization","Notes","ID"]
+     "Date checked","Date emailed","Status","Replied","Next follow-up","Follow-ups sent","Personalization","Notes",
+     "Roster season","Pitchers on roster","Pitchers leaving","Roster URL","Program fact","Business major","ID"]
+
+# Pitcher counts parsed from each official roster page on 2026-11-17.
+# "Leaving" = pitchers gone before fall 2027: on a 2027 roster, seniors/grad students
+# (JUCO: sophomores); on a 2026 roster, juniors and older.
+ROSTER = {"acu":("2026",20,17),"apu":("2026",20,14),"asu":("2026",24,12),"bushnell":("2027",25,6),"chapman":("2026",13,5),
+ "chico":("2027",10,5),"clu":("2026",17,8),"cms":("2026",24,14),"cmu":("2026",24,14),"cofi":("2026",24,9),"corban":("2026",20,12),
+ "cpp":("2027",21,7),"csi":("2027",22,3),"cwu":("2027",21,6),"hiu":("2027",16,11),"linfield":("2026",16,6),"masters":("2026",21,16),
+ "oit":("2027",23,5),"ouaz":("2026",24,20),"oxy":("2026",19,10),"plnu":("2026",13,7),"pomona":("2026",17,8),"redlands":("2026",14,7),
+ "regis":("2027",30,7),"slcc":("2027",25,14),"trinity":("2026",17,7),"txwes":("2026",11,9),"ups":("2026",26,18),"westmont":("2026",27,5),
+ "whitworth":("2026",19,5)}
+KEY = {"sagehens.com":"pomona","cmsathletics.org":"cms","athletics.chapman.edu":"chapman","clusports.com":"clu","goredlands.com":"redlands",
+ "oxyathletics.com":"oxy","whitworthpirates.com":"whitworth","loggerathletics.com":"ups","golinfieldwildcats.com":"linfield",
+ "athletics.georgefox.edu":"georgefox","trinitytigers.com":"trinity","plnusealions.com":"plnu","athletics.westmont.edu":"westmont",
+ "athletics.apu.edu":"apu","broncoathletics.com":"cpp","chicowildcats.com":"chico","cmumavericks.com":"cmu","regisrangers.com":"regis",
+ "wildcatsports.com":"cwu","angelosports.com":"asu","lcwarriors.com":"lcsc","yoteathletics.com":"cofi","oregontechowls.com":"oit",
+ "corbanwarriors.com":"corban","bushnellbeacons.com":"bushnell","acufirestorm.com":"acu","ouazspirit.com":"ouaz","gomustangs.com":"masters",
+ "hiuroyals.com":"hiu","ramsports.net":"txwes","athletics.csi.edu":"csi","slccbruins.com":"slcc"}
+# One program fact per school, written to the coach. From the schools' own athletics sites via search; check before sending.
+FACT = {
+ "pomona":"Coach Pericolosi is the winningest coach in program history.",
+ "cms":"Your back-to-back 35-15 seasons in 2025 and 2026 stood out to me.",
+ "chapman":"Your 2019 Division III national championship is a big reason Chapman is on my list.",
+ "clu":"I like that Coach Scherer played for the Kingsmen before leading the program.",
+ "redlands":"Congratulations on your staff being named 2026 SCIAC Coaching Staff of the Year.",
+ "oxy":"",
+ "whitworth":"Congratulations on the 2025 NWC tournament championship.",
+ "ups":"I noticed Kai Correa and Craig Driver both came through Puget Sound baseball before coaching in the majors.",
+ "linfield":"I know Coach Harlow played on Linfield's 2013 national championship team.",
+ "georgefox":"I noticed your program has earned the ABCA Team Academic Excellence Award every year under Coach Kopple.",
+ "trinity":"I know Coach Scannell was the 2016 ABCA Division III National Coach of the Year.",
+ "plnu":"Five straight NCAA West Regional appearances is a big reason PLNU is near the top of my list.",
+ "westmont":"",
+ "apu":"I followed your 2023 run to the first PacWest tournament title.",
+ "cpp":"Congratulations to Coach Torres on being named 2026 ABCA Division II National Assistant Coach of the Year.",
+ "chico":"I know Coach Taylor is the winningest coach in Chico State history and was the Wildcats' pitching coach before that.",
+ "cmu":"Coach Hanks passing 1,000 wins says a lot about how consistent your program is.",
+ "regis":"Congratulations to Coach Lautz on being named head coach this summer.",
+ "cwu":"I noticed Coach Vaughn pitched for the Wildcats before taking over as head coach.",
+ "wou":"Five GNAC regular-season titles under Coach Walker caught my attention.",
+ "asu":"Your 2023 Division II national championship is a big reason Angelo State is on my list.",
+ "lcsc":"Congratulations on your 45-9 season in 2026.",
+ "cofi":"Coach Humberger passing 700 wins says a lot about the program.",
+ "oit":"Your 2024 team's 39 wins and first NAIA tournament trip caught my attention.",
+ "corban":"",
+ "bushnell":"",
+ "acu":"Your 2024 NAIA World Series run caught my attention.",
+ "ouaz":"",
+ "masters":"Coach Brooks reaching nearly 900 wins over 30 seasons says a lot about the program.",
+ "hiu":"Congratulations on the 2024 NAIA national championship.",
+ "txwes":"Congratulations on your 42-12 season and SAC regular-season title in 2026.",
+ "yavapai":"Your history at the JUCO World Series is a big reason Yavapai is on my list.",
+ "cac":"Your 2022 NJCAA national championship caught my attention.",
+ "occ":"",
+ "cypress":"",
+ "lcc":"Congratulations on another NWAC championship this year.",
+ "lbcc":"Congratulations to Coach Peterson on being named 2024 NWAC Coach of the Year.",
+ "mclennan":"Your 2021 NJCAA national championship caught my attention.",
+ "csi":"",
+ "slcc":"Your JUCO World Series championship under Coach Nelson is a big reason SLCC is on my list.",
+}
+OTHER = {"wouwolves.com":"wou","goroughriders.com":"yavapai","vaquerosports.com":"cac","occpirateathletics.com":"occ",
+ "cypresschargers.com":"cypress","lccreddevils.com":"lcc","athletics.linnbenton.edu":"lbcc","mclennanathletics.com":"mclennan"}
+NO_BUSINESS = {"pomona","oxy","cms"}
 # school, division, conference, state, head coach, pitching/recruiting coach, email, url, notes
 R = [
 # ---- NCAA D3 ----
@@ -55,5 +119,13 @@ with open("seed-programs.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(H)
     for s,dv,cf,st,hc,pc,em,url,notes in R:
-        w.writerow([s,dv,cf,st,hc,pc,em,url,D,"","Not contacted","no","","0","",notes,""])
+        host = url.split("/")[2]
+        k = KEY.get(host) or OTHER.get(host)
+        season, npit, leave = ROSTER.get(k, ("", "", ""))
+        rurl = url.replace("/coaches", "/roster") if k in ROSTER else ""
+        biz = "no (economics instead)" if k in NO_BUSINESS else "likely, verify"
+        if k in NO_BUSINESS:
+            notes += " No undergraduate business major (economics instead); check fit."
+        w.writerow([s,dv,cf,st,hc,pc,em,url,D,"","Not contacted","no","","0","",notes,
+                    season,npit,leave,rurl,FACT.get(k,""),biz,""])
 print("wrote", len(R))
