@@ -542,7 +542,8 @@ function warningsFor(p, d) {
   if (CLOSED.indexOf(p.status) >= 0) w.push("Status is " + p.status + ".");
   return w;
 }
-function gmailUrl(d) { return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(d.to || "") + "&su=" + encodeURIComponent(d.subject) + "&body=" + encodeURIComponent(d.body); }
+// authuser picks the matching Gmail account when the browser is signed into several.
+function gmailUrl(d) { var acct = pf("email", ""); return "https://mail.google.com/mail/?" + (/@gmail\.com$|@googlemail\.com$/i.test(acct) ? "authuser=" + encodeURIComponent(acct) + "&" : "") + "view=cm&fs=1&to=" + encodeURIComponent(d.to || "") + "&su=" + encodeURIComponent(d.subject) + "&body=" + encodeURIComponent(d.body); }
 function mailtoUrl(d) { return "mailto:" + encodeURIComponent(d.to || "").replace(/%40/g, "@") + "?subject=" + encodeURIComponent(d.subject) + "&body=" + encodeURIComponent(d.body); }
 
 function buildPrompt(p) {
