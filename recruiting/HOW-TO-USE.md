@@ -1,27 +1,19 @@
 # How to use the recruiting tracker
 
-**Open it.** Download `recruiting-tracker.html` and open it in your browser (on iPhone: save to Files, then open). No install and no internet needed. Data saves in that browser only, so use the same browser each time.
+**Open it.** Download `recruiting-tracker.html` and open it in your phone or computer browser (on iPhone: save to Files, then open). No install, no account. Your data stays in that browser, so use the same one each time and export a backup weekly.
 
-**Set up once.**
-1. Fill in every box under "My profile". The emails pull from it, and a warning shows if anything is missing.
-2. Click "Load the starter list" to get 40 programs.
-3. Rows tagged "verify" need a check. Open the source link, confirm the coach and email, fix them with Edit, and remove "verify" from the notes. The send queue skips these rows until you do.
+The app has five tabs.
 
-**Send emails (about 10 minutes a week).**
-1. Click "Send queue". It lists due follow-ups first, then the next new schools, ranked by how many pitchers each team loses before you arrive.
-2. For each one, read the preview and click "Open in Gmail" or "Mail app". The email opens ready to go. Read it once and press send yourself. The app never sends anything.
-3. Click "Mark sent". The app sets the next follow-up: 10 days after the first email, then every 14 days.
+**Home.** Your setup checklist, the number of emails ready to send, goal progress, follow-ups due, and charts: list to offer, reply rate by division, and emails per week. Hover or tap a bar for its numbers, or open "Show as table".
 
-**What makes each email personal.** Every school gets its own line, built from two facts: the pitcher count from its official roster, and one fact about the program. Openers and questions change by school and level (D3 emails ask about admissions, JUCO emails ask about developing pitchers for four-year schools). Not happy with a line? Click "New line" for another version or type your own. Check the program fact before you send.
+**Profile.** Fill in every box. The profile score (out of 100) shows what coaches still need from you and what each item is worth. Aim for 85+ before sending. The realistic outlook rates each division Reach, Target or Likely from your fastball, height, handedness and GPA, and checks whether your list is balanced (about 20% reach, 50% target, 30% likely). It's a rough guide: coaches also weigh command, off-speed, projection and video. "My latest news" holds updates like new velo or a showcase date. Every follow-up leads with the newest one.
 
-**Keep follow-ups worth reading.** When something changes (new velo, new video, a showcase date, a good outing), add it under "My latest news". Every follow-up leads with your newest item, and the app tracks which coaches have already seen it.
+**Schools.** Tap "Find schools" to add programs from the national list of 1,600 (D1, D2, D3, NAIA, JUCO). Filter by division, state or region, fit for you, has email, has X, and pitchers leaving. In your list, "Filters" offers status, division, fit, state, conference, contact info, outreach stage, follow-up timing, last emailed, pitchers leaving, verify flag and business major. "My states" limits the list and the send queue to the states you pick. Rows tagged "verify" need a look at the official source link before you email.
 
-**Pick your regions.** Open "Regions" and tick the states you want, or use the West Coast, Southwest and Mountain West buttons. The program list and the send queue only show those states. Follow-ups you already started still appear under Due today.
+**Send.** The next email is already written for that coach. Tap "Send in Gmail": the email opens ready to go and the app marks it sent. Press Send in Gmail, come back, and the next one is waiting. Tap Undo if you didn't send it. Follow-ups are set automatically: 10 days after the first email, then every 14 days. X messages work the same way: "Copy and open X", paste, send, then "I sent it". Mark "Seen" when X shows it.
 
-**Message coaches on X.** Click "Message on X" on a school. The app writes a short message, and "Copy message" then "Open on X" takes you to the coach's profile, where you tap Message and paste. X charges for automated messaging, so this step stays manual. Many coaches only accept messages from accounts they follow. If there's no Message button, follow them and rely on email. Five schools have handles from official pages. For the rest, "Find on X" searches for the coach. Save a handle with Edit only when the profile clearly belongs to that coach.
+**Goals.** Tap a preset like "Get 10 replies" or set your own number and date. Each goal shows progress and the weekly pace you need. Reply goals also estimate how many more schools to contact.
 
-**When a coach replies,** set Replied to Yes and update the status.
+**What's tracked, and what isn't.** Replies are found by your weekly email run, or you set them with one tap. Email opens are not tracked: it needs a server and a hidden image, and it's unreliable (Apple Mail fakes opens, and many school email systems block it). X "Seen" is real, so mark it.
 
-**Back up weekly.** Click Export JSON and save the file to Google Drive or iCloud. Clearing browser data erases the app's data. Import the JSON to restore it or move it to another device.
-
-**Giving it to a teammate.** Send them the HTML file. They fill in their own profile and replace the starter list with schools that fit them.
+**Back up weekly.** Profile tab, Export JSON, save it to Google Drive or iCloud. Import it to restore your data or move it to another device.
