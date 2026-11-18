@@ -3,7 +3,7 @@ import csv
 D = "2026-11-17"
 H = ["School","Division","Conference","State","Head coach","Pitching or recruiting coach","Coach email","Source URL",
      "Date checked","Date emailed","Status","Replied","Next follow-up","Follow-ups sent","Personalization","Notes",
-     "Roster season","Pitchers on roster","Pitchers leaving","Roster URL","Program fact","Business major","ID"]
+     "Roster season","Pitchers on roster","Pitchers leaving","Roster URL","Program fact","Business major","X handle","X source","ID"]
 
 # Pitcher counts parsed from each official roster page on 2026-11-17.
 # "Leaving" = pitchers gone before fall 2027: on a 2027 roster, seniors/grad students
@@ -30,13 +30,13 @@ FACT = {
  "redlands":"Congratulations on your staff being named 2026 SCIAC Coaching Staff of the Year.",
  "oxy":"",
  "whitworth":"Congratulations on the 2025 NWC tournament championship.",
- "ups":"I noticed Kai Correa and Craig Driver both came through Puget Sound baseball before coaching in the majors.",
+ "ups":"Your back-to-back postseason trips, a first in program history, caught my attention.",
  "linfield":"I know Coach Harlow played on Linfield's 2013 national championship team.",
  "georgefox":"I noticed your program has earned the ABCA Team Academic Excellence Award every year under Coach Kopple.",
  "trinity":"I know Coach Scannell was the 2016 ABCA Division III National Coach of the Year.",
  "plnu":"Five straight NCAA West Regional appearances is a big reason PLNU is near the top of my list.",
  "westmont":"",
- "apu":"I followed your 2023 run to the first PacWest tournament title.",
+ "apu":"Winning the first PacWest tournament title in 2023 caught my attention.",
  "cpp":"Congratulations to Coach Torres on being named 2026 ABCA Division II National Assistant Coach of the Year.",
  "chico":"I know Coach Taylor is the winningest coach in Chico State history and was the Wildcats' pitching coach before that.",
  "cmu":"Coach Hanks passing 1,000 wins says a lot about how consistent your program is.",
@@ -67,6 +67,12 @@ FACT = {
 OTHER = {"wouwolves.com":"wou","goroughriders.com":"yavapai","vaquerosports.com":"cac","occpirateathletics.com":"occ",
  "cypresschargers.com":"cypress","lccreddevils.com":"lcc","athletics.linnbenton.edu":"lbcc","mclennanathletics.com":"mclennan"}
 NO_BUSINESS = {"pomona","oxy","cms"}
+# X handles linked from official athletics pages (coach bio or team page), checked 2026-11-18.
+XH = {"cmu":("@30skipper","https://cmumavericks.com/sports/baseball/roster/coaches/chris-hanks/3294"),
+      "asu":("@KBrooks15","https://angelosports.com/sports/baseball/roster/coaches/kevin-brooks/1333"),
+      "ouaz":("@Tanner_Wickham_","https://ouazspirit.com/sports/baseball/roster/coaches/tanner-wickham/1028"),
+      "cwu":("@CWUBaseball","https://wildcatsports.com/sports/baseball/coaches"),
+      "plnu":("@PLNUBaseball","https://plnusealions.com/sports/baseball/coaches")}
 # school, division, conference, state, head coach, pitching/recruiting coach, email, url, notes
 R = [
 # ---- NCAA D3 ----
@@ -127,5 +133,5 @@ with open("seed-programs.csv", "w", newline="", encoding="utf-8") as f:
         if k in NO_BUSINESS:
             notes += " No undergraduate business major (economics instead); check fit."
         w.writerow([s,dv,cf,st,hc,pc,em,url,D,"","Not contacted","no","","0","",notes,
-                    season,npit,leave,rurl,FACT.get(k,""),biz,""])
+                    season,npit,leave,rurl,FACT.get(k,""),biz,XH.get(k,("",""))[0],XH.get(k,("",""))[1],""])
 print("wrote", len(R))

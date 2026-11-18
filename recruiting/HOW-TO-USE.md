@@ -16,6 +16,10 @@
 
 **Keep follow-ups worth reading.** When something changes (new velo, new video, a showcase date, a good outing), add it under "My latest news". Every follow-up leads with your newest item, and the app tracks which coaches have already seen it.
 
+**Pick your regions.** Open "Regions" and tick the states you want, or use the West Coast, Southwest and Mountain West buttons. The program list and the send queue only show those states. Follow-ups you already started still appear under Due today.
+
+**Message coaches on X.** Click "Message on X" on a school. The app writes a short message, and "Copy message" then "Open on X" takes you to the coach's profile, where you tap Message and paste. X charges for automated messaging, so this step stays manual. Many coaches only accept messages from accounts they follow. If there's no Message button, follow them and rely on email. Five schools have handles from official pages. For the rest, "Find on X" searches for the coach. Save a handle with Edit only when the profile clearly belongs to that coach.
+
 **When a coach replies,** set Replied to Yes and update the status.
 
 **Back up weekly.** Click Export JSON and save the file to Google Drive or iCloud. Clearing browser data erases the app's data. Import the JSON to restore it or move it to another device.
