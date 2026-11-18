@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Recruiting Tracker</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1f5fbf">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recruiting">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 :root {
   --bg: #f6f7f9; --panel: #ffffff; --text: #1b1f24; --muted: #5d6673; --line: #dde1e6; --soft: #eef1f5;
@@ -187,6 +195,11 @@ dialog::backdrop { background: rgba(0,0,0,.45); }
 <main>
 <!-- ================= HOME ================= -->
 <div class="view" data-view="home">
+  <section id="installCard" class="hide">
+    <h2>Put this app on your home screen</h2>
+    <div id="installBody"></div>
+  </section>
+
   <section id="onboard" class="hide">
     <h2>Get set up</h2>
     <div class="stack" id="onboardList"></div>
@@ -1788,8 +1801,39 @@ function init() {
   $("findDivs").addEventListener("change", renderFind);
   $("dlgFind").addEventListener("click", function (e) { var b = e.target.closest("[data-fstates]"); if (b) { $("findStates").value = b.getAttribute("data-fstates").split(",").join(", "); renderFind(); } });
   render();
-  showTab(ui.tab || (state.programs.length ? "home" : "home"));
+  renderInstall();
+  showTab(ui.tab || "home");
 }
+
+// ================= install as a phone app =================
+var APP_URL = "https://tennenneking-bot.github.io/PLUMBER-TEST/recruiting/";
+var installEvt = null;
+function isStandalone() { return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
+function renderInstall() {
+  var card = $("installCard"), body = $("installBody");
+  if (isStandalone() || state.ui.installDismissed) { card.classList.add("hide"); return; }
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var html;
+  if (location.protocol === "file:") {
+    html = '<p>You opened a downloaded copy. To install it as an app, open <a href="' + APP_URL + '" target="_blank" rel="noopener">' + APP_URL + "</a> on your phone, then add it to your home screen. Export a backup here first (Profile tab) and import it there.</p>";
+  } else if (installEvt) {
+    html = '<p>Install it like any app: its own icon, full screen, works offline.</p><button class="primary" id="btnInstall">Install app</button>';
+  } else if (ios) {
+    html = "<ol class=\"plan\"><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (square with an arrow).</li><li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open the app from its new icon. It keeps its own data, so import your backup there if you have one.</li></ol>";
+  } else {
+    html = "<p>In your browser menu, choose <b>Install app</b> or <b>Add to Home screen</b>.</p>";
+  }
+  body.innerHTML = html + '<p class="sub" style="margin-bottom:0">Teammates can install it from the same link: ' + esc(APP_URL) + ' <button class="link" id="btnInstallHide">Hide this</button></p>';
+  card.classList.remove("hide");
+  var bi = $("btnInstall"); if (bi) bi.onclick = function () { installEvt.prompt(); installEvt.userChoice.then(function () { installEvt = null; renderInstall(); }); };
+  $("btnInstallHide").onclick = function () { state.ui.installDismissed = true; save(); renderInstall(); };
+}
+window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvt = e; renderInstall(); });
+window.addEventListener("appinstalled", function () { installEvt = null; renderInstall(); toast("Installed. Open it from your home screen."); });
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+}
+if (navigator.storage && navigator.storage.persist) { try { navigator.storage.persist(); } catch (e) {} }
 
 // Exposed for automated tests and the weekly sending script.
 window.__tracker = { state: function () { return state; }, parseCsv: parseCsv, toCsv: toCsv, addDays: addDays, importText: importText,

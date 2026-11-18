@@ -1,6 +1,10 @@
 # How to use the recruiting tracker
 
-**Open it.** Download `recruiting-tracker.html` and open it in your phone or computer browser (on iPhone: save to Files, then open). No install, no account. Your data stays in that browser, so use the same one each time and export a backup weekly.
+**Install it as an app.** Open https://tennenneking-bot.github.io/PLUMBER-TEST/recruiting/ on your phone.
+- iPhone: open it in Safari, tap Share (the square with an arrow), then Add to Home Screen.
+- Android: in Chrome, tap Install app (or menu, then Add to Home screen).
+
+It gets its own icon, opens full screen, and works offline. No App Store and no account. The installed app keeps its own data, separate from the browser, so if you used the app before, Export JSON there first and Import it in the installed app. Teammates install from the same link and keep their own data. You can also download `recruiting-tracker.html` and open it in any browser.
 
 The app has five tabs.
 
