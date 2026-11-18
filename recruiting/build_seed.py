@@ -3,7 +3,7 @@ import csv
 D = "2026-11-17"
 H = ["School","Division","Conference","State","Head coach","Pitching or recruiting coach","Coach email","Source URL",
      "Date checked","Date emailed","Status","Replied","Next follow-up","Follow-ups sent","Personalization","Notes",
-     "Roster season","Pitchers on roster","Pitchers leaving","Roster URL","Program fact","Business major","ID"]
+     "Roster season","Pitchers on roster","Pitchers leaving","Roster URL","Program fact","Business major","X handle","X source","ID"]
 
 # Pitcher counts parsed from each official roster page on 2026-11-17.
 # "Leaving" = pitchers gone before fall 2027: on a 2027 roster, seniors/grad students
@@ -67,6 +67,12 @@ FACT = {
 OTHER = {"wouwolves.com":"wou","goroughriders.com":"yavapai","vaquerosports.com":"cac","occpirateathletics.com":"occ",
  "cypresschargers.com":"cypress","lccreddevils.com":"lcc","athletics.linnbenton.edu":"lbcc","mclennanathletics.com":"mclennan"}
 NO_BUSINESS = {"pomona","oxy","cms"}
+# X handles linked from official athletics pages (coach bio or team page), checked 2026-11-18.
+XH = {"cmu":("@30skipper","https://cmumavericks.com/sports/baseball/roster/coaches/chris-hanks/3294"),
+      "asu":("@KBrooks15","https://angelosports.com/sports/baseball/roster/coaches/kevin-brooks/1333"),
+      "ouaz":("@Tanner_Wickham_","https://ouazspirit.com/sports/baseball/roster/coaches/tanner-wickham/1028"),
+      "cwu":("@CWUBaseball","https://wildcatsports.com/sports/baseball/coaches"),
+      "plnu":("@PLNUBaseball","https://plnusealions.com/sports/baseball/coaches")}
 # school, division, conference, state, head coach, pitching/recruiting coach, email, url, notes
 R = [
 # ---- NCAA D3 ----
@@ -127,5 +133,5 @@ with open("seed-programs.csv", "w", newline="", encoding="utf-8") as f:
         if k in NO_BUSINESS:
             notes += " No undergraduate business major (economics instead); check fit."
         w.writerow([s,dv,cf,st,hc,pc,em,url,D,"","Not contacted","no","","0","",notes,
-                    season,npit,leave,rurl,FACT.get(k,""),biz,""])
+                    season,npit,leave,rurl,FACT.get(k,""),biz,XH.get(k,("",""))[0],XH.get(k,("",""))[1],""])
 print("wrote", len(R))

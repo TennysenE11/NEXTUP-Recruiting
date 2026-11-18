@@ -78,6 +78,10 @@ pre.out { white-space: pre-wrap; word-wrap: break-word; background: var(--bg); b
 #toast.show { opacity: 1; }
 .count { font-weight: 400; color: var(--muted); font-size: 14px; }
 a { color: var(--accent); }
+.state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
+.state-grid label { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--text);
+  border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; cursor: pointer; }
+.state-grid input { width: auto; margin: 0; }
 .update-item { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding: 6px 0; font-size: 14px; }
 
 @media (max-width: 760px) {
@@ -85,10 +89,10 @@ a { color: var(--accent); }
   #programTable, #programTable thead, #programTable tbody, #programTable tr, #programTable td { display: block; width: 100%; }
   #programTable thead { display: none; }
   #programTable tr { border: 1px solid var(--line); border-radius: 9px; margin-bottom: 10px; padding: 6px 8px; }
-  #programTable td { border: 0; padding: 4px 0; display: flex; gap: 8px; }
-  #programTable td::before { content: attr(data-label); flex: 0 0 96px; font-size: 12px; color: var(--muted); padding-top: 2px; }
+  #programTable td { border: 0; padding: 4px 0 4px 104px; position: relative; min-height: 28px; overflow-wrap: anywhere; }
+  #programTable td::before { content: attr(data-label); position: absolute; left: 0; top: 6px; width: 96px; font-size: 12px; color: var(--muted); }
   #programTable td.school-cell::before { content: none; }
-  #programTable td.school-cell { font-size: 16px; display: block; }
+  #programTable td.school-cell { font-size: 16px; padding-left: 0; }
   .toolbar select, .toolbar button { flex: 1 1 auto; }
   .row { flex-direction: column; align-items: stretch; }
 }
@@ -125,6 +129,21 @@ a { color: var(--accent); }
         <button id="btnAddUpdate" class="primary">Add</button>
       </div>
       <div id="updList" style="margin-top:8px"></div>
+    </details>
+  </section>
+
+  <section id="regionSection">
+    <details id="regionDetails">
+      <summary>Regions <span class="count" id="regionStatus"></span></summary>
+      <p class="muted">Tick the states you want. The program list and the send queue only show those states. Follow-ups you already started still show under Due today.</p>
+      <div class="toolbar" style="margin-bottom:8px">
+        <button class="small" data-region="all">All</button>
+        <button class="small" data-region="none">None</button>
+        <button class="small" data-region="CA,OR,WA">West Coast</button>
+        <button class="small" data-region="AZ,NM,NV,TX">Southwest</button>
+        <button class="small" data-region="CO,ID,MT,UT,WY">Mountain West</button>
+      </div>
+      <div class="state-grid" id="stateList"></div>
     </details>
   </section>
 
@@ -192,6 +211,22 @@ a { color: var(--accent); }
   </div>
 </dialog>
 
+<dialog id="dlgX">
+  <div class="dlg-head"><h3 id="xTitle">Message on X</h3><button type="button" class="small" data-close>Close</button></div>
+  <div class="dlg-body">
+    <p class="muted" id="xHint" style="margin-top:0"></p>
+    <ul class="warns" id="xWarns"></ul>
+    <pre class="out" id="xText"></pre>
+    <p class="sub">How to send: click "Copy message", then "Open on X", tap Message on the profile, paste, and send. Many coaches only accept messages from accounts they follow. If the Message button is missing, follow them and email instead. Don't post this publicly.</p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" id="btnXFind">Find on X</button>
+    <button type="button" id="btnXCopy">Copy message</button>
+    <button type="button" id="btnXOpen">Open on X</button>
+    <button type="button" class="primary" id="btnXSent">Mark X message sent</button>
+  </div>
+</dialog>
+
 <dialog id="dlgQueue">
   <div class="dlg-head"><h3>Send queue</h3><button type="button" class="small" data-close>Close</button></div>
   <div class="dlg-body">
@@ -206,47 +241,47 @@ a { color: var(--accent); }
 <div id="toast" role="status"></div>
 
 <script type="text/csv" id="seedCsv">
-School,Division,Conference,State,Head coach,Pitching or recruiting coach,Coach email,Source URL,Date checked,Date emailed,Status,Replied,Next follow-up,Follow-ups sent,Personalization,Notes,Roster season,Pitchers on roster,Pitchers leaving,Roster URL,Program fact,Business major,ID
-Pomona-Pitzer Colleges,NCAA D3,SCIAC,CA,Frank Pericolosi,Michael Surina (Asst. Coach / Recruiting Coordinator),Michael.Surina@pomona.edu,https://sagehens.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach email on page: frank.pericolosi@pomona.edu. Page lists no pitching coach title. No undergraduate business major (economics instead); check fit.,2026,17,8,https://sagehens.com/sports/baseball/roster,Coach Pericolosi is the winningest coach in program history.,no (economics instead),
-Claremont-Mudd-Scripps,NCAA D3,SCIAC,CA,Bill Walkenbach,Quinn Heiner (Asst. Coach / Recruiting Coordinator),quinn.heiner@cms.claremont.edu,https://cmsathletics.org/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: bill.walkenbach@cms.claremont.edu. Keith Walker (keith.walker@cms.claremont.edu) may work with pitchers per his bio; page title is only 'Assistant Coach', verify. No undergraduate business major (economics instead); check fit.",2026,24,14,https://cmsathletics.org/sports/baseball/roster,Your back-to-back 35-15 seasons in 2025 and 2026 stood out to me.,no (economics instead),
-Chapman University,NCAA D3,SCIAC,CA,Scott Laverty,Dave Edwards (Assoc. Head Coach / Pitching Coach),baseball@chapman.edu,https://athletics.chapman.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Page lists one shared program inbox (baseball@chapman.edu) for all coaches.,2026,13,5,https://athletics.chapman.edu/sports/baseball/roster,Your 2019 Division III national championship is a big reason Chapman is on my list.,"likely, verify",
-California Lutheran University,NCAA D3,SCIAC,CA,Erik Scherer,Collin Crowl (Recruiting Coordinator),ccrowl@callutheran.edu,https://clusports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: escherer@callutheran.edu. Pitching Development: Joey Romano (no email on page).,2026,17,8,https://clusports.com/sports/baseball/roster,I like that Coach Scherer played for the Kingsmen before leading the program.,"likely, verify",
-University of Redlands,NCAA D3,SCIAC,CA,Aaron Holley,Chris Hernandez (Asst. Coach / Recruiting Coordinator),chris_hernandez@redlands.edu,https://goredlands.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: aaron_holley@redlands.edu.,2026,14,7,https://goredlands.com/sports/baseball/roster,Congratulations on your staff being named 2026 SCIAC Coaching Staff of the Year.,"likely, verify",
-Occidental College,NCAA D3,SCIAC,CA,Luke Wetmore,Cameron McMullen (Asst. Coach / Recruiting Coordinator),cmcmullen@oxy.edu,https://oxyathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: wetmorel@oxy.edu. No undergraduate business major (economics instead); check fit.,2026,19,10,https://oxyathletics.com/sports/baseball/roster,,no (economics instead),
-Whitworth University,NCAA D3,Northwest Conference,WA,CJ Perry,,cperry@whitworth.edu,https://whitworthpirates.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page names no pitching coach or recruiting coordinator; verify who handles pitchers.,2026,19,5,https://whitworthpirates.com/sports/baseball/roster,Congratulations on the 2025 NWC tournament championship.,"likely, verify",
-University of Puget Sound,NCAA D3,Northwest Conference,WA,Jeff Halstead,AJ Morioka (Asst. Coach / Recruiting Coordinator),amorioka@pugetsound.edu,https://loggerathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jhalstead@pugetsound.edu. Pitching coach: Michael Johnson (no email on page).,2026,26,18,https://loggerathletics.com/sports/baseball/roster,"Your back-to-back postseason trips, a first in program history, caught my attention.","likely, verify",
-Linfield University,NCAA D3,Northwest Conference,OR,Jordan Harlow,,jharlow@linfield.edu,https://golinfieldwildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Aug 2026 news says Ethan Krupp will run the pitching staff for 2027, but he is not on the staff page yet; verify.",2026,16,6,https://golinfieldwildcats.com/sports/baseball/roster,I know Coach Harlow played on Linfield's 2013 national championship team.,"likely, verify",
-George Fox University,NCAA D3,Northwest Conference,OR,Kevin Kopple,,kkopple@georgefox.edu,https://athletics.georgefox.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. All assistants titled 'Assistant Coach'; Brandon Rupp (brupp@georgefox.edu) is described as pitching assistant in his bio, verify.",,,,,I noticed your program has earned the ABCA Team Academic Excellence Award every year under Coach Kopple.,"likely, verify",
-Trinity University,NCAA D3,SAA,TX,Tim Scannell,Dave Smith (Pitching Coach),dsmith4@trinity.edu,https://trinitytigers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tscannel@trinity.edu.,2026,17,7,https://trinitytigers.com/sports/baseball/roster,I know Coach Scannell was the 2016 ABCA Division III National Coach of the Year.,"likely, verify",
-Point Loma Nazarene University,NCAA D2,PacWest,CA,Justin James,Jack Gonzales (Pitching Coach),jgonzal2@pointloma.edu,https://plnusealions.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: justinjames@pointloma.edu.,2026,13,7,https://plnusealions.com/sports/baseball/roster,Five straight NCAA West Regional appearances is a big reason PLNU is near the top of my list.,"likely, verify",
-Westmont College,NCAA D2,PacWest,CA,Paul Svagdis,,psvagdis@westmont.edu,https://athletics.westmont.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. No pitching coach title on page (older bios name Rick Hubbard; he is not listed now); verify. Program inbox on page: baseball@westmont.edu.,2026,27,5,https://athletics.westmont.edu/sports/baseball/roster,,"likely, verify",
-Azusa Pacific University,NCAA D2,PacWest,CA,Kirk Nieuwenhuis,Jerry Peña (Asst. Coach / Recruiting Coordinator),gpena@apu.edu,https://athletics.apu.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: knieuwenhuis@apu.edu. Pitching coach: Bobby O'Neill (no email on page).,2026,20,14,https://athletics.apu.edu/sports/baseball/roster,Winning the first PacWest tournament title in 2023 caught my attention.,"likely, verify",
-Cal Poly Pomona,NCAA D2,CCAA,CA,Randy Betten,,rbetten@cpp.edu,https://broncoathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Associate head coach Jenzen Torres: jenzentorres@cpp.edu. Page gives no pitching or recruiting title; verify.,2027,21,7,https://broncoathletics.com/sports/baseball/roster,Congratulations to Coach Torres on being named 2026 ABCA Division II National Assistant Coach of the Year.,"likely, verify",
-Chico State,NCAA D2,CCAA,CA,Dave Taylor,,dmtaylor@csuchico.edu,https://chicowildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Baseball Coach' only; verify who handles pitchers.,2027,10,5,https://chicowildcats.com/sports/baseball/roster,I know Coach Taylor is the winningest coach in Chico State history and was the Wildcats' pitching coach before that.,"likely, verify",
-Colorado Mesa University,NCAA D2,RMAC,CO,Chris Hanks,Jeff Rodgers (Pitching Coach),chanks@coloradomesa.edu,https://cmumavericks.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,24,14,https://cmumavericks.com/sports/baseball/roster,"Coach Hanks passing 1,000 wins says a lot about how consistent your program is.","likely, verify",
-Regis University,NCAA D2,RMAC,CO,Matt Lautz,,rlautz@regis.edu,https://regisrangers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's (new head coach, July 2026). Page lists Mike Newton with a personal gmail address; not used. Verify pitching coach.",2027,30,7,https://regisrangers.com/sports/baseball/roster,Congratulations to Coach Lautz on being named head coach this summer.,"likely, verify",
-Central Washington University,NCAA D2,GNAC,WA,Aaron Vaughn,Garrison Becker (Pitching Coach / Recruiting Coordinator),Garrison.Becker@cwu.edu,https://wildcatsports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach (new 2026): Aaron.Vaughn@cwu.edu.,2027,21,6,https://wildcatsports.com/sports/baseball/roster,I noticed Coach Vaughn pitched for the Wildcats before taking over as head coach.,"likely, verify",
-Western Oregon University,NCAA D2,GNAC,OR,Kellen Walker,,,https://wouwolves.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access. Head coach name from search results citing wouwolves.com; email not checked, so left blank.",,,,,Five GNAC regular-season titles under Coach Walker caught my attention.,"likely, verify",
-Angelo State University,NCAA D2,Lone Star Conference,TX,Kevin Brooks,,kevin.brooks@angelo.edu,https://angelosports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Adam Foster (adam.foster@angelo.edu) is the pitching coach per his bio but titled 'Assistant Coach' on the page; verify.,2026,24,12,https://angelosports.com/sports/baseball/roster,Your 2023 Division II national championship is a big reason Angelo State is on my list.,"likely, verify",
-Lewis-Clark State College,NAIA,Cascade Collegiate Conference,ID,Jeremiah Robbins,,jwrobbins@lcsc.edu,https://lcwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page lists assistants with no pitching or recruiting title; verify.,,,,,Congratulations on your 45-9 season in 2026.,"likely, verify",
-College of Idaho,NAIA,Cascade Collegiate Conference,ID,Shawn Humberger,Oliver Massie (Asst. Pitching Coach),shumberger@collegeofidaho.edu,https://yoteathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's. Assoc. head coach Brian Schweiger: bschweiger@collegeofidaho.edu.",2026,24,9,https://yoteathletics.com/sports/baseball/roster,Coach Humberger passing 700 wins says a lot about the program.,"likely, verify",
-Oregon Tech,NAIA,Cascade Collegiate Conference,OR,Ricky Walker,John Kemp (Pitching Coach / Recruiting Coordinator),ricky.walker@oit.edu,https://oregontechowls.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"John Kemp has no email on page, so email is the head coach's.",2027,23,5,https://oregontechowls.com/sports/baseball/roster,Your 2024 team's 39 wins and first NAIA tournament trip caught my attention.,"likely, verify",
-Corban University,NAIA,Cascade Collegiate Conference,OR,Ryan Harris,,rharris@corban.edu,https://corbanwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Coach' only; verify.,2026,20,12,https://corbanwarriors.com/sports/baseball/roster,,"likely, verify",
-Bushnell University,NAIA,Cascade Collegiate Conference,OR,Jamie Womack,Ethan Stacy (Hitting Coach / Recruiting Coordinator),estacy@bushnell.edu,https://bushnellbeacons.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jawomack@bushnell.edu. Pitching coach: Cameron Kundig (no email on page).,2027,25,6,https://bushnellbeacons.com/sports/baseball/roster,,"likely, verify",
-Arizona Christian University,NAIA,GSAC,AZ,Joe McDonald,Jacob Carson (Pitching Coach),joe.mcdonald@arizonachristian.edu,https://acufirestorm.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,20,17,https://acufirestorm.com/sports/baseball/roster,Your 2024 NAIA World Series run caught my attention.,"likely, verify",
-Ottawa University Arizona,NAIA,GSAC,AZ,Tim Montez,Tanner Wickham (Asst. Head Coach / Recruiting Coordinator),tanner.wickham@ottawa.edu,https://ouazspirit.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tim.montez@ottawa.edu. Pitching coach: Artie Cox (no email on page).,2026,24,20,https://ouazspirit.com/sports/baseball/roster,,"likely, verify",
-The Master's University,NAIA,GSAC,CA,Monte Brooks,Rob Winslow (Pitching Coach),rwinslow@masters.edu,https://gomustangs.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: mbrooks@masters.edu. Recruiting coordinator Sean Harris is listed with a personal gmail; not used.,2026,21,16,https://gomustangs.com/sports/baseball/roster,Coach Brooks reaching nearly 900 wins over 30 seasons says a lot about the program.,"likely, verify",
-Hope International University,NAIA,GSAC,CA,Larry Mahoney,Steven Phillips (Sr. Assoc. Head Coach / Exec. Director of Recruiting),sphillips@hiu.edu,https://hiuroyals.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: lmmahoney@hiu.edu. Pitching development: Vince Payne, vmpayne@hiu.edu.",2027,16,11,https://hiuroyals.com/sports/baseball/roster,Congratulations on the 2024 NAIA national championship.,"likely, verify",
-Texas Wesleyan University,NAIA,Sooner Athletic Conference,TX,Bobby Garza,,robertgarza@txwes.edu,https://ramsports.net/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Conference from news (SAC), verify.",2026,11,9,https://ramsports.net/sports/baseball/roster,Congratulations on your 42-12 season and SAC regular-season title in 2026.,"likely, verify",
-Yavapai College,JUCO,ACCAC (NJCAA),AZ,Marc MacMillan,"Chris Jimenez (pitchers/catchers, Recruiting Coordinator)",,https://goroughriders.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing goroughriders.com; email left blank.,,,,,Your history at the JUCO World Series is a big reason Yavapai is on my list.,"likely, verify",
-Central Arizona College,JUCO,ACCAC (NJCAA),AZ,,,,https://vaquerosports.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access, and sources conflict on the head coach (Sean Cashman vs. John 'JoJo' Howie). Left blank.",,,,,Your 2022 NJCAA national championship caught my attention.,"likely, verify",
-Orange Coast College,JUCO,Orange Empire Conference (CCCAA),CA,Nate Johnson,,,https://occpirateathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing the official site; email left blank.,,,,,,"likely, verify",
-Cypress College,JUCO,Orange Empire Conference (CCCAA),CA,Anthony Hutting,Steve Lambright (Pitching Coach),,https://cypresschargers.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing cypresschargers.com; email left blank.,,,,,,"likely, verify",
-Lower Columbia College,JUCO,NWAC,WA,Kurt Lupinski,,,https://lccreddevils.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing lccreddevils.com; email left blank.,,,,,Congratulations on another NWAC championship this year.,"likely, verify",
-Linn-Benton Community College,JUCO,NWAC,OR,Andy Peterson,,,https://athletics.linnbenton.edu/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results; email left blank.,,,,,Congratulations to Coach Peterson on being named 2024 NWAC Coach of the Year.,"likely, verify",
-McLennan Community College,JUCO,NJCAA Region V,TX,Tyler Johnson,Peter Stark (Asst. / Pitching Coach),,https://mclennanathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing mclennanathletics.com; email left blank.,,,,,Your 2021 NJCAA national championship caught my attention.,"likely, verify",
-College of Southern Idaho,JUCO,Scenic West (NJCAA),ID,Boomer Walker,Bruer Webster (Asst. Coach / Recruiting Coordinator),bwebster2@csi.edu,https://athletics.csi.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: bwalker@csi.edu.,2027,22,3,https://athletics.csi.edu/sports/baseball/roster,,"likely, verify",
-Salt Lake Community College,JUCO,Scenic West (NJCAA),UT,David Nelson,Glen Spencer (Recruiting Coordinator / Defense),david.nelson@slcc.edu,https://slccbruins.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Recruiting coordinator has no email on page, so email is the head coach's. Page still lists Dusty Nielsen, who news says left for Utah Valley; verify.",2027,25,14,https://slccbruins.com/sports/baseball/roster,Your JUCO World Series championship under Coach Nelson is a big reason SLCC is on my list.,"likely, verify",
+School,Division,Conference,State,Head coach,Pitching or recruiting coach,Coach email,Source URL,Date checked,Date emailed,Status,Replied,Next follow-up,Follow-ups sent,Personalization,Notes,Roster season,Pitchers on roster,Pitchers leaving,Roster URL,Program fact,Business major,X handle,X source,ID
+Pomona-Pitzer Colleges,NCAA D3,SCIAC,CA,Frank Pericolosi,Michael Surina (Asst. Coach / Recruiting Coordinator),Michael.Surina@pomona.edu,https://sagehens.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach email on page: frank.pericolosi@pomona.edu. Page lists no pitching coach title. No undergraduate business major (economics instead); check fit.,2026,17,8,https://sagehens.com/sports/baseball/roster,Coach Pericolosi is the winningest coach in program history.,no (economics instead),,,
+Claremont-Mudd-Scripps,NCAA D3,SCIAC,CA,Bill Walkenbach,Quinn Heiner (Asst. Coach / Recruiting Coordinator),quinn.heiner@cms.claremont.edu,https://cmsathletics.org/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: bill.walkenbach@cms.claremont.edu. Keith Walker (keith.walker@cms.claremont.edu) may work with pitchers per his bio; page title is only 'Assistant Coach', verify. No undergraduate business major (economics instead); check fit.",2026,24,14,https://cmsathletics.org/sports/baseball/roster,Your back-to-back 35-15 seasons in 2025 and 2026 stood out to me.,no (economics instead),,,
+Chapman University,NCAA D3,SCIAC,CA,Scott Laverty,Dave Edwards (Assoc. Head Coach / Pitching Coach),baseball@chapman.edu,https://athletics.chapman.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Page lists one shared program inbox (baseball@chapman.edu) for all coaches.,2026,13,5,https://athletics.chapman.edu/sports/baseball/roster,Your 2019 Division III national championship is a big reason Chapman is on my list.,"likely, verify",,,
+California Lutheran University,NCAA D3,SCIAC,CA,Erik Scherer,Collin Crowl (Recruiting Coordinator),ccrowl@callutheran.edu,https://clusports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: escherer@callutheran.edu. Pitching Development: Joey Romano (no email on page).,2026,17,8,https://clusports.com/sports/baseball/roster,I like that Coach Scherer played for the Kingsmen before leading the program.,"likely, verify",,,
+University of Redlands,NCAA D3,SCIAC,CA,Aaron Holley,Chris Hernandez (Asst. Coach / Recruiting Coordinator),chris_hernandez@redlands.edu,https://goredlands.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: aaron_holley@redlands.edu.,2026,14,7,https://goredlands.com/sports/baseball/roster,Congratulations on your staff being named 2026 SCIAC Coaching Staff of the Year.,"likely, verify",,,
+Occidental College,NCAA D3,SCIAC,CA,Luke Wetmore,Cameron McMullen (Asst. Coach / Recruiting Coordinator),cmcmullen@oxy.edu,https://oxyathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: wetmorel@oxy.edu. No undergraduate business major (economics instead); check fit.,2026,19,10,https://oxyathletics.com/sports/baseball/roster,,no (economics instead),,,
+Whitworth University,NCAA D3,Northwest Conference,WA,CJ Perry,,cperry@whitworth.edu,https://whitworthpirates.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page names no pitching coach or recruiting coordinator; verify who handles pitchers.,2026,19,5,https://whitworthpirates.com/sports/baseball/roster,Congratulations on the 2025 NWC tournament championship.,"likely, verify",,,
+University of Puget Sound,NCAA D3,Northwest Conference,WA,Jeff Halstead,AJ Morioka (Asst. Coach / Recruiting Coordinator),amorioka@pugetsound.edu,https://loggerathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jhalstead@pugetsound.edu. Pitching coach: Michael Johnson (no email on page).,2026,26,18,https://loggerathletics.com/sports/baseball/roster,"Your back-to-back postseason trips, a first in program history, caught my attention.","likely, verify",,,
+Linfield University,NCAA D3,Northwest Conference,OR,Jordan Harlow,,jharlow@linfield.edu,https://golinfieldwildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Aug 2026 news says Ethan Krupp will run the pitching staff for 2027, but he is not on the staff page yet; verify.",2026,16,6,https://golinfieldwildcats.com/sports/baseball/roster,I know Coach Harlow played on Linfield's 2013 national championship team.,"likely, verify",,,
+George Fox University,NCAA D3,Northwest Conference,OR,Kevin Kopple,,kkopple@georgefox.edu,https://athletics.georgefox.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. All assistants titled 'Assistant Coach'; Brandon Rupp (brupp@georgefox.edu) is described as pitching assistant in his bio, verify.",,,,,I noticed your program has earned the ABCA Team Academic Excellence Award every year under Coach Kopple.,"likely, verify",,,
+Trinity University,NCAA D3,SAA,TX,Tim Scannell,Dave Smith (Pitching Coach),dsmith4@trinity.edu,https://trinitytigers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tscannel@trinity.edu.,2026,17,7,https://trinitytigers.com/sports/baseball/roster,I know Coach Scannell was the 2016 ABCA Division III National Coach of the Year.,"likely, verify",,,
+Point Loma Nazarene University,NCAA D2,PacWest,CA,Justin James,Jack Gonzales (Pitching Coach),jgonzal2@pointloma.edu,https://plnusealions.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: justinjames@pointloma.edu.,2026,13,7,https://plnusealions.com/sports/baseball/roster,Five straight NCAA West Regional appearances is a big reason PLNU is near the top of my list.,"likely, verify",@PLNUBaseball,https://plnusealions.com/sports/baseball/coaches,
+Westmont College,NCAA D2,PacWest,CA,Paul Svagdis,,psvagdis@westmont.edu,https://athletics.westmont.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. No pitching coach title on page (older bios name Rick Hubbard; he is not listed now); verify. Program inbox on page: baseball@westmont.edu.,2026,27,5,https://athletics.westmont.edu/sports/baseball/roster,,"likely, verify",,,
+Azusa Pacific University,NCAA D2,PacWest,CA,Kirk Nieuwenhuis,Jerry Peña (Asst. Coach / Recruiting Coordinator),gpena@apu.edu,https://athletics.apu.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: knieuwenhuis@apu.edu. Pitching coach: Bobby O'Neill (no email on page).,2026,20,14,https://athletics.apu.edu/sports/baseball/roster,Winning the first PacWest tournament title in 2023 caught my attention.,"likely, verify",,,
+Cal Poly Pomona,NCAA D2,CCAA,CA,Randy Betten,,rbetten@cpp.edu,https://broncoathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Associate head coach Jenzen Torres: jenzentorres@cpp.edu. Page gives no pitching or recruiting title; verify.,2027,21,7,https://broncoathletics.com/sports/baseball/roster,Congratulations to Coach Torres on being named 2026 ABCA Division II National Assistant Coach of the Year.,"likely, verify",,,
+Chico State,NCAA D2,CCAA,CA,Dave Taylor,,dmtaylor@csuchico.edu,https://chicowildcats.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Baseball Coach' only; verify who handles pitchers.,2027,10,5,https://chicowildcats.com/sports/baseball/roster,I know Coach Taylor is the winningest coach in Chico State history and was the Wildcats' pitching coach before that.,"likely, verify",,,
+Colorado Mesa University,NCAA D2,RMAC,CO,Chris Hanks,Jeff Rodgers (Pitching Coach),chanks@coloradomesa.edu,https://cmumavericks.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,24,14,https://cmumavericks.com/sports/baseball/roster,"Coach Hanks passing 1,000 wins says a lot about how consistent your program is.","likely, verify",@30skipper,https://cmumavericks.com/sports/baseball/roster/coaches/chris-hanks/3294,
+Regis University,NCAA D2,RMAC,CO,Matt Lautz,,rlautz@regis.edu,https://regisrangers.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's (new head coach, July 2026). Page lists Mike Newton with a personal gmail address; not used. Verify pitching coach.",2027,30,7,https://regisrangers.com/sports/baseball/roster,Congratulations to Coach Lautz on being named head coach this summer.,"likely, verify",,,
+Central Washington University,NCAA D2,GNAC,WA,Aaron Vaughn,Garrison Becker (Pitching Coach / Recruiting Coordinator),Garrison.Becker@cwu.edu,https://wildcatsports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach (new 2026): Aaron.Vaughn@cwu.edu.,2027,21,6,https://wildcatsports.com/sports/baseball/roster,I noticed Coach Vaughn pitched for the Wildcats before taking over as head coach.,"likely, verify",@CWUBaseball,https://wildcatsports.com/sports/baseball/coaches,
+Western Oregon University,NCAA D2,GNAC,OR,Kellen Walker,,,https://wouwolves.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access. Head coach name from search results citing wouwolves.com; email not checked, so left blank.",,,,,Five GNAC regular-season titles under Coach Walker caught my attention.,"likely, verify",,,
+Angelo State University,NCAA D2,Lone Star Conference,TX,Kevin Brooks,,kevin.brooks@angelo.edu,https://angelosports.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Adam Foster (adam.foster@angelo.edu) is the pitching coach per his bio but titled 'Assistant Coach' on the page; verify.,2026,24,12,https://angelosports.com/sports/baseball/roster,Your 2023 Division II national championship is a big reason Angelo State is on my list.,"likely, verify",@KBrooks15,https://angelosports.com/sports/baseball/roster/coaches/kevin-brooks/1333,
+Lewis-Clark State College,NAIA,Cascade Collegiate Conference,ID,Jeremiah Robbins,,jwrobbins@lcsc.edu,https://lcwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Page lists assistants with no pitching or recruiting title; verify.,,,,,Congratulations on your 45-9 season in 2026.,"likely, verify",,,
+College of Idaho,NAIA,Cascade Collegiate Conference,ID,Shawn Humberger,Oliver Massie (Asst. Pitching Coach),shumberger@collegeofidaho.edu,https://yoteathletics.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's. Assoc. head coach Brian Schweiger: bschweiger@collegeofidaho.edu.",2026,24,9,https://yoteathletics.com/sports/baseball/roster,Coach Humberger passing 700 wins says a lot about the program.,"likely, verify",,,
+Oregon Tech,NAIA,Cascade Collegiate Conference,OR,Ricky Walker,John Kemp (Pitching Coach / Recruiting Coordinator),ricky.walker@oit.edu,https://oregontechowls.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"John Kemp has no email on page, so email is the head coach's.",2027,23,5,https://oregontechowls.com/sports/baseball/roster,Your 2024 team's 39 wins and first NAIA tournament trip caught my attention.,"likely, verify",,,
+Corban University,NAIA,Cascade Collegiate Conference,OR,Ryan Harris,,rharris@corban.edu,https://corbanwarriors.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Email is the head coach's. Assistants titled 'Assistant Coach' only; verify.,2026,20,12,https://corbanwarriors.com/sports/baseball/roster,,"likely, verify",,,
+Bushnell University,NAIA,Cascade Collegiate Conference,OR,Jamie Womack,Ethan Stacy (Hitting Coach / Recruiting Coordinator),estacy@bushnell.edu,https://bushnellbeacons.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: jawomack@bushnell.edu. Pitching coach: Cameron Kundig (no email on page).,2027,25,6,https://bushnellbeacons.com/sports/baseball/roster,,"likely, verify",,,
+Arizona Christian University,NAIA,GSAC,AZ,Joe McDonald,Jacob Carson (Pitching Coach),joe.mcdonald@arizonachristian.edu,https://acufirestorm.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Pitching coach has no email on page, so email is the head coach's.",2026,20,17,https://acufirestorm.com/sports/baseball/roster,Your 2024 NAIA World Series run caught my attention.,"likely, verify",,,
+Ottawa University Arizona,NAIA,GSAC,AZ,Tim Montez,Tanner Wickham (Asst. Head Coach / Recruiting Coordinator),tanner.wickham@ottawa.edu,https://ouazspirit.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: tim.montez@ottawa.edu. Pitching coach: Artie Cox (no email on page).,2026,24,20,https://ouazspirit.com/sports/baseball/roster,,"likely, verify",@Tanner_Wickham_,https://ouazspirit.com/sports/baseball/roster/coaches/tanner-wickham/1028,
+The Master's University,NAIA,GSAC,CA,Monte Brooks,Rob Winslow (Pitching Coach),rwinslow@masters.edu,https://gomustangs.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: mbrooks@masters.edu. Recruiting coordinator Sean Harris is listed with a personal gmail; not used.,2026,21,16,https://gomustangs.com/sports/baseball/roster,Coach Brooks reaching nearly 900 wins over 30 seasons says a lot about the program.,"likely, verify",,,
+Hope International University,NAIA,GSAC,CA,Larry Mahoney,Steven Phillips (Sr. Assoc. Head Coach / Exec. Director of Recruiting),sphillips@hiu.edu,https://hiuroyals.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Head coach: lmmahoney@hiu.edu. Pitching development: Vince Payne, vmpayne@hiu.edu.",2027,16,11,https://hiuroyals.com/sports/baseball/roster,Congratulations on the 2024 NAIA national championship.,"likely, verify",,,
+Texas Wesleyan University,NAIA,Sooner Athletic Conference,TX,Bobby Garza,,robertgarza@txwes.edu,https://ramsports.net/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Email is the head coach's. Conference from news (SAC), verify.",2026,11,9,https://ramsports.net/sports/baseball/roster,Congratulations on your 42-12 season and SAC regular-season title in 2026.,"likely, verify",,,
+Yavapai College,JUCO,ACCAC (NJCAA),AZ,Marc MacMillan,"Chris Jimenez (pitchers/catchers, Recruiting Coordinator)",,https://goroughriders.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing goroughriders.com; email left blank.,,,,,Your history at the JUCO World Series is a big reason Yavapai is on my list.,"likely, verify",,,
+Central Arizona College,JUCO,ACCAC (NJCAA),AZ,,,,https://vaquerosports.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,"VERIFY: official page refused automated access, and sources conflict on the head coach (Sean Cashman vs. John 'JoJo' Howie). Left blank.",,,,,Your 2022 NJCAA national championship caught my attention.,"likely, verify",,,
+Orange Coast College,JUCO,Orange Empire Conference (CCCAA),CA,Nate Johnson,,,https://occpirateathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing the official site; email left blank.,,,,,,"likely, verify",,,
+Cypress College,JUCO,Orange Empire Conference (CCCAA),CA,Anthony Hutting,Steve Lambright (Pitching Coach),,https://cypresschargers.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing cypresschargers.com; email left blank.,,,,,,"likely, verify",,,
+Lower Columbia College,JUCO,NWAC,WA,Kurt Lupinski,,,https://lccreddevils.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results citing lccreddevils.com; email left blank.,,,,,Congratulations on another NWAC championship this year.,"likely, verify",,,
+Linn-Benton Community College,JUCO,NWAC,OR,Andy Peterson,,,https://athletics.linnbenton.edu/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Head coach from search results; email left blank.,,,,,Congratulations to Coach Peterson on being named 2024 NWAC Coach of the Year.,"likely, verify",,,
+McLennan Community College,JUCO,NJCAA Region V,TX,Tyler Johnson,Peter Stark (Asst. / Pitching Coach),,https://mclennanathletics.com/sports/bsb/coaches/index,2026-11-17,,Not contacted,no,,0,,VERIFY: official page refused automated access. Names from search results citing mclennanathletics.com; email left blank.,,,,,Your 2021 NJCAA national championship caught my attention.,"likely, verify",,,
+College of Southern Idaho,JUCO,Scenic West (NJCAA),ID,Boomer Walker,Bruer Webster (Asst. Coach / Recruiting Coordinator),bwebster2@csi.edu,https://athletics.csi.edu/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,Head coach: bwalker@csi.edu.,2027,22,3,https://athletics.csi.edu/sports/baseball/roster,,"likely, verify",,,
+Salt Lake Community College,JUCO,Scenic West (NJCAA),UT,David Nelson,Glen Spencer (Recruiting Coordinator / Defense),david.nelson@slcc.edu,https://slccbruins.com/sports/baseball/coaches,2026-11-17,,Not contacted,no,,0,,"Recruiting coordinator has no email on page, so email is the head coach's. Page still lists Dusty Nielsen, who news says left for Utah Valley; verify.",2027,25,14,https://slccbruins.com/sports/baseball/roster,Your JUCO World Series championship under Coach Nelson is a big reason SLCC is on my list.,"likely, verify",,,
 </script>
 
 <script>
@@ -269,6 +304,7 @@ var COLS = [
   ["followups_sent", "Follow-ups sent"], ["personalization", "Personalization"], ["notes", "Notes"],
   ["roster_season", "Roster season"], ["roster_pitchers", "Pitchers on roster"], ["roster_leaving", "Pitchers leaving"],
   ["roster_url", "Roster URL"], ["program_fact", "Program fact"], ["business_major", "Business major"],
+  ["x_handle", "X handle"], ["x_source", "X source"], ["x_dm_date", "X message sent"],
   ["last_update_id", "Last update sent"], ["id", "ID"]
 ];
 
@@ -328,7 +364,7 @@ function normalize(p) {
   o.division = normDivision(o.division);
   o.status = STATUSES.indexOf(o.status) >= 0 ? o.status : matchStatus(o.status);
   o.replied = /^(y|yes|true|1)$/i.test(o.replied) ? "yes" : "no";
-  ["date_checked", "date_emailed", "next_followup"].forEach(function (k) { o[k] = cleanDate(o[k]); });
+  ["date_checked", "date_emailed", "next_followup", "x_dm_date"].forEach(function (k) { o[k] = cleanDate(o[k]); });
   o.followups_sent = String(parseInt(o.followups_sent, 10) || 0);
   o.variant = parseInt(p.variant, 10) || 0;
   return o;
@@ -541,6 +577,69 @@ function buildPrompt(p) {
   ].join("\n");
 }
 
+// ---------- regions ----------
+function allStates() {
+  var seen = {};
+  state.programs.forEach(function (p) { var st = (p.state || "").toUpperCase(); if (st) seen[st] = (seen[st] || 0) + 1; });
+  return Object.keys(seen).sort().map(function (k) { return { st: k, n: seen[k] }; });
+}
+// state.ui.states: null/undefined = every state; otherwise the list of ticked states.
+function inRegion(p) {
+  var sel = state.ui && state.ui.states;
+  if (!Array.isArray(sel)) return true;
+  return sel.indexOf((p.state || "").toUpperCase()) >= 0;
+}
+function renderRegions() {
+  var sel = state.ui && state.ui.states, list = allStates();
+  $("stateList").innerHTML = list.map(function (o) {
+    var on = !Array.isArray(sel) || sel.indexOf(o.st) >= 0;
+    return '<label><input type="checkbox" data-state="' + esc(o.st) + '"' + (on ? " checked" : "") + "> " + esc(o.st) + ' <span class="sub">(' + o.n + ")</span></label>";
+  }).join("") || '<span class="muted">Add programs to see states.</span>';
+  $("regionStatus").textContent = !Array.isArray(sel) ? "(all states)" : "(" + (sel.length ? sel.join(", ") : "none selected") + ")";
+}
+function setStates(arr) { state.ui.states = arr; save(); render(); }
+
+// ---------- X messages ----------
+function xHandle(p) { var h = (p.x_handle || "").trim().replace(/^https?:\/\/(www\.)?(x|twitter)\.com\//i, "").replace(/^@/, "").replace(/[\/?#].*$/, ""); return /^[A-Za-z0-9_]{1,15}$/.test(h) ? h : ""; }
+function isTeamHandle(p) { return /baseball|athletic|sports/i.test(xHandle(p)); }
+function xGreet(p) {
+  if (isTeamHandle(p)) return "Hi Coaches,";
+  var hc = cleanName(p.head_coach), pc = cleanName(p.pitching_coach), h = xHandle(p).toLowerCase();
+  var who = [pc, hc].filter(function (n) { return n && h.indexOf(plain(lastName(n)).slice(0, 4)) >= 0 || n && h.indexOf(plain(n.split(/\s+/)[0])) >= 0; })[0];
+  who = who || hc;
+  return who ? "Coach " + lastName(who) + "," : "Coach,";
+}
+function buildDM(p) {
+  var name = pf("name", "[Your name]"), u = latestUpdate();
+  var stats = [pf("height", ""), pf("weight", "")].filter(Boolean).join(", ");
+  var L = [xGreet(p) + " I'm " + name + ", a " + pf("grad_year", "2027") + " " + pf("hand", "RHP") + " at " + pf("high_school", "[high school]") + " (" + pf("hometown", "[city, state]") + ")."];
+  L.push([stats, "FB " + pf("fb_velo", "[velo]"), pf("gpa", "") ? pf("gpa", "") + " GPA" : ""].filter(Boolean).join(" | "));
+  if (p.date_emailed) L.push("I emailed you on " + shortDate(p.date_emailed) + (u && u.id !== p.last_update_id ? ". Quick update: " + u.text : " and wanted to follow up here."));
+  else { var f = (p.program_fact || "").trim(); L.push(f || ("I'm very interested in " + p.school + " baseball.")); }
+  L.push("Video: " + pf("video", "[video link]"));
+  L.push("I'd like to know what you look for in pitchers. My email is " + pf("email", "[email]") + ". Thank you.");
+  return L.join("\n\n");
+}
+function xWarnings(p, t) {
+  var w = [];
+  if (!xHandle(p)) w.push("No X handle on file. Use \"Find on X\", confirm it's really the coach (check the school in their bio), then add it with Edit.");
+  if (isTeamHandle(p)) w.push("This is the team account, not a coach. A staff member reads it.");
+  if (/\[[^\]]+\]/.test(t)) w.push("Some profile details are missing (shown in [brackets]).");
+  if (p.x_dm_date) w.push("You already messaged this account on X on " + niceDate(p.x_dm_date) + ".");
+  return w;
+}
+var xId = null;
+function openX(id) {
+  var p = find(id); if (!p) return; xId = id;
+  var t = buildDM(p), h = xHandle(p);
+  $("xTitle").textContent = "X message: " + p.school;
+  $("xHint").innerHTML = h ? "To <strong>@" + esc(h) + "</strong>" + (safeUrl(p.x_source) ? ' · <a href="' + esc(p.x_source) + '" target="_blank" rel="noopener">where this handle came from</a>' : "") : "No X handle saved for this school yet.";
+  $("xWarns").innerHTML = xWarnings(p, t).map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("");
+  $("xText").textContent = t;
+  $("btnXOpen").hidden = !h; $("btnXSent").hidden = !h;
+  $("dlgX").showModal();
+}
+
 // ---------- rendering ----------
 var $ = function (id) { return document.getElementById(id); };
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -550,6 +649,7 @@ function fillSelect(sel, values) { values.forEach(function (v) { var o = documen
 function filtered() {
   var q = $("q").value.trim().toLowerCase(), fs = $("fStatus").value, fd = $("fDiv").value, sort = $("sort").value;
   var list = state.programs.filter(function (p) {
+    if (!inRegion(p)) return false;
     if (fs && p.status !== fs) return false;
     if (fd && p.division !== fd) return false;
     if (!q) return true;
@@ -597,7 +697,8 @@ function render() {
     return "<tr>" +
       '<td class="school-cell"><strong>' + esc(p.school) + "</strong>" + (isVerify(p) ? ' <span class="badge verify">verify</span>' : "") +
         '<div class="sub">' + esc([p.division, p.conference, p.state].filter(Boolean).join(" · ")) + "</div>" + rosterBadge(p) + "</td>" +
-      '<td data-label="Coaches">' + esc(p.head_coach || "-") + coach2 + email + src + "</td>" +
+      '<td data-label="Coaches">' + esc(p.head_coach || "-") + coach2 + email +
+        (xHandle(p) ? '<div class="sub">X: @' + esc(xHandle(p)) + (p.x_dm_date ? " · messaged " + esc(niceDate(p.x_dm_date)) : "") + "</div>" : "") + src + "</td>" +
       '<td data-label="Status">' + statusSel + "</td>" +
       '<td data-label="Emailed">' + (p.date_emailed ? esc(niceDate(p.date_emailed)) : '<span class="muted">-</span>') + "</td>" +
       '<td data-label="Replied">' + replied + "</td>" +
@@ -605,6 +706,7 @@ function render() {
       '<td data-label="Actions"><div class="actions">' +
         '<button class="small" data-act="draft" data-id="' + p.id + '">Draft email</button>' +
         '<button class="small" data-act="prompt" data-id="' + p.id + '">Copy AI prompt</button>' + sentBtn +
+        '<button class="small" data-act="xdm" data-id="' + p.id + '">' + (xHandle(p) ? "Message on X" : "X") + "</button>" +
         '<button class="small" data-act="edit" data-id="' + p.id + '">Edit</button>' +
       "</div></td></tr>";
   }).join("");
@@ -618,7 +720,7 @@ function render() {
   } else if (!list.length) { empty.hidden = false; empty.textContent = "No programs match these filters."; }
   else empty.hidden = true;
 
-  renderDue(); renderProfileStatus(); renderUpdates();
+  renderDue(); renderProfileStatus(); renderUpdates(); renderRegions();
   $("btnQueue").textContent = "Send queue (" + queue().length + ")";
 }
 function renderDue() {
@@ -671,6 +773,8 @@ var EDIT_FIELDS = [
   ["roster_season", "Roster season (e.g. 2027)", "text"], ["roster_pitchers", "Pitchers on roster", "number"],
   ["roster_leaving", "Pitchers leaving before you arrive", "number"], ["roster_url", "Roster URL", "url"],
   ["business_major", "Business major offered", "text"],
+  ["x_handle", "X handle (only from an official page or the coach's verified profile)", "text"], ["x_source", "Where you found the X handle", "url"],
+  ["x_dm_date", "X message sent", "date"],
   ["program_fact", "Program fact (one true sentence to the coach)", "wide"],
   ["personalization", "Your own personal line (blank = auto-written)", "wide"], ["notes", "Notes (write \"verify\" to flag)", "textarea"]
 ];
@@ -739,7 +843,7 @@ function refreshOut() {
 function queue() {
   var due = state.programs.filter(isDue).sort(function (a, b) { return a.next_followup < b.next_followup ? -1 : 1; });
   var size = parseInt(state.ui.batch || "5", 10);
-  var fresh = state.programs.filter(function (p) { return p.status === "Not contacted" && p.coach_email && !isVerify(p); })
+  var fresh = state.programs.filter(function (p) { return p.status === "Not contacted" && p.coach_email && !isVerify(p) && inRegion(p); })
     .sort(function (a, b) { return openingRatio(b) - openingRatio(a) || a.school.localeCompare(b.school); }).slice(0, size);
   return due.concat(fresh);
 }
@@ -865,6 +969,8 @@ function loadSeed() {
 function onClick(e) {
   var del = e.target.closest("[data-upd-del]");
   if (del) { var uid_ = del.getAttribute("data-upd-del"); state.updates = state.updates.filter(function (u) { return u.id !== uid_; }); save(); render(); return; }
+  var rg = e.target.closest("[data-region]");
+  if (rg) { var v = rg.getAttribute("data-region"); setStates(v === "all" ? null : v === "none" ? [] : v.split(",")); return; }
   var qb = e.target.closest("[data-q]");
   if (qb) {
     var qp = find(qb.getAttribute("data-id")), how = qb.getAttribute("data-q"); if (!qp) return;
@@ -876,12 +982,18 @@ function onClick(e) {
   if (!p && act !== "edit") return;
   if (act === "edit") openEdit(id);
   else if (act === "draft") openOut("draft", id);
+  else if (act === "xdm") openX(id);
   else if (act === "prompt") { copy(buildPrompt(p)); openOut("prompt", id); }
   else if (act === "emailed") { markEmailed(p); save(); render(); toast("Marked emailed. Follow-up set for " + niceDate(p.next_followup) + "."); }
   else if (act === "followup") { logFollowup(p); save(); render(); toast("Follow-up logged. Next one " + niceDate(p.next_followup) + "."); }
 }
 function onChange(e) {
-  var el = e.target, act = el.getAttribute("data-act"); if (!act) return;
+  var el = e.target;
+  if (el.hasAttribute("data-state")) {
+    var ticked = Array.prototype.map.call(document.querySelectorAll("#stateList input:checked"), function (c) { return c.getAttribute("data-state"); });
+    setStates(ticked.length === allStates().length ? null : ticked); return;
+  }
+  var act = el.getAttribute("data-act"); if (!act) return;
   var p = find(el.getAttribute("data-id")); if (!p) return;
   if (act === "status") {
     p.status = el.value;
@@ -939,13 +1051,26 @@ function init() {
   $("btnMailApp").onclick = function () { var p = find(outId); if (p) openMail(p, "mail"); };
   $("btnMarkSent").onclick = function () { var p = find(outId); if (p) { doMarkSent(p); $("dlgOut").close(); if ($("dlgQueue").open) renderQueue(); } };
   $("btnQueue").onclick = function () { renderQueue(); $("dlgQueue").showModal(); };
+  $("btnXCopy").onclick = function () { var p = find(xId); if (p) copy(buildDM(p), "Message copied. Now open X and paste it."); };
+  $("btnXOpen").onclick = function () { var p = find(xId); if (p && xHandle(p)) window.open("https://x.com/" + xHandle(p), "_blank", "noopener"); };
+  $("btnXFind").onclick = function () {
+    var p = find(xId); if (!p) return;
+    var who = cleanName(p.pitching_coach) || cleanName(p.head_coach);
+    window.open("https://x.com/search?f=user&q=" + encodeURIComponent((who ? who + " " : "") + p.school + " baseball"), "_blank", "noopener");
+  };
+  $("btnXSent").onclick = function () {
+    var p = find(xId); if (!p) return;
+    p.x_dm_date = today(); var line = "X message sent " + today() + ".";
+    p.notes = p.notes ? p.notes + " " + line : line;
+    save(); $("dlgX").close(); render(); toast("Logged X message for " + p.school + ".");
+  };
   $("batchSize").addEventListener("change", function () { state.ui.batch = this.value; save(); renderQueue(); render(); });
   render();
 }
 
 // Exposed for automated tests only.
 window.__tracker = { state: function () { return state; }, parseCsv: parseCsv, toCsv: toCsv, addDays: addDays, importText: importText,
-  draftFor: function (id) { return draftFor(find(id)); }, autoLine: function (id) { return autoLine(find(id)); }, queue: queue };
+  draftFor: function (id) { return draftFor(find(id)); }, buildDM: function (id) { return buildDM(find(id)); }, autoLine: function (id) { return autoLine(find(id)); }, queue: queue };
 init();
 })();
 </script>
