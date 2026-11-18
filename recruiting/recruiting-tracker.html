@@ -105,6 +105,10 @@ pre.out { white-space: pre-wrap; word-wrap: break-word; background: var(--bg); b
 .levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 8px 0; }
 .level { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
 .level b { display: block; }
+.plan { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 8px; }
+.plan li { font-size: 14px; }
+.plan li > span { margin-right: 8px; }
+.plan li > button { margin-top: 4px; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
 /* filters */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
@@ -195,6 +199,8 @@ dialog::backdrop { background: rgba(0,0,0,.45); }
     </div>
     <button class="primary big" id="btnGoSend">Start sending</button>
   </div>
+
+  <section id="weekPlan"></section>
 
   <div class="tiles" id="tiles" style="margin-bottom:14px"></div>
 
@@ -1276,6 +1282,7 @@ function renderHome() {
       (x.done ? "" : '<button class="small primary" data-go="' + x.go + '">' + esc(x.btn) + "</button>") + "</div>";
   }).join("");
   renderGoalsInto($("homeGoals"), true);
+  renderWeekPlan();
   renderCharts();
 }
 
@@ -1302,12 +1309,121 @@ function goalInfo(g) {
     if (days < 0) pace = "Deadline passed " + (-days) + " days ago.";
     else { var wk = Math.max(1, Math.ceil(days / 7)); pace = left + " to go in " + days + " days: about " + Math.ceil(left / wk) + " per week."; }
   } else if (!done) pace = left + " to go.";
-  if (!done && g.type === "replies") {
-    var rate = s.contacted >= 5 ? s.replied / s.contacted : 0.15;
-    pace += " At " + (s.contacted >= 5 ? "your reply rate (" + Math.round(rate * 100) + "%)" : "a starting guess of 15% replies") + ", that's roughly " + Math.ceil(left / Math.max(rate, 0.02)) + " more schools to contact.";
-  }
   return { cur: cur, done: done, pct: Math.min(100, pct(cur, g.target)), label: T.label, unit: T.unit, pace: pace };
 }
+// ================= goal action plans =================
+// Everything here is computed from the player's own data; each step links to the place in the app where it gets done.
+function weekStart() { var d = parseDate(today()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return fmt(d); }
+function sentThisWeek() { var ws = weekStart(), n = 0; state.programs.forEach(function (p) { sentDates(p).forEach(function (d) { if (d >= ws) n++; }); }); return n; }
+function planFacts() {
+  var s = stats(), o = outlook(), sc = scoreProfile(), u = latestUpdate();
+  var open = function (p) { return CLOSED.indexOf(p.status) < 0; };
+  return {
+    s: s, sc: sc, o: o,
+    rate: s.contacted >= 5 ? Math.max(s.replied / s.contacted, 0.02) : 0.15, rateKnown: s.contacted >= 5,
+    due: state.programs.filter(function (p) { return isDue(p) && p.coach_email && p.replied !== "yes"; }).length,
+    fresh: state.programs.filter(function (p) { return p.status === "Not contacted" && p.coach_email && !isVerify(p) && inRegion(p); }).length,
+    xPool: state.programs.filter(function (p) { return xHandle(p) && !p.x_dm_date && open(p); }).length,
+    xPoolEmailed: state.programs.filter(function (p) { return xHandle(p) && !p.x_dm_date && p.date_emailed && open(p); }).length,
+    noHandleContacted: state.programs.filter(function (p) { return !xHandle(p) && p.date_emailed && open(p); }).length,
+    repliedOpen: state.programs.filter(function (p) { return p.replied === "yes" && (p.status === "Replied" || p.status === "Emailed"); }).length,
+    newsFresh: !!(u && daysFromToday(u.date) >= -30),
+    mix: listMix(), ready: queue().length, batch: parseInt(state.ui.batch || "5", 10)
+  };
+}
+function weeksLeft(g) { if (!g.deadline) return null; var d = daysFromToday(g.deadline); return d < 0 ? 0 : Math.max(1, Math.ceil(d / 7)); }
+var UNDATED_WEEKS = 6; // goals without a deadline are paced over six weeks
+function perWeek(left, g) { var w = weeksLeft(g); return Math.ceil(left / (w || UNDATED_WEEKS)); }
+function step(text, btn, attrs) { return { text: text, btn: btn, attrs: attrs || "" }; }
+var GO = { send: 'data-go="send"', find: 'data-gofind="fit"', findX: 'data-gofind="x"', profile: 'data-go="profile"', goals: 'data-go="goals"' };
+function goSchools(f) { return 'data-goschools="' + esc(JSON.stringify(f)) + '"'; }
+function goalPlan(g) {
+  var F = planFacts(), i = goalInfo(g), left = Math.max(0, g.target - i.cur), steps = [];
+  if (i.done) return [step("Goal reached. Set a bigger one so you keep momentum.", "New goal", GO.goals)];
+  var by = g.deadline ? " by " + niceDate(g.deadline) : "";
+  var profileStep = function () {
+    if (F.sc.score < 85) steps.push(step("Raise your profile score from " + F.sc.score + " to 85+. Add: " + F.sc.missing.slice(0, 3).map(function (m) { return m.label.toLowerCase(); }).join(", ") + ". Coaches skip emails missing these.", "Fix profile", GO.profile));
+  };
+  var contactSteps = function (need) {
+    var wk = perWeek(need, g);
+    steps.push(step("Contact about " + need + " more school" + (need === 1 ? "" : "s") + by + ": roughly " + wk + " a week." + (F.ready ? " " + F.ready + " emails are ready now." : ""), F.ready ? "Send now" : "Find schools", F.ready ? GO.send : GO.find));
+    if (wk > F.batch) steps.push(step("Raise \"New schools per batch\" on the Send tab to " + Math.min(20, wk) + " so the queue keeps up with your pace.", "Open Send", GO.send));
+    if (F.fresh < need) steps.push(step("You only have " + F.fresh + " uncontacted schools with an email in your states. Add about " + (need - F.fresh) + " more, ideally Target and Likely fits.", "Find schools", GO.find));
+  };
+  if (g.type === "replies") {
+    var need = Math.ceil(left / F.rate);
+    profileStep();
+    steps.push(step("You need " + left + " more repl" + (left === 1 ? "y" : "ies") + ". At " + (F.rateKnown ? "your reply rate of " + Math.round(F.rate * 100) + "%" : "a starting guess of 15% (it updates once you've contacted 5 schools)") + ", that means reaching about " + need + " more schools.", "", ""));
+    contactSteps(need);
+    if (F.due) steps.push(step("Send the " + F.due + " follow-up" + (F.due === 1 ? "" : "s") + " that are due. A follow-up with new information gives a coach a fresh reason to answer.", "Send follow-ups", GO.send));
+    if (!F.newsFresh) steps.push(step("Add a news item (new velo, new video, a showcase date) so your follow-ups say something new.", "Add news", GO.profile));
+    if (F.xPoolEmailed) steps.push(step("Message " + F.xPoolEmailed + " coach" + (F.xPoolEmailed === 1 ? "" : "es") + " on X who already got your email. A second channel helps you get noticed.", "Open X queue", GO.send));
+    if (F.mix && F.mix.n && pct(F.mix.mix[0] + F.mix.mix[1], F.mix.n) > 40) steps.push(step("Your list leans on reach schools (" + pct(F.mix.mix[0] + F.mix.mix[1], F.mix.n) + "%). Add Target and Likely schools; they're the ones most likely to answer.", "Find fits", GO.find));
+  } else if (g.type === "emails") {
+    var wk = perWeek(left, g);
+    steps.push(step("Send " + left + " more email" + (left === 1 ? "" : "s") + by + ": about " + wk + " a week. This week so far: " + sentThisWeek() + ".", F.ready ? "Send now" : "Find schools", F.ready ? GO.send : GO.find));
+    if (F.due) steps.push(step(F.due + " follow-up" + (F.due === 1 ? " is" : "s are") + " due now and count toward this goal.", "Send follow-ups", GO.send));
+    if (wk > F.batch) steps.push(step("Raise \"New schools per batch\" to " + Math.min(20, wk) + ".", "Open Send", GO.send));
+    if (F.fresh + F.due < left) steps.push(step("Add more schools with a coach email: you have " + F.fresh + " ready to contact.", "Find schools", GO.find));
+    profileStep();
+  } else if (g.type === "contacted") {
+    contactSteps(left);
+    if (F.xPool) steps.push(step("X messages count too: " + F.xPool + " school" + (F.xPool === 1 ? " has" : "s have") + " an X handle you haven't used.", "Open X queue", GO.send));
+    profileStep();
+  } else if (g.type === "x") {
+    steps.push(step("Send " + left + " more X message" + (left === 1 ? "" : "s") + by + (g.deadline ? ": about " + perWeek(left, g) + " a week" : "") + ". " + F.xPool + " are ready in the X queue.", "Open X queue", GO.send));
+    if (F.xPool < left) {
+      steps.push(step("Add schools that list an X handle on their official pages.", "Find with X", GO.findX));
+      if (F.noHandleContacted) steps.push(step("For the " + F.noHandleContacted + " schools you've emailed without a handle, use \"Find on X\" from the X button. Save a handle only when the profile clearly shows that coach and school.", "Show them", goSchools({ fContact: "No X handle", fOutreach: "Contacted, no reply" })));
+    }
+    steps.push(step("Follow the coach first. Many coaches only accept messages from accounts they follow.", "", ""));
+  } else if (g.type === "calls") {
+    if (F.repliedOpen) steps.push(step("Answer the " + F.repliedOpen + " coach" + (F.repliedOpen === 1 ? "" : "es") + " who replied within a day. Ask for a 10-minute call and offer two times.", "Show replies", goSchools({ fOutreach: "Replied" })));
+    else steps.push(step("Calls come from replies, and you have none waiting. Work on replies first.", "Replies goal", 'data-preset="replies:10"'));
+    if (!pf("phone", "")) steps.push(step("Add your phone number so coaches can call you.", "Add phone", GO.profile));
+    steps.push(step("When a call is set, change that school's status to \"Call scheduled\" so it counts here.", "", ""));
+  } else if (g.type === "camps") {
+    if (F.repliedOpen) steps.push(step("Ask the " + F.repliedOpen + " coach" + (F.repliedOpen === 1 ? "" : "es") + " who replied which camp or showcase they recommend for pitchers.", "Show replies", goSchools({ fOutreach: "Replied" })));
+    if (!pf("schedule", "")) steps.push(step("List your upcoming events in your profile so every email tells coaches where to see you.", "Add schedule", GO.profile));
+    steps.push(step("Check the camps page on the official sites of your Target schools, and mention the camp you plan to attend in your next follow-up.", "Target schools", goSchools({ fFit: "Target or Likely", fOutreach: "Contacted, no reply" })));
+    if (F.s.replied < 3) steps.push(step("Camp invites usually follow a reply. Keep your reply pace up.", "Send now", GO.send));
+  } else if (g.type === "offers") {
+    profileStep();
+    if (F.s.engaged < 3) steps.push(step("Offers usually come after a coach has talked with you or seen you throw. Get calls and camp visits first (" + F.s.engaged + " so far).", "Set a calls goal", 'data-preset="calls:3"'));
+    if (!pf("schedule", "")) steps.push(step("Add your upcoming showcases and camps so coaches can see you in person.", "Add schedule", GO.profile));
+    if (F.o && F.mix && F.mix.n && F.mix.mix[3] === 0) steps.push(step("Add some Likely schools. That's where an offer is most realistic right now.", "Find fits", GO.find));
+    if (!F.newsFresh) steps.push(step("Send coaches an update when your velo or video improves. It's the strongest reason to look again.", "Add news", GO.profile));
+  }
+  return steps;
+}
+function planHtml(steps) {
+  return '<ol class="plan">' + steps.map(function (s) {
+    return "<li><span>" + esc(s.text) + "</span>" + (s.btn ? '<button class="small" ' + s.attrs + ">" + esc(s.btn) + "</button>" : "") + "</li>";
+  }).join("") + "</ol>";
+}
+function renderWeekPlan() {
+  var F = planFacts(), items = [], target = 0;
+  state.goals.forEach(function (g) {
+    var i = goalInfo(g); if (i.done) return;
+    var left = Math.max(0, g.target - i.cur);
+    if (g.type === "replies") target = Math.max(target, perWeek(Math.ceil(left / F.rate), g));
+    if (g.type === "contacted" || g.type === "emails") target = Math.max(target, perWeek(left, g));
+  });
+  if (!target) target = Math.min(F.batch, F.fresh + F.due) || 0;
+  var done = sentThisWeek();
+  if (target) items.push(step("Send " + target + " emails this week (" + done + " sent so far)." + (F.ready ? " " + F.ready + " are ready." : ""), F.ready ? "Send now" : "Find schools", F.ready ? GO.send : GO.find));
+  if (F.due) items.push(step(F.due + " follow-up" + (F.due === 1 ? " is" : "s are") + " due.", "Send follow-ups", GO.send));
+  if (F.repliedOpen) items.push(step("Answer " + F.repliedOpen + " coach" + (F.repliedOpen === 1 ? "" : "es") + " who replied, and ask for a call.", "Show replies", goSchools({ fOutreach: "Replied" })));
+  var xg = state.goals.filter(function (g) { return g.type === "x" && !goalInfo(g).done; })[0];
+  if (xg || F.xPoolEmailed) { var xn = xg ? perWeek(Math.max(0, xg.target - goalInfo(xg).cur), xg, 4) : Math.min(5, F.xPoolEmailed); if (xn) items.push(step("Send " + xn + " X message" + (xn === 1 ? "" : "s") + ".", "Open X queue", GO.send)); }
+  if (F.sc.score < 85) items.push(step("Raise your profile score (" + F.sc.score + "/100): add " + F.sc.missing.slice(0, 2).map(function (m) { return m.label.toLowerCase(); }).join(" and ") + ".", "Fix profile", GO.profile));
+  if (!F.newsFresh && F.s.contacted) items.push(step("Add a news item so this week's follow-ups have something new.", "Add news", GO.profile));
+  if (!state.goals.length) items.push(step("Set a goal so the plan can pace you.", "Set a goal", GO.goals));
+  var pctWk = target ? Math.min(100, pct(done, target)) : 0;
+  $("weekPlan").innerHTML = "<h2>This week's plan</h2>" + (target ? '<div class="goal" style="margin-bottom:8px"><div class="head"><strong>Emails this week: ' + done + " / " + target + '</strong><span class="sub">' + pctWk + '%</span></div><div class="bar"><i style="width:' + pctWk + '%"></i></div></div>' : "") +
+    (items.length ? planHtml(items) : '<p class="muted">You\'re on track. Nothing else to do this week.</p>');
+}
+
 function renderGoalsInto(el, compact) {
   if (!state.goals.length) { el.innerHTML = '<div class="muted">No goals yet. ' + (compact ? '<button class="link" data-go="goals">Set one</button>' : "Pick one above.") + "</div>"; return; }
   el.innerHTML = state.goals.map(function (g) {
@@ -1315,7 +1431,9 @@ function renderGoalsInto(el, compact) {
     return '<div class="goal' + (i.done ? " done" : "") + '"><div class="head"><strong>' + esc(i.label) + ": " + i.cur + " / " + g.target + "</strong>" +
       '<span class="sub">' + (i.done ? "✓ Done" : i.pct + "%") + (g.deadline ? " · by " + esc(niceDate(g.deadline)) : "") + "</span></div>" +
       '<div class="bar" role="progressbar" aria-valuenow="' + i.pct + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + i.pct + '%"></i></div>' +
-      (compact ? "" : '<div class="sub" style="margin-top:6px">' + esc(i.done ? "Goal reached. Set a bigger one." : i.pace) + '</div><div style="margin-top:6px"><button class="small danger" data-goal-del="' + g.id + '">Remove</button></div>') + "</div>";
+      (compact ? "" : '<div class="sub" style="margin-top:6px">' + esc(i.done ? "Goal reached. Set a bigger one." : i.pace) + "</div>" +
+        '<h3 style="margin:10px 0 4px;font-size:14px">' + (i.done ? "Next" : "How to get there") + "</h3>" + planHtml(goalPlan(g)) +
+        '<div style="margin-top:6px"><button class="small danger" data-goal-del="' + g.id + '">Remove goal</button></div>') + "</div>";
   }).join("");
 }
 function renderGoals() {
@@ -1514,6 +1632,17 @@ function onClick(e) {
   var t = e.target;
   var tab = t.closest("#tabs [data-tab]"); if (tab) { showTab(tab.getAttribute("data-tab")); return; }
   var g = t.closest("[data-go]"); if (g) { go(g.getAttribute("data-go")); return; }
+  var gs = t.closest("[data-goschools]");
+  if (gs) { state.ui.f = JSON.parse(gs.getAttribute("data-goschools")); save(); buildFilterGrid(); render(); showTab("schools"); return; }
+  var gf = t.closest("[data-gofind]");
+  if (gf) {
+    openFind(); var how = gf.getAttribute("data-gofind");
+    if (how === "fit" && outlook()) $("findFit").value = "fit";
+    if (how === "x") $("findX").checked = true;
+    $("findEmail").checked = true; $("findNoVerify").checked = true;
+    var st = state.ui && state.ui.states; if (Array.isArray(st) && st.length) $("findStates").value = st.join(", ");
+    renderFind(); return;
+  }
   var del = t.closest("[data-upd-del]");
   if (del) { var u_ = del.getAttribute("data-upd-del"); state.updates = state.updates.filter(function (u) { return u.id !== u_; }); save(); render(); return; }
   var rg = t.closest("[data-region]");

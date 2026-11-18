@@ -12,7 +12,7 @@ The app has five tabs.
 
 **Send.** The next email is already written for that coach. Tap "Send in Gmail": the email opens ready to go and the app marks it sent. Press Send in Gmail, come back, and the next one is waiting. Tap Undo if you didn't send it. Follow-ups are set automatically: 10 days after the first email, then every 14 days. X messages work the same way: "Copy and open X", paste, send, then "I sent it". Mark "Seen" when X shows it.
 
-**Goals.** Tap a preset like "Get 10 replies" or set your own number and date. Each goal shows progress and the weekly pace you need. Reply goals also estimate how many more schools to contact.
+**Goals.** Tap a preset like "Get 10 replies" or set your own number and date. Each goal shows progress and a "How to get there" plan built from your data: how many more schools to contact at your reply rate, follow-ups due, coaches who replied and need an answer, profile items to add, and X messages you can still send. Each step has a button that takes you there. Goals without a date are paced over six weeks. Home shows "This week's plan", which combines all your goals into one to-do list for the week.
 
 **What's tracked, and what isn't.** Replies are found by your weekly email run, or you set them with one tap. Email opens are not tracked: it needs a server and a hidden image, and it's unreliable (Apple Mail fakes opens, and many school email systems block it). X "Seen" is real, so mark it.
 
