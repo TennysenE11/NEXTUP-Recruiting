@@ -1,8 +1,11 @@
 """Turn the crawl into the app's national school list. Every coach and email comes from the school's official athletics page."""
 import json, re, csv, collections, urllib.parse
+import parse
 CHECKED = "2026-11-18"
 PERSONAL = re.compile(r"@(gmail|yahoo|hotmail|outlook|icloud|aol|msn|live)\.", re.I)
 e = json.load(open("enriched.json"))
+# Position-group counts (P, C, IF, OF: total/leaving) from regroup.py
+GROUPS = json.load(open("roster_groups.json")) if __import__("os").path.exists("roster_groups.json") else {}
 
 def host(u): return urllib.parse.urlsplit(u if "://" in u else "https://" + u).netloc.lower().replace("www.", "")
 def toks(s): return {t for t in re.findall(r"[a-z]+", s.lower()) if t not in {"university", "college", "of", "the", "community", "state", "at", "and", "campus"}}
@@ -38,7 +41,7 @@ for o in rows:
     co = o["coaches"] if id(o) not in shared else []
     rec = dict(school=o["school"], division=o["division"], conference=o["conference"], state=o["state"],
                head_coach="", pitching_coach="", coach_email="", source_url=o["coaches_url"] or o["athletics_url"] or ("https://" + o["school_url"].replace("https://", "").replace("http://", "").strip("/")),
-               date_checked=CHECKED, roster_season="", roster_pitchers="", roster_leaving="", roster_url="", x_handle="", x_source="", x_owner="", notes="")
+               date_checked=CHECKED, roster_season="", roster_pitchers="", roster_leaving="", roster_url="", roster_groups="", head_email="", pc_name="", pc_email="", rc_name="", rc_email="", x_handle="", x_source="", x_owner="", notes="")
     if id(o) in shared:
         notes.append(f"VERIFY: the link found leads to {shared[id(o)]}'s athletics site, not this school's. Find this program's own coaches page.")
         rec["source_url"] = "https://" + o["school_url"].replace("https://", "").replace("http://", "").strip("/")
@@ -59,13 +62,24 @@ for o in rows:
             rec["coach_email"] = contact["email"]
             if contact is not head: rec["pitching_coach"] = f'{contact["name"]} ({contact["title"]})'
         if not rec["pitching_coach"] and o["pitching_coach"]: rec["pitching_coach"] = o["pitching_coach"]
+        # Role contacts so the app can pick the right coach for each player's position (official emails only).
+        def ok(c): return c and c.get("email") and not PERSONAL.search(c["email"])
+        pc = next((c for c in co if parse.is_pitch(c["title"]) and not parse.is_head(c["title"]) and ok(c)), None)
+        rc = next((c for c in co if parse.is_recruit(c["title"]) and not parse.is_head(c["title"]) and ok(c)), None)
+        if ok(head): rec["head_email"] = head["email"]
+        if pc: rec.update(pc_name=f'{pc["name"]} ({pc["title"]})', pc_email=pc["email"])
+        if rc: rec.update(rc_name=f'{rc["name"]} ({rc["title"]})', rc_email=rc["email"])
         if not o["head_coach"]: notes.append("VERIFY: head coach not identified on the page.")
         if o["head_coach"] in dup_head: notes.append("VERIFY: this head coach is also listed by another school; one page may be out of date.")
         if len(co) > 20: notes.append("VERIFY: long staff list; check the contact is a baseball coach.")
         if any(c.get("text") for c in co if c is contact): notes.append("VERIFY: email matched to the coach by name on a page without a contact table.")
         if not rec["coach_email"]: notes.append("No coach email on the official page.")
-        if o["roster_pitchers"]:
+        if o["roster_pitchers"] and str(o["roster_season"]) in ("2026", "2027"):  # older rosters would miscount who leaves
             rec.update(roster_season=o["roster_season"], roster_pitchers=o["roster_pitchers"], roster_leaving=o["roster_leaving"], roster_url=o["roster_url"])
+        rg = GROUPS.get(o["school"])
+        if rg and rg["season"] in ("2026", "2027"):
+            rec["roster_groups"] = rg["groups"]
+            if not rec["roster_season"]: rec.update(roster_season=rg["season"], roster_url=o["roster_url"] or o["athletics_url"] + "/sports/baseball/roster")
         if o["x_handle"]:
             rec.update(x_handle=o["x_handle"], x_source=o["x_source"], x_owner=o.get("x_owner", ""))
     rec["notes"] = " ".join(notes)
@@ -76,7 +90,7 @@ json.dump({"meta": {"checked": CHECKED, "count": len(out)}, "cols": cols, "rows"
           open("national.json", "w"), separators=(",", ":"))
 LABEL = {"school": "School", "division": "Division", "conference": "Conference", "state": "State", "head_coach": "Head coach",
          "pitching_coach": "Pitching or recruiting coach", "coach_email": "Coach email", "source_url": "Source URL", "date_checked": "Date checked",
-         "roster_season": "Roster season", "roster_pitchers": "Pitchers on roster", "roster_leaving": "Pitchers leaving", "roster_url": "Roster URL",
+         "roster_season": "Roster season", "roster_pitchers": "Pitchers on roster", "roster_leaving": "Pitchers leaving", "roster_url": "Roster URL", "roster_groups": "Roster by position", "head_email": "Head coach email", "pc_name": "Pitching coach", "pc_email": "Pitching coach email", "rc_name": "Recruiting coordinator", "rc_email": "Recruiting coordinator email",
          "x_handle": "X handle", "x_source": "X source", "x_owner": "X owner", "notes": "Notes"}
 with open("national-programs.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f); w.writerow([LABEL[c] for c in cols])
@@ -85,7 +99,8 @@ c = collections.Counter
 print("programs", len(out), "| by division", dict(c(r["division"] for r in out)))
 print("with email", sum(1 for r in out if r["coach_email"]), "| head coach", sum(1 for r in out if r["head_coach"]),
       "| verify", sum(1 for r in out if "VERIFY" in r["notes"]), "| X coach", sum(1 for r in out if r["x_owner"] and r["x_owner"] != "team"),
-      "| X team", sum(1 for r in out if r["x_owner"] == "team"), "| roster", sum(1 for r in out if r["roster_pitchers"]))
+      "| X team", sum(1 for r in out if r["x_owner"] == "team"), "| roster", sum(1 for r in out if r["roster_pitchers"]), "| position groups", sum(1 for r in out if r["roster_groups"]))
+print("role emails: head", sum(1 for r in out if r["head_email"]), "| pitching", sum(1 for r in out if r["pc_email"]), "| recruiting", sum(1 for r in out if r["rc_email"]))
 for d in ["NCAA D1", "NCAA D2", "NCAA D3", "NAIA", "JUCO"]:
     g = [r for r in out if r["division"] == d]
     print(f"  {d:8} {len(g):4} programs  {sum(1 for r in g if r['coach_email']):4} emails  {sum(1 for r in g if r['x_handle']):4} X")

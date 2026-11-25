@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Barlow Condensed"', '"Arial Narrow"', 'sans-serif'],
-        body: ['"Source Sans 3"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        display: ['"Instrument Serif"', 'Georgia', 'serif'],
+        body: ['"Schibsted Grotesk"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
       },
       colors: {
         field: "hsl(var(--field))",

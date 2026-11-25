@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Automatic sending helper for the recruiting tracker.
+// Automatic sending helper for NEXTUP (recruiting-tracker.html).
 // It drives recruiting-tracker.html in headless Chromium, so emails are written by exactly the same
 // code the app uses. It never sends email itself: the scheduled Claude task sends what `plan` writes.
 //

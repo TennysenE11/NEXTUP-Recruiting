@@ -1,60 +1,98 @@
-import { BarChart3, Database, Gauge, Goal, Mail, MessageSquare, Smartphone, Wand2, Filter, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { APP_URL } from "@/lib/site";
-import { PageHead } from "@/components/site/PageHead";
+import { Intro } from "@/components/site/Intro";
+import { Phone } from "@/components/site/Phone";
+import { APP_URL, SHOTS } from "@/lib/site";
+import { Link } from "@/lib/router";
+import { cn } from "@/lib/utils";
 
-const GROUPS = [
+const ROWS = [
   {
-    title: "Find the right programs",
-    items: [
-      { icon: Database, t: "1,600 programs, official sources", d: "Every D1, D2, D3, NAIA and junior college baseball program we could find. Coach names, titles and emails are copied from each school's official athletics page, never guessed." },
-      { icon: Filter, t: "Filters that matter", d: "Division, state or region, fit for you, has an email, has an X account, and how many pitchers each team is losing. Twelve more filters for your own list." },
-      { icon: Gauge, t: "A realistic outlook", d: "From your top fastball, handedness, height and GPA, each level is rated Reach, Target or Likely, with a check on whether your list is balanced." },
-    ],
+    label: "Find",
+    pro: false,
+    t: "1,600 programs, read from their own pages.",
+    d: "Every D1, D2, D3, NAIA and junior college program we could find. Coach names, titles and emails are copied from each school's official athletics site. Pick divisions, states or a whole region, and see how many players at your position each team is losing.",
+    points: ["Rated Reach, Target or Likely for you (Pro)", "Players leaving at your position, from the official roster (Pro)", "Programs we couldn't read are marked verify, with the link"],
+    shot: SHOTS.schools,
+    alt: "School list filtered by fit and position",
   },
   {
-    title: "Write and send",
-    items: [
-      { icon: Wand2, t: "A different email for every coach", d: "Each email opens with something only that coach would recognize, like how many of their pitchers are seniors, plus a question that fits the level." },
-      { icon: Mail, t: "Two taps to send", d: "Send in Gmail opens the finished email in your own account and marks it sent. Press Send, come back, and the next one is ready. Undo if you change your mind." },
-      { icon: MessageSquare, t: "X messages too", d: "For coaches with an X account linked on official pages, copy the message and open their profile in one tap. Mark it Seen when X shows it." },
-    ],
+    label: "Write",
+    pro: false,
+    t: "A different email for every coach.",
+    d: "The first line is something only that coach would recognize, like how many of their infielders are seniors. Your numbers follow: fastball and pitch mix for pitchers, exit velo, 60 time, pop time or throwing velo for everyone else.",
+    points: ["Sent to the pitching coach, or the recruiting coordinator or head coach for position players", "A closing question that fits the level", "Two taps to send from your own Gmail, with Undo"],
+    shot: SHOTS.send,
+    alt: "The next email, written for one coach",
   },
   {
-    title: "Stay on it",
-    items: [
-      { icon: Bell, t: "Follow-ups on time", d: "Ten days after the first email, then every 14 days. Each follow-up leads with your newest velo, video or showcase date." },
-      { icon: Goal, t: "Goals with a plan", d: "Set a goal like 10 replies. The app turns it into this week's to-do list from your own numbers." },
-      { icon: BarChart3, t: "Charts that are real", d: "From list to offer, reply rate by division, emails per week. No fake open tracking; replies, calls and offers are what count." },
-      { icon: Smartphone, t: "An app on your phone", d: "Add it to your home screen. It opens full screen, works offline, and keeps your data on your device." },
-    ],
+    label: "Prepare",
+    pro: false,
+    t: "A profile score that tells you what's missing.",
+    d: "Before a coach reads past your name, they look for a few things: grad year, position, the right numbers, video, GPA, a coach who can vouch for you. The score shows what you have, what you don't, and what each one is worth.",
+    points: ["Checklist built for your position", "An honest outlook for each division (Pro)", "A check that your list isn't all reaches (Pro)"],
+    shot: SHOTS.profile,
+    alt: "Profile score checklist",
   },
+  {
+    label: "Keep going",
+    pro: true,
+    t: "Goals that turn into this week's list.",
+    d: "Set a goal like 10 replies by March. The app works backward from your own reply rate and tells you how many schools to add, which follow-ups are due and who's waiting on an answer from you.",
+    points: ["Presets or your own number and date", "Each step links to the screen that does it", "One combined weekly plan on Home"],
+    shot: SHOTS.goals,
+    alt: "Goals tab with a step-by-step plan",
+  },
+];
+
+const ALSO: [string, string, boolean][] = [
+  ["Follow-ups on time", "Ten days after the first email, then every 14. Each one leads with your newest number, video or event.", false],
+  ["X messages", "For coaches whose X account is linked on official pages. Copy, open, send, then mark it Seen.", true],
+  ["Charts that mean something", "List to offer, reply rate by division and emails per week. Every chart has a table view.", true],
+  ["Every filter", "Fit, conference, contact info, outreach stage, follow-up timing, last emailed and more. Free has status, division, state and verify.", true],
+  ["My states", "Pick the states you'd live in. The list and the send queue stay inside them.", false],
+  ["Works offline", "Add it to your home screen. It opens full screen and keeps your data on your phone.", false],
+  ["Backup and move", "Export one file, import it on another device. Nothing is stored on our side.", false],
+  ["No fake open tracking", "Opens aren't measurable without spying, so the app counts replies, calls and invites instead.", false],
 ];
 
 export function Features() {
   return (
     <>
-      <PageHead kicker="Features" title="Everything a recruit needs. Nothing that fakes it." lead="Built around how coaches actually read email: short, specific, honest, and followed up on time." />
-      <div className="mx-auto max-w-6xl space-y-16 px-4 py-14 sm:px-6">
-        {GROUPS.map((g) => (
-          <section key={g.title} className="grid gap-8 md:grid-cols-[220px_1fr]">
-            <h2 className="text-3xl font-extrabold uppercase leading-none text-accent">{g.title}</h2>
-            <div className="grid gap-px overflow-hidden rounded-md border bg-border sm:grid-cols-2">
-              {g.items.map((it) => (
-                <div key={it.t} className="bg-card p-6">
-                  <it.icon className="h-6 w-6 text-field" aria-hidden />
-                  <h3 className="mt-3 text-xl font-bold uppercase">{it.t}</h3>
-                  <p className="mt-2 text-[15px] text-muted-foreground">{it.d}</p>
-                </div>
-              ))}
+      <Intro eyebrow="Features" title="Everything a recruit needs, and nothing that fakes it." lead="Built around how coaches read email: short, specific, honest, and followed up on time." />
+
+      <div className="mx-auto max-w-6xl space-y-24 px-5 sm:px-8 md:space-y-36">
+        {ROWS.map((r, i) => (
+          <section key={r.label} className="grid items-center gap-12 md:grid-cols-2 md:gap-20">
+            <div className={cn("reveal", i % 2 === 1 && "md:order-2")}>
+              <p className="font-mono text-[13px] text-muted-foreground">{String(i + 1).padStart(2, "0")} · {r.label}{r.pro && <span className="ml-2 rounded-full bg-foreground px-2 py-0.5 font-body text-[11px] font-medium text-background">Pro</span>}</p>
+              <h2 className="display mt-3 text-[42px] sm:text-[54px]">{r.t}</h2>
+              <p className="mt-5 text-[17px] leading-relaxed text-muted-foreground">{r.d}</p>
+              <ul className="mt-7 border-t border-foreground/10">
+                {r.points.map((p) => <li key={p} className="border-b border-foreground/10 py-3 text-[15px]">{p}</li>)}
+              </ul>
+            </div>
+            <div className={cn("reveal mx-auto w-[72%] max-w-[300px]", i % 2 === 1 && "md:order-1")} style={{ ["--d" as string]: "120ms" }}>
+              <Phone src={r.shot} alt={r.alt} />
             </div>
           </section>
         ))}
-        <div className="flex flex-col gap-3 border-t pt-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-xl text-lg">All of this is free in the app today.</p>
-          <Button asChild size="lg" className="h-12 rounded-sm bg-accent px-6 text-base font-semibold text-accent-foreground hover:bg-accent/90"><a href={APP_URL}>Open the app</a></Button>
-        </div>
       </div>
+
+      <section className="mx-auto max-w-6xl px-5 pt-28 sm:px-8 md:pt-40">
+        <h2 className="display reveal text-5xl sm:text-6xl">Also in the app</h2>
+        <dl className="mt-10 grid gap-x-16 sm:grid-cols-2">
+          {ALSO.map(([t, d, pro], i) => (
+            <div key={t} className="reveal border-t border-foreground/10 py-6" style={{ ["--d" as string]: `${(i % 2) * 80}ms` }}>
+              <dt className="text-[17px] font-medium">{t}{pro && <span className="ml-2 rounded-full bg-foreground px-2 py-0.5 align-[2px] text-[11px] font-medium text-background">Pro</span>}</dt>
+              <dd className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{d}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="reveal mt-14 flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-foreground/10 pt-10">
+          <p className="mr-auto text-[18px]">Start free with 20 schools. Pro unlocks the rest.</p>
+          <Link to="pricing" className="link-arrow">Compare plans →</Link>
+          <a href={APP_URL} className="btn-ink">Start free</a>
+        </div>
+      </section>
     </>
   );
 }
