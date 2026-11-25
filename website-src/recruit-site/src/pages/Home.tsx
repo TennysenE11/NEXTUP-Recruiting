@@ -1,9 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Phone } from "@/components/site/Phone";
 import { LogoMark } from "@/components/site/Logo";
+import { HeroStage } from "@/components/site/HeroStage";
+import { PositionDemo } from "@/components/site/PositionDemo";
+import { CountUp, Marquee, Tilt } from "@/components/site/Motion";
 import { Link } from "@/lib/router";
 import { APP_URL, POSITIONS, SHOTS, STATS } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+// Headline words rise in one at a time.
+function Words({ parts, start = 100 }: { parts: { t: string; em?: boolean }[]; start?: number }) {
+  let i = 0;
+  return (
+    <>
+      {parts.map((p, k) => {
+        const words = p.t.trim().split(/\s+/).map((w) => (
+          <Fragment key={i}><span className="word" style={{ ["--d" as string]: `${start + i++ * 70}ms` }}>{w}</span>{" "}</Fragment>
+        ));
+        return p.em ? <em key={k}>{words}</em> : <span key={k}>{words}</span>;
+      })}
+    </>
+  );
+}
+
+const STRIP = ["NCAA D1 · 309", "NCAA D2 · 252", "NCAA D3 · 379", "NAIA · 182", "JUCO · 478", "49 states", "Pitchers", "Catchers", "Infielders", "Outfielders", "Two-way"];
 
 const WEEK = [
   { n: "01", t: "Find your fits", d: "1,600 programs. Pick divisions and states.", shot: SHOTS.schools, alt: "School list with college logos" },
@@ -24,7 +44,8 @@ function WeekScroller() {
   }, []);
   return (
     <div className="grid gap-12 md:grid-cols-[1fr_minmax(240px,310px)] md:gap-20">
-      <ol className="space-y-16 md:space-y-[34vh] md:py-[18vh]">
+      <ol className="relative space-y-16 md:space-y-[34vh] md:border-l md:border-foreground/10 md:py-[18vh] md:pl-10">
+        <span aria-hidden className="absolute -left-px top-0 hidden w-[2px] bg-[hsl(var(--field))] transition-[height] duration-700 ease-out md:block" style={{ height: `${((active + 1) / WEEK.length) * 100}%` }} />
         {WEEK.map((w, i) => (
           <li key={w.n} data-i={i} ref={(el) => { refs.current[i] = el; }} className={cn("transition-opacity duration-500 md:opacity-25", active === i && "md:opacity-100")}>
             <p className="font-mono text-[13px] text-[hsl(var(--field))]">{w.n}</p>
@@ -39,7 +60,7 @@ function WeekScroller() {
           <div className="relative ml-auto" style={{ width: "min(100%, calc(76vh * 390 / 844))" }}>
             {WEEK.map((w, i) => (
               <div key={w.n} className={cn("screen-fade", i === 0 ? "relative" : "absolute inset-0", active === i ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0")}>
-                <Phone src={w.shot} alt={w.alt} />
+                <Tilt><Phone src={w.shot} alt={w.alt} /></Tilt>
               </div>
             ))}
           </div>
@@ -53,12 +74,13 @@ export function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-5 pb-20 pt-10 sm:px-8 md:pb-28 md:pt-16">
-        <div className="grid items-center gap-14 md:grid-cols-[1.15fr_1fr]">
+      <section className="overflow-hidden">
+      <div className="mx-auto max-w-6xl px-5 pb-16 pt-10 sm:px-8 md:pb-24 md:pt-16">
+        <div className="grid items-center gap-16 md:grid-cols-[1.15fr_1fr]">
           <div>
             <p className="eyebrow reveal">Every position. Every division.</p>
-            <h1 className="display reveal mt-5 text-[52px] sm:text-[72px] lg:text-[84px]" style={{ ["--d" as string]: "80ms" }}>
-              Email college coaches like you <em>already know</em> their team.
+            <h1 className="display mt-5 text-[52px] sm:text-[72px] lg:text-[84px]">
+              <Words parts={[{ t: "Email college coaches like you" }, { t: "already know", em: true }, { t: "their team." }]} />
             </h1>
             <p className="reveal mt-6 text-[19px] text-muted-foreground" style={{ ["--d" as string]: "160ms" }}>
               Find programs. Send personal emails. Follow up on time.
@@ -68,23 +90,26 @@ export function Home() {
               <Link to="how-it-works" className="link-arrow">How it works →</Link>
             </div>
           </div>
-          <div className="relative mx-auto w-full max-w-[420px] pb-6">
-            <div className="float-in absolute right-0 top-10 w-[58%]" style={{ ["--r" as string]: "4deg", ["--d" as string]: "250ms" }}>
-              <Phone src={SHOTS.schools} alt="School list with college logos" className="opacity-95" />
-            </div>
-            <div className="float-in relative w-[64%]" style={{ ["--r" as string]: "-3deg" }}>
-              <Phone src={SHOTS.send} alt="The next email ready to send" />
-            </div>
+          <div className="px-6 pb-4 sm:px-10">
+            <HeroStage />
           </div>
         </div>
+      </div>
+      </section>
+
+      {/* Moving strip */}
+      <section className="border-y border-foreground/10 py-5" aria-label="Divisions and positions covered">
+        <Marquee items={STRIP.map((t) => (
+          <span key={t} className="display flex items-center px-6 text-[30px] leading-none sm:text-[38px]">{t}<span className="ml-12 text-[18px] text-[hsl(var(--field))]" aria-hidden>✦</span></span>
+        ))} />
       </section>
 
       {/* Numbers */}
-      <section className="border-y border-foreground/10 bg-card">
+      <section className="bg-card">
         <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-y-10 px-5 py-14 sm:px-8 md:grid-cols-4">
           {STATS.map((s, i) => (
             <div key={s.label} className="reveal" style={{ ["--d" as string]: `${i * 70}ms` }}>
-              <dt className="display text-[56px] leading-none sm:text-[68px]">{s.value}</dt>
+              <dt className="display text-[56px] leading-none sm:text-[68px]"><CountUp value={s.value} /></dt>
               <dd className="mt-2 text-[14px] text-muted-foreground">{s.label}</dd>
             </div>
           ))}
@@ -94,19 +119,15 @@ export function Home() {
       {/* The first line */}
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-28">
         <h2 className="display reveal max-w-2xl text-5xl sm:text-6xl">Coaches read the first line.</h2>
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <p className="reveal mt-4 text-[17px] text-muted-foreground">Tap a position.</p>
+        <div className="mt-10 grid items-start gap-6 md:grid-cols-[0.8fr_1.2fr]">
           <figure className="reveal rounded-[1.25rem] border border-foreground/10 p-7 sm:p-9">
             <figcaption className="text-[12px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Most emails</figcaption>
             <blockquote className="mt-5 text-[21px] leading-snug text-muted-foreground/70 line-through decoration-foreground/20">
               "Dear Coach, I am a hard-working, dedicated athlete and very interested in your program."
             </blockquote>
           </figure>
-          <figure className="reveal rounded-[1.25rem] bg-foreground p-7 text-background sm:p-9" style={{ ["--d" as string]: "120ms" }}>
-            <figcaption className="text-[12px] font-medium uppercase tracking-[0.14em] text-[hsl(259_90%_78%)]">Yours</figcaption>
-            <blockquote className="display mt-5 text-[30px] leading-[1.12]">
-              "I saw that 5 of the 6 infielders on your 2027 roster are seniors or grad students."
-            </blockquote>
-          </figure>
+          <div className="reveal" style={{ ["--d" as string]: "120ms" }}><PositionDemo /></div>
         </div>
       </section>
 
@@ -122,7 +143,7 @@ export function Home() {
         <h2 className="display reveal text-5xl sm:text-6xl">Built for every position.</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-5">
           {POSITIONS.map((p, i) => (
-            <li key={p.pos} className="reveal rounded-[1.25rem] border border-foreground/10 bg-card p-5" style={{ ["--d" as string]: `${i * 60}ms` }}>
+            <li key={p.pos} className="reveal lift rounded-[1.25rem] border border-foreground/10 bg-card p-5" style={{ ["--d" as string]: `${i * 60}ms` }}>
               <p className="display text-[30px] leading-none">{p.pos}</p>
               <p className="mt-3 text-[13px] leading-snug text-muted-foreground">{p.numbers}</p>
             </li>
@@ -143,7 +164,7 @@ export function Home() {
       {/* CTA */}
       <section className="mx-auto max-w-6xl px-5 pt-24 sm:px-8 md:pt-32">
         <div className="reveal relative overflow-hidden rounded-[1.5rem] bg-[#0b0a0e] px-8 py-14 text-white sm:px-12 sm:py-20">
-          <LogoMark className="pointer-events-none absolute right-12 top-1/2 hidden w-[300px] -translate-y-1/2 text-white/10 md:block lg:w-[360px]" />
+          <LogoMark arrowClassName="arrow-loop" className="pointer-events-none absolute right-12 top-1/2 hidden w-[300px] -translate-y-1/2 text-white/10 md:block lg:w-[340px]" />
           <h2 className="display relative max-w-xl text-5xl sm:text-7xl">Your first ten emails can go out tonight.</h2>
           <div className="relative mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
             <a href={APP_URL} className="inline-flex h-12 items-center rounded-full bg-white px-6 text-[15px] font-medium text-[#0b0a0e] transition-transform duration-200 hover:-translate-y-0.5">Start free</a>

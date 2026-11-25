@@ -2,6 +2,7 @@ import { Apple, Smartphone } from "lucide-react";
 import { Intro } from "@/components/site/Intro";
 import { Phone } from "@/components/site/Phone";
 import { APP_URL, SHOTS } from "@/lib/site";
+import { Tilt } from "@/components/site/Motion";
 
 const STEPS = [
   { t: "Install it", d: "Add it to your home screen. No account." },
@@ -33,7 +34,7 @@ export function HowItWorks() {
           </ol>
           <div className="hidden md:block">
             <div className="sticky top-28 mx-auto w-full max-w-[290px]">
-              <Phone src={SHOTS.home} alt="Home screen with this week's plan" />
+              <Tilt><Phone src={SHOTS.home} alt="Home screen with this week's plan" /></Tilt>
             </div>
           </div>
         </div>
@@ -67,7 +68,7 @@ export function HowItWorks() {
         <h2 className="display reveal text-5xl sm:text-6xl">What it never does</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {NEVER.map((n, i) => (
-            <li key={n} className="reveal rounded-[1.25rem] border border-foreground/10 p-5 text-[18px] font-medium" style={{ ["--d" as string]: `${i * 60}ms` }}>
+            <li key={n} className="reveal lift rounded-[1.25rem] border border-foreground/10 p-5 text-[18px] font-medium" style={{ ["--d" as string]: `${i * 60}ms` }}>
               <span className="mb-3 block text-[22px] leading-none text-[hsl(var(--field))]" aria-hidden>✕</span>{n}
             </li>
           ))}

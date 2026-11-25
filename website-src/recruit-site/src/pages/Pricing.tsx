@@ -32,7 +32,7 @@ export function Pricing() {
   const save = yearlySavingsPct();
   const perMonthYearly = Math.round((PRO.yearly / 12) * 100) / 100;
   const waitlistHref = CONTACT_EMAIL
-    ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("NEXTUP Pro waitlist")}&body=${encodeURIComponent(`Add me to the Pro waitlist (${cycle} plan).\n\nGrad year:\nPosition:\nDivision I'm targeting:\n`)}`
+    ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("OpenSpot Pro waitlist")}&body=${encodeURIComponent(`Add me to the Pro waitlist (${cycle} plan).\n\nGrad year:\nPosition:\nDivision I'm targeting:\n`)}`
     : undefined;
 
   return (
@@ -98,7 +98,7 @@ export function Pricing() {
                 ))}
                 <tr className="border-b-2 border-foreground align-top">
                   <td className="py-5 pr-6">
-                    <span className="font-medium">NEXTUP Pro</span>
+                    <span className="font-medium">OpenSpot Pro</span>
                   </td>
                   <td className="py-5 text-right font-medium sm:whitespace-nowrap">{money(PRO.monthly)} a month or {money(PRO.yearly)} a year</td>
                 </tr>
