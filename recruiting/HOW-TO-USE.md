@@ -1,6 +1,6 @@
 # How to use OpenSpot
 
-**Install it as an app.** Open https://tennenneking-bot.github.io/PLUMBER-TEST/recruiting/ on your phone.
+**Install it as an app.** Open https://tennysene11.github.io/NEXTUP-Recruiting/recruiting/ on your phone.
 - iPhone: open it in Safari, tap Share (the square with an arrow), then Add to Home Screen.
 - Android: in Chrome, tap Install app (or menu, then Add to Home screen).
 
