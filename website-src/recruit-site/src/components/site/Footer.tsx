@@ -10,7 +10,7 @@ export function Footer() {
           <div>
             <Brand />
             <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-muted-foreground">
-              Built by a 2027 pitcher from Santa Clarita, California, for every high school player emailing college coaches.
+              Built by a 2027 pitcher, for every position.
             </p>
           </div>
           <div className="text-[15px]">
@@ -31,7 +31,7 @@ export function Footer() {
           </div>
         </div>
         <p className="rule py-6 text-[13px] text-muted-foreground">
-          Coach names and emails come from each school's official athletics website. Not affiliated with the NCAA, NAIA, NJCAA or any school.
+          Coach info and college logos come from each school's official athletics site. Logos belong to their schools. Not affiliated with the NCAA, NAIA, NJCAA or any school.
         </p>
       </div>
     </footer>
