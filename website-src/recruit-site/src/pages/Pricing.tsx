@@ -7,10 +7,10 @@ type Cycle = "monthly" | "yearly";
 const money = (n: number) => (Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`);
 
 const PROMISES = [
-  ["No sales calls", "The price is on this page. That's the price."],
-  ["No contracts", "Monthly means monthly. Cancel from the app in two taps."],
-  ["Your data is yours", "Export everything any time, on either plan. Nothing is locked in."],
-  ["Renewal reminder", "We email you before a yearly plan renews, so it never surprises you."],
+  ["No sales calls", "The price is right here."],
+  ["No contracts", "Cancel in two taps."],
+  ["Your data is yours", "Export any time."],
+  ["Renewal reminder", "Before any yearly renewal."],
 ];
 
 function Toggle({ cycle, setCycle, save }: { cycle: Cycle; setCycle: (c: Cycle) => void; save: number }) {
@@ -37,7 +37,7 @@ export function Pricing() {
 
   return (
     <>
-      <Intro eyebrow="Pricing" title="Free to start. Pro when you want it on autopilot." lead="No sales calls and no contracts. Free gets your first 20 coaches emailed. Pro tells you where to aim, keeps you on pace and sends for you.">
+      <Intro eyebrow="Pricing" title="Free to start. Pro when you want it on autopilot." lead="No sales calls. No contracts.">
         <Toggle cycle={cycle} setCycle={setCycle} save={save} />
       </Intro>
 
@@ -46,7 +46,7 @@ export function Pricing() {
         <article className="reveal flex flex-col rounded-[1.5rem] border border-foreground/10 bg-card p-8 sm:p-10" aria-labelledby="plan-free">
           <h2 id="plan-free" className="text-[15px] font-medium">Free</h2>
           <p className="display mt-6 text-[72px] leading-none">$0</p>
-          <p className="mt-2 text-[15px] text-muted-foreground">Forever. Enough to email your first 20 coaches the right way.</p>
+          <p className="mt-2 text-[15px] text-muted-foreground">Forever.</p>
           <ul className="mt-8 flex-1 border-t border-foreground/10">
             {FREE_FEATURES.map((f) => <li key={f} className="border-b border-foreground/10 py-3 text-[15px]">{f}</li>)}
           </ul>
@@ -74,7 +74,7 @@ export function Pricing() {
           ) : (
             <button disabled className="mt-8 inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-background/15 text-[15px] font-medium text-background/80">Waitlist opens soon</button>
           )}
-          <p className="mt-4 text-[13px] leading-relaxed text-background/55">21-day free trial when Pro launches. Pro isn't for sale yet, so nothing is charged now. Automatic sending, sync and data refreshes arrive with the launch. A parent or guardian will be the account holder.</p>
+          <p className="mt-4 text-[13px] leading-relaxed text-background/55">21-day free trial at launch. Nothing is charged now.</p>
         </article>
       </section>
 
@@ -82,7 +82,7 @@ export function Pricing() {
         <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-16">
           <div>
             <h2 className="display reveal text-5xl sm:text-6xl">What families already pay</h2>
-            <p className="reveal mt-5 text-[15px] leading-relaxed text-muted-foreground">Reported prices for comparable products in late 2026. Ranges, not exact quotes. Check each company's own site.</p>
+            <p className="reveal mt-5 text-[14px] text-muted-foreground">Reported ranges, late 2026.</p>
           </div>
           <div className="reveal">
             <table className="w-full text-left text-[15px]">
@@ -92,7 +92,6 @@ export function Pricing() {
                   <tr key={m.what} className="border-b border-foreground/10 align-top">
                     <td className="py-5 pr-6">
                       <span className="font-medium">{m.what}</span>
-                      <span className="mt-1 block text-[14px] text-muted-foreground">{m.note}</span>
                     </td>
                     <td className="py-5 text-right sm:whitespace-nowrap">{m.price}</td>
                   </tr>
@@ -100,7 +99,6 @@ export function Pricing() {
                 <tr className="border-b-2 border-foreground align-top">
                   <td className="py-5 pr-6">
                     <span className="font-medium">NEXTUP Pro</span>
-                    <span className="mt-1 block text-[14px] text-muted-foreground">price published, cancel anytime, free plan always there</span>
                   </td>
                   <td className="py-5 text-right font-medium sm:whitespace-nowrap">{money(PRO.monthly)} a month or {money(PRO.yearly)} a year</td>
                 </tr>
