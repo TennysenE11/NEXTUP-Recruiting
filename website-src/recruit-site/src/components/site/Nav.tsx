@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useRoute } from "@/lib/router";
 import { APP_URL, NAV } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { Logo } from "./Logo";
 
 export function Brand() {
   return (
-    <Link to="home" className="group flex items-center" aria-label="NEXTUP home">
+    <Link to="home" className="group flex items-center" aria-label="OpenSpot home">
       <Logo className="h-[22px] transition-transform duration-300 group-hover:-translate-y-px sm:h-6" />
     </Link>
   );
@@ -16,8 +16,13 @@ export function Nav() {
   const route = useRoute();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const bar = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 8);
+    const on = () => {
+      setScrolled(window.scrollY > 8);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.current?.style.setProperty("--p", String(max > 0 ? Math.min(1, window.scrollY / max) : 0));
+    };
     on(); window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
@@ -42,6 +47,7 @@ export function Nav() {
           <span className={cn("absolute left-2 right-2 h-[1.5px] bg-foreground transition-transform duration-300", open ? "top-1/2 -rotate-45" : "top-[24px]")} />
         </button>
       </div>
+      <div ref={bar} className="scroll-bar absolute inset-x-0 bottom-0 h-[2px] bg-[hsl(var(--field))]" aria-hidden />
     </header>
       {/* Kept outside the header: its backdrop blur would otherwise trap this fixed panel inside the header's 64px. */}
       <div className={cn("fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-background px-5 transition-[opacity,transform] duration-300 md:hidden", open ? "opacity-100" : "pointer-events-none -translate-y-2 opacity-0")} aria-hidden={!open}>

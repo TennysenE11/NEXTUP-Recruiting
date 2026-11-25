@@ -1,72 +1,52 @@
-# Redraws the NEXTUP logo as SVG: an N-with-arrow mark plus the wordmark (Saira, OFL, widest and heaviest, slanted to match).
-import json, sys
+# OpenSpot logo: an open ring (the open spot) with the purple arrow rising through the gap,
+# plus the OPENSPOT wordmark (Saira, widest and heaviest, slanted to match the earlier logo).
+import json, math, sys
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
-from fontTools.pens.boundsPen import BoundsPen
-
 P = json.loads(sys.argv[1]) if len(sys.argv) > 1 else {}
-SLANT = P.get("slant", 0.50)        # dx per dy, like the logo's strokes
-WD = P.get("wdth", 125); WT = P.get("wght", 900)
-TRACK = P.get("track", -10)         # font units between letters
-XS = P.get("xs", 1.0)               # extra horizontal stretch
-f = TTFont("node_modules/@fontsource-variable/saira/files/saira-latin-wdth-normal.woff2")
-f = instancer.instantiateVariableFont(f, {"wght": WT, "wdth": WD})
-gs = f.getGlyphSet(); cmap = f.getBestCmap()
-cap = f["OS/2"].sCapHeight or 700
-
-def word(text, x0, base, capH, colors):
-    """Return SVG paths for text with baseline at `base`, cap height capH, starting at x0 (bottom-left)."""
-    s = capH / cap
-    out = []; x = 0
+SLANT = 0.50; XS = P.get("xs", 1.28); TRACK = P.get("track", 0)
+f = instancer.instantiateVariableFont(TTFont("node_modules/@fontsource-variable/saira/files/saira-latin-wdth-normal.woff2"), {"wght": 900, "wdth": 125})
+gs = f.getGlyphSet(); cmap = f.getBestCmap(); cap = f["OS/2"].sCapHeight or 700
+def word(text, x0, base, capH):
+    s = capH / cap; out = []; x = 0
     for ch in text:
         g = cmap[ord(ch)]; pen = SVGPathPen(gs)
-        # font units -> svg: scale, flip y, skew (x += SLANT * height above baseline)
-        t = TransformPen(pen, (s * XS, 0, s * SLANT, -s, x0 + x * s * XS, base))
-        gs[g].draw(t)
-        out.append((ch, pen.getCommands()))
-        x += gs[g].width + TRACK
+        gs[g].draw(TransformPen(pen, (s * XS, 0, s * SLANT, -s, x0 + x * s * XS, base)))
+        out.append(pen.getCommands()); x += gs[g].width + TRACK
     return out, x * s * XS
 
-def measure(text, capH):
-    _, w = word(text, 0, 0, capH, None); return w
-
-# ---- mark, in the 1254 x 1254 frame of the original artwork
-S = 0.52
-def para(x_bl, x_br, y_b, y_t, slope=S):
-    h = y_b - y_t
-    return [(x_bl, y_b), (x_br, y_b), (x_br + slope * h, y_t), (x_bl + slope * h, y_t)]
-stem = para(377, 466, 613, 414)
-
-diag = [(stem[3][0], 414), (stem[2][0], 414), (P.get("dbr", 705), 613), (640, 613)]
-# thin white speed line, parallel to the arrow shaft, ending where it meets the diagonal
-dBR = P.get("dbr", 705)
-def diag_x(y): return stem[2][0] + (dBR - stem[2][0]) * (y - 414) / 199
-def meet(xtop):  # where a line from (xtop,450) with slope S meets the diagonal's right edge
-    y = (xtop + S * 450 - stem[2][0] + (dBR - stem[2][0]) * 414 / 199) / (S + (dBR - stem[2][0]) / 199)
-    return (xtop - S * (y - 450), y)
-sx, sw = P.get("sx", 752), P.get("sw", 14)
-stripe = [(sx, 450), (sx + sw, 450), meet(sx + sw), meet(sx)]
-shaft = para(720, 790, 613, 423)
-head = [(700, 423), (875, 330), (943, 423)]
-def poly(pts):
-    # same winding for every shape, so overlaps fill instead of cancelling out
-    a = sum(x1 * y2 - x2 * y1 for (x1, y1), (x2, y2) in zip(pts, pts[1:] + pts[:1]))
-    if a < 0: pts = pts[::-1]
-    return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + " Z"
-mark_white = poly(stem) + poly(diag) + poly(stripe)
-mark_accent = poly(shaft) + poly(head)
-
-capH = 117; base = 807
-letters, w = word("NEXTUP", 0, base, capH, None)
-x0 = (1254 - w - SLANT * capH) / 2 + P.get("dx", 0)
-letters, w = word("NEXTUP", x0, base, capH, None)
-white = "".join(d for ch, d in letters[:4]); accent = "".join(d for ch, d in letters[4:])
-json.dump({"mark_white": mark_white, "mark_accent": mark_accent, "word_white": white, "word_accent": accent,
-           "word_box": [x0, base - capH, w + SLANT * capH, capH]}, open("logo_paths.json", "w"))
-PURPLE = P.get("purple", "#6c2ee6")
-full = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254"><rect width="1254" height="1254" fill="#000"/>
-<g fill="#fff"><path d="{mark_white}"/><path d="{white}"/></g><g fill="{PURPLE}"><path d="{mark_accent}"/><path d="{accent}"/></g></svg>'''
-open("logo-full.svg", "w").write(full)
-print("word width", round(w), "from", round(x0), "to", round(x0 + w + SLANT * capH))
+# ---- mark, drawn upright around (0,0) and then slanted like the letters
+R = P.get("R", 100); W = P.get("w", 36)          # ring radius and thickness
+g0, g1 = math.radians(P.get("g0", -100)), math.radians(P.get("g1", -28))   # gap (screen angles, y down)
+def ring_path():
+    ro, ri = R + W / 2, R - W / 2
+    # arc from g1 clockwise around to g0 (+2pi): the ring minus the gap
+    a0, a1 = g1, g0 + 2 * math.pi
+    large = 1 if (a1 - a0) > math.pi else 0
+    p = lambda r, a: (r * math.cos(a), r * math.sin(a))
+    o0, o1, i1, i0 = p(ro, a0), p(ro, a1), p(ri, a1), p(ri, a0)
+    return (f"M{o0[0]:.2f},{o0[1]:.2f} A{ro},{ro} 0 {large} 1 {o1[0]:.2f},{o1[1]:.2f} "
+            f"L{i1[0]:.2f},{i1[1]:.2f} A{ri},{ri} 0 {large} 0 {i0[0]:.2f},{i0[1]:.2f} Z")
+AX = P.get("ax", 38); SW = P.get("sw", 38)       # arrow x and shaft width
+y_bot = P.get("yb", 40); y_head = P.get("yh", -128); tip = P.get("tip", -205); hw = P.get("hw", 62)
+arrow = [(AX - SW / 2, y_bot), (AX + SW / 2, y_bot), (AX + SW / 2, y_head), (AX + hw, y_head), (AX, tip), (AX - hw, y_head), (AX - SW / 2, y_head)]
+ROT = math.radians(P.get("rot", 45))   # turn the arrow toward the upper right
+arrow = [(x * math.cos(ROT) - y * math.sin(ROT), x * math.sin(ROT) + y * math.cos(ROT)) for x, y in arrow]
+arrow_d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in arrow) + " Z"
+# slant matrix (x += SLANT * -y) so the ring leans like the letters
+SK = f"matrix(1 0 {-SLANT * P.get('sk', 0.55):.3f} 1 0 0)"
+open("os_mark.json", "w").write(json.dumps({"ring": ring_path(), "arrow": arrow_d, "skew": SK}))
+capH = P.get("capH", 92)
+letters, w = word("OPENSPOT", 0, 0, capH)
+json.dump({"white": "".join(letters[:4]), "accent": "".join(letters[4:]), "w": w + SLANT * capH, "capH": capH}, open("os_word.json", "w"))
+PURPLE = "#6c2ee6"
+# stacked preview on black, like the original logo artwork
+mark_scale = P.get("ms", 1.15)
+word_x = (1254 - (w + SLANT * capH)) / 2
+svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254"><rect width="1254" height="1254" fill="#000"/>
+<g transform="translate({P.get('mx', 610)} {P.get('my', 520)}) scale({mark_scale})"><g transform="{SK}"><path fill="#fff" d="{ring_path()}"/><path fill="{PURPLE}" d="{arrow_d}"/></g></g>
+<g transform="translate({word_x:.1f} {P.get('base', 800)})"><path fill="#fff" d="{"".join(letters[:4])}"/><path fill="{PURPLE}" d="{"".join(letters[4:])}"/></g></svg>'''
+open("openspot-full.svg", "w").write(svg)
+print("word width", round(w))

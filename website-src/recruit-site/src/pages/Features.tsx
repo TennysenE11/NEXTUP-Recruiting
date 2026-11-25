@@ -3,6 +3,7 @@ import { Intro } from "@/components/site/Intro";
 import { Phone } from "@/components/site/Phone";
 import { APP_URL, SHOTS } from "@/lib/site";
 import { Link } from "@/lib/router";
+import { Tilt } from "@/components/site/Motion";
 import { cn } from "@/lib/utils";
 
 const ROWS = [
@@ -42,7 +43,7 @@ export function Features() {
               <div className="mt-6 flex flex-wrap gap-2">{r.tags.map((t) => <Tag key={t}>{t}</Tag>)}</div>
             </div>
             <div className={cn("reveal mx-auto w-[72%] max-w-[300px]", i % 2 === 1 && "md:order-1")} style={{ ["--d" as string]: "120ms" }}>
-              <Phone src={r.shot} alt={r.alt} />
+              <Tilt><Phone src={r.shot} alt={r.alt} /></Tilt>
             </div>
           </section>
         ))}
@@ -52,7 +53,7 @@ export function Features() {
         <h2 className="display reveal text-5xl sm:text-6xl">Also inside</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {ALSO.map(({ icon: Icon, t, pro }, i) => (
-            <li key={t} className="reveal flex items-center gap-3 rounded-[1rem] border border-foreground/10 bg-card px-4 py-4" style={{ ["--d" as string]: `${(i % 4) * 60}ms` }}>
+            <li key={t} className="reveal lift flex items-center gap-3 rounded-[1rem] border border-foreground/10 bg-card px-4 py-4" style={{ ["--d" as string]: `${(i % 4) * 60}ms` }}>
               <Icon className="h-5 w-5 shrink-0 text-[hsl(var(--field))]" aria-hidden />
               <span className="text-[15px] font-medium leading-tight">{t}</span>
               {pro && <span className="ml-auto rounded-full bg-foreground px-2 py-0.5 text-[11px] font-medium text-background">Pro</span>}

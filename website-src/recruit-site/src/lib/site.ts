@@ -1,7 +1,7 @@
 // Single place for facts and settings shown on the website.
 // Every number here comes from the app's own national data (checked 2026-11-18).
 
-export const APP_NAME = "NEXTUP";
+export const APP_NAME = "OpenSpot";
 export const APP_URL = "./recruiting/"; // the installable app, hosted next to this site
 export const CONTACT_EMAIL = ""; // set before launch; when blank, buttons say the waitlist opens soon
 
@@ -39,13 +39,13 @@ export const NAV: { route: Route; label: string }[] = [
 ];
 
 export const TITLES: Record<Route, string> = {
-  home: "NEXTUP | College baseball recruiting, one coach at a time",
-  features: "Features | NEXTUP",
-  "how-it-works": "How it works | NEXTUP",
-  pricing: "Pricing | NEXTUP",
-  faq: "FAQ | NEXTUP",
-  privacy: "Privacy | NEXTUP",
-  "not-found": "Page not found | NEXTUP",
+  home: "OpenSpot | College baseball recruiting, one coach at a time",
+  features: "Features | OpenSpot",
+  "how-it-works": "How it works | OpenSpot",
+  pricing: "Pricing | OpenSpot",
+  faq: "FAQ | OpenSpot",
+  privacy: "Privacy | OpenSpot",
+  "not-found": "Page not found | OpenSpot",
 };
 
 // ---- Plans (see reports/Recruiting app subscription pricing.md for the research behind these) ----

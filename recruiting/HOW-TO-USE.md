@@ -1,4 +1,4 @@
-# How to use NEXTUP
+# How to use OpenSpot
 
 **Install it as an app.** Open https://tennenneking-bot.github.io/PLUMBER-TEST/recruiting/ on your phone.
 - iPhone: open it in Safari, tap Share (the square with an arrow), then Add to Home Screen.

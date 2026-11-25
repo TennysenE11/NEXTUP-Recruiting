@@ -1,7 +1,7 @@
 {
-  "name": "NEXTUP",
-  "short_name": "NEXTUP",
-  "description": "NEXTUP: college baseball recruiting for every position. Find programs, email coaches, track replies and goals.",
+  "name": "OpenSpot",
+  "short_name": "OpenSpot",
+  "description": "OpenSpot: college baseball recruiting for every position. Find programs, email coaches, track replies and goals.",
   "start_url": "./recruiting-tracker.html",
   "scope": "./",
   "display": "standalone",
