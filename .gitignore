@@ -1,0 +1,6 @@
+# Website source build files (the built site is index.html at the repo root)
+website-src/recruit-site/node_modules/
+website-src/recruit-site/dist/
+website-src/recruit-site/.parcel-cache/
+website-src/recruit-site/bundle.html
+website-src/bundle.log
