@@ -17,3 +17,5 @@ Steps:
 Checked 2026-11-18: 1,600 programs, 923 head coaches, 890 contact emails, 86 coach X handles and 539 team X accounts from official pages, pitcher counts for 696 rosters.
 
 **Logos.** `add_logos.py` adds each school's official athletics logo (Sidearm's `/images/logos/site/site.png`) as a 96 px WebP in `recruiting/logos/`, and a `logo` column to the app's national list. The logo address comes only from the school's own page (home-screen icon, share image or header logo) or its own domain, and addresses shared by two schools are dropped. 829 of 1,600 programs have one.
+
+**College facts.** `add_academics.py` matches each program to its federal IPEDS record (by EADA ID, the school's website domain, or exact name in the state) and adds city, public or private, religious affiliation, enrollment, acceptance rate, SAT and ACT middle-50% ranges, graduation rate, tuition and fees, and yearly cost of attendance on campus (in-state and out-of-state). Data: nces.ed.gov; admissions, enrollment and graduation from 2023, cost from 2023-24, affiliation from 2024. 1,598 of 1,600 programs matched; the two combined Claremont teams are left out.

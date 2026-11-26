@@ -7,7 +7,7 @@ import { Tilt } from "@/components/site/Motion";
 import { cn } from "@/lib/utils";
 
 const ROWS = [
-  { label: "Find", t: "1,600 programs, with their logos.", d: "D1 to JUCO. Coach info from official pages.", tags: ["Fit ratings · Pro", "Players leaving · Pro"], shot: SHOTS.schools, alt: "School list with college logos" },
+  { label: "Find", t: "1,600 programs, with their logos.", d: "Cost, acceptance rate, SAT and ACT for every college.", tags: ["Cost per year", "Test scores", "Fit ratings · Pro", "Players leaving · Pro"], shot: SHOTS.schools, alt: "School list with college logos" },
   { label: "Write", t: "A different email for every coach.", d: "Opens with their roster. Goes to the right coach.", tags: ["Two-tap send", "Undo"], shot: SHOTS.send, alt: "The next email, written for one coach" },
   { label: "Prepare", t: "A score for what's missing.", d: "Built for your position.", tags: ["Checklist", "Outlook · Pro"], shot: SHOTS.profile, alt: "Profile score checklist" },
   { label: "Keep going", t: "Goals that become a weekly list.", d: "Set 10 replies. Get this week's steps.", tags: ["Pro"], shot: SHOTS.goals, alt: "Goals tab with a step-by-step plan" },
