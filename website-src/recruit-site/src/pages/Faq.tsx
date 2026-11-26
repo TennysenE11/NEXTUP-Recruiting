@@ -7,6 +7,7 @@ const QA: { q: string; a: React.ReactNode }[] = [
   { q: "Does it work for my position?", a: "Yes. Pitchers, catchers, infielders, outfielders and two-way players. Your numbers and the right coach change with you." },
   { q: "Where do coach emails come from?", a: "Each school's official athletics site. Never guessed. Unclear ones are marked verify." },
   { q: "Where do the college logos come from?", a: "Each school's official athletics site. Schools without one show their initials." },
+  { q: "Where do cost and test scores come from?", a: "The U.S. Department of Education (IPEDS): yearly cost, tuition, acceptance rate, SAT and ACT ranges, enrollment and graduation rate." },
   { q: "Does it send emails for me?", a: "Only if you turn on automatic sending in Pro. Otherwise you press Send." },
   { q: "Can I see if a coach opened my email?", a: "No. Open tracking is unreliable. The app counts replies, calls and offers." },
   { q: "Which divisions?", a: "NCAA D1, D2, D3, NAIA and junior colleges." },
