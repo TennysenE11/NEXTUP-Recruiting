@@ -38,7 +38,7 @@ export function Features() {
           <section key={r.label} className="grid items-center gap-10 md:grid-cols-2 md:gap-20">
             <div className={cn("reveal", i % 2 === 1 && "md:order-2")}>
               <p className="font-mono text-[13px] text-[hsl(var(--field))]">{String(i + 1).padStart(2, "0")} · {r.label}</p>
-              <h2 className="display mt-3 text-[44px] sm:text-[58px]">{r.t}</h2>
+              <h2 className="display grad mt-3 text-[44px] sm:text-[58px]">{r.t}</h2>
               <p className="mt-4 text-[18px] text-muted-foreground">{r.d}</p>
               <div className="mt-6 flex flex-wrap gap-2">{r.tags.map((t) => <Tag key={t}>{t}</Tag>)}</div>
             </div>
@@ -50,13 +50,13 @@ export function Features() {
       </div>
 
       <section className="mx-auto max-w-6xl px-5 pt-28 sm:px-8 md:pt-36">
-        <h2 className="display reveal text-5xl sm:text-6xl">Also inside</h2>
+        <h2 className="display grad reveal text-5xl sm:text-6xl">Also inside</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {ALSO.map(({ icon: Icon, t, pro }, i) => (
-            <li key={t} className="reveal lift flex items-center gap-3 rounded-[1rem] border border-foreground/10 bg-card px-4 py-4" style={{ ["--d" as string]: `${(i % 4) * 60}ms` }}>
+            <li key={t} className="reveal lift panel-soft flex items-center gap-3 px-4 py-4" style={{ ["--d" as string]: `${(i % 4) * 60}ms` }}>
               <Icon className="h-5 w-5 shrink-0 text-[hsl(var(--field))]" aria-hidden />
               <span className="text-[15px] font-medium leading-tight">{t}</span>
-              {pro && <span className="ml-auto rounded-full bg-foreground px-2 py-0.5 text-[11px] font-medium text-background">Pro</span>}
+              {pro && <span className="ml-auto rounded-full bg-[hsl(var(--brand))] px-2 py-0.5 text-[11px] font-semibold text-white">Pro</span>}
             </li>
           ))}
         </ul>

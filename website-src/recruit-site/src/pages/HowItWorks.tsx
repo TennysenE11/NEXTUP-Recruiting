@@ -24,9 +24,9 @@ export function HowItWorks() {
           <ol className="border-t border-foreground/10">
             {STEPS.map((s, i) => (
               <li key={s.t} className="reveal grid grid-cols-[3rem_1fr] items-baseline gap-2 border-b border-foreground/10 py-7 sm:grid-cols-[4.5rem_1fr]">
-                <span className="display text-[34px] leading-none text-[hsl(var(--field))]">{i + 1}</span>
+                <span className="display grad text-[34px] leading-none text-[hsl(var(--field))]">{i + 1}</span>
                 <div>
-                  <h2 className="display text-[36px] leading-none sm:text-[44px]">{s.t}</h2>
+                  <h2 className="display grad text-[36px] leading-none sm:text-[44px]">{s.t}</h2>
                   <p className="mt-2 text-[16px] text-muted-foreground">{s.d}</p>
                 </div>
               </li>
@@ -41,13 +41,13 @@ export function HowItWorks() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pt-24 sm:px-8 md:pt-32">
-        <h2 className="display reveal text-5xl sm:text-6xl">Put it on your phone</h2>
+        <h2 className="display grad reveal text-5xl sm:text-6xl">Put it on your phone</h2>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {[
             { icon: Apple, name: "iPhone", steps: ["Open the app link in Safari", "Tap Share", "Add to Home Screen"] },
             { icon: Smartphone, name: "Android", steps: ["Open the app link in Chrome", "Tap Install app", "Open from your home screen"] },
           ].map(({ icon: Icon, name, steps }, i) => (
-            <div key={name} className="reveal rounded-[1.25rem] bg-card p-7 sm:p-9" style={{ ["--d" as string]: `${i * 100}ms` }}>
+            <div key={name} className="reveal panel-soft p-7 sm:p-9" style={{ ["--d" as string]: `${i * 100}ms` }}>
               <div className="flex items-center gap-3">
                 <Icon className="h-6 w-6" aria-hidden />
                 <h3 className="text-[17px] font-medium">{name}</h3>
@@ -55,7 +55,7 @@ export function HowItWorks() {
               <ol className="mt-5 space-y-3">
                 {steps.map((s, j) => (
                   <li key={s} className="flex items-center gap-3 text-[16px]">
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-[13px] font-medium text-background">{j + 1}</span>{s}
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[hsl(var(--brand))] text-[13px] font-semibold text-white">{j + 1}</span>{s}
                   </li>
                 ))}
               </ol>
@@ -65,7 +65,7 @@ export function HowItWorks() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pt-24 sm:px-8 md:pt-32">
-        <h2 className="display reveal text-5xl sm:text-6xl">What it never does</h2>
+        <h2 className="display grad reveal text-5xl sm:text-6xl">What it never does</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {NEVER.map((n, i) => (
             <li key={n} className="reveal lift rounded-[1.25rem] border border-foreground/10 p-5 text-[18px] font-medium" style={{ ["--d" as string]: `${i * 60}ms` }}>

@@ -18,9 +18,9 @@ export function PositionDemo() {
   const idx = keys.indexOf(pos);
   const line = `I saw that ${d.n} of the ${d.t} ${d.pl} on your 2027 roster are seniors or grad students, and I want to be ready to compete for ${d.play} in 2028.`;
   return (
-    <div className="rounded-[1.5rem] bg-foreground p-6 text-background sm:p-9">
-      <div role="radiogroup" aria-label="Position" className="relative grid grid-cols-4 rounded-full bg-white/10 p-1">
-        <span aria-hidden className="absolute bottom-1 top-1 rounded-full bg-[hsl(var(--field))] transition-transform duration-300 ease-[cubic-bezier(.2,.65,.2,1)]"
+    <div className="panel p-6 text-left sm:p-9">
+      <div role="radiogroup" aria-label="Position" className="relative grid grid-cols-4 rounded-full border border-white/[.08] bg-white/[.04] p-1">
+        <span aria-hidden className="absolute bottom-1 top-1 rounded-full bg-[hsl(var(--brand))] shadow-[0_6px_20px_-6px_hsl(var(--brand))] transition-transform duration-300 ease-[cubic-bezier(.2,.65,.2,1)]"
           style={{ left: 4, width: "calc((100% - 8px) / 4)", transform: `translateX(${idx * 100}%)` }} />
         {keys.map((k) => (
           <button key={k} role="radio" aria-checked={pos === k} onClick={() => setPos(k)}
@@ -29,13 +29,13 @@ export function PositionDemo() {
           </button>
         ))}
       </div>
-      <p className="mt-7 text-[12px] font-medium uppercase tracking-[0.14em] text-[hsl(259_90%_80%)]">Your first line</p>
-      <blockquote className="display mt-3 min-h-[5.2em] text-[26px] leading-[1.15] sm:min-h-[4.2em] sm:text-[30px]">
+      <p className="mt-7 text-[12px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--field))]">Your first line</p>
+      <blockquote className="mt-3 min-h-[5.6em] text-[22px] font-semibold leading-snug tracking-tight sm:min-h-[4.4em] sm:text-[27px]">
         "<Typewriter text={line} />"
       </blockquote>
       <div className="mt-6 flex flex-wrap gap-2 text-[13px]">
-        <span key={pos + "to"} className="pop-in rounded-full bg-white/10 px-3 py-1.5">To: {d.to}</span>
-        <span key={pos + "n"} className="pop-in rounded-full bg-white/10 px-3 py-1.5" style={{ animationDelay: "120ms" }}>{d.nums}</span>
+        <span key={pos + "to"} className="pop-in rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5">To: {d.to}</span>
+        <span key={pos + "n"} className="pop-in rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5" style={{ animationDelay: "120ms" }}>{d.nums}</span>
       </div>
     </div>
   );

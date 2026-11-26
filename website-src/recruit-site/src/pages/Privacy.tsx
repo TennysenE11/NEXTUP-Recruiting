@@ -15,9 +15,9 @@ export function Privacy() {
       <Intro eyebrow="Privacy" title="Your data stays on your phone." lead="Last updated November 2026." />
       <section className="mx-auto grid max-w-6xl gap-4 px-5 sm:grid-cols-2 sm:px-8 lg:grid-cols-3">
         {SECTIONS.map(({ icon: Icon, t, d }, i) => (
-          <article key={t} className="reveal lift rounded-[1.25rem] border border-foreground/10 bg-card p-7" style={{ ["--d" as string]: `${(i % 3) * 70}ms` }}>
+          <article key={t} className="reveal lift panel-soft p-7" style={{ ["--d" as string]: `${(i % 3) * 70}ms` }}>
             <Icon className="h-6 w-6 text-[hsl(var(--field))]" aria-hidden />
-            <h2 className="display mt-5 text-[30px] leading-none">{t}</h2>
+            <h2 className="display grad mt-5 text-[30px] leading-none">{t}</h2>
             <p className="mt-3 text-[16px] leading-relaxed text-muted-foreground">{d}</p>
           </article>
         ))}
