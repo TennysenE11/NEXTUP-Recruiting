@@ -155,6 +155,8 @@ td select { width: auto; padding: 4px 6px; font-size: 15px; min-height: 34px; }
 #proTeaser p { margin: 8px 0 14px; }
 #proHook { margin-bottom: 10px; } #proHook .big-n { font: 700 44px/1 var(--display); color: #fff; }
 .pro-price { font-size: 17px; margin: 6px 0 4px; }
+.pro-buy { display: grid; gap: 6px; margin: 12px 0 16px; justify-items: center; }
+.pro-buy .big { width: 100%; }
 
 /* school cards: a clean directory card per school */
 #programTable { display: block; width: 100%; border: 0; }
@@ -545,9 +547,10 @@ dialog::backdrop { background: rgba(15, 27, 45, .55); }
   <div class="dlg-body">
     <div id="proHook"></div>
     <p class="pro-price"><b>$99 a year</b> <span class="sub">($8.25 a month)</span> or $12.99 a month</p>
-    <p class="sub" style="margin-top:0">Pro launches in 2027 with a 21-day free trial. The free plan keeps working for your first 20 schools.</p>
+    <p class="sub" style="margin-top:0" id="proLaunch">Pro launches in 2027 with a 21-day free trial. The free plan keeps working for your first 20 schools.</p>
+    <div class="pro-buy hide" id="proBuy"></div>
     <ul class="pro-list" id="proList"></ul>
-    <label>Have a Pro code?<input id="proCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="RT-XXXX-XXXX-XXXX"></label>
+    <label><span id="proCodeLabel">Have a Pro code?</span><input id="proCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="RT-XXXX-XXXX-XXXX"></label>
   </div>
   <div class="dlg-foot">
     <button type="button" id="btnProPricing">See pricing</button>
@@ -715,7 +718,8 @@ function save() {
 
 // ---------- plans: Free and Pro ----------
 // Free covers the first FREE_LIMIT schools on the list. Pro unlocks the rest of the features below.
-// There's no checkout yet, so Pro is unlocked with a code. Only the code's SHA-256 is stored here.
+// Pro comes from a Stripe subscription (see the billing section below) or from the owner code.
+// Only the code's SHA-256 is stored here.
 // Email text never depends on the plan, so the weekly automation writes the same emails either way.
 var FREE_LIMIT = 20;
 var PRO_HASH = "ddba224a47ba6f69d335cd8f9957eedb23c29a6e7acedeccd2c1e0ace663c2a7";
@@ -744,24 +748,129 @@ function openPro(key) {
     return "<li" + (f[0] === key ? ' class="hl"' : "") + "><b>" + esc(f[1]) + '</b><span class="sub">' + esc(f[2]) + "</span></li>";
   }).join("");
   $("proCode").value = "";
+  var live = !!BILLING_URL;
+  $("proBuy").classList.toggle("hide", !live);
+  $("proBuy").innerHTML = live ? '<button type="button" class="primary big" data-checkout="yearly">Try free for 21 days</button>' +
+    '<button type="button" class="link" data-checkout="monthly">Or $12.99 a month, also free for 21 days</button>' : "";
+  $("proLaunch").textContent = live ? "No charge for 21 days. Cancel anytime from your Profile tab. The free plan keeps working for your first 20 schools."
+    : "Pro launches in 2027 with a 21-day free trial. The free plan keeps working for your first 20 schools.";
+  $("proCodeLabel").textContent = live ? "Have a license key or code?" : "Have a Pro code?";
   if (!$("dlgPro").open) $("dlgPro").showModal();
 }
 function unlockPro() {
-  var code = $("proCode").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  var raw = $("proCode").value.trim();
+  if (LICENSE_RE.test(raw)) { unlockLicense(raw); return; }
+  var code = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (!code) { toast("Type your Pro code first."); return; }
   if (!(window.crypto && crypto.subtle && window.TextEncoder)) { toast("Open the app from its web link to unlock Pro."); return; }
   crypto.subtle.digest("SHA-256", new TextEncoder().encode(code)).then(function (buf) {
     var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) { return (b < 16 ? "0" : "") + b.toString(16); }).join("");
     if (hex !== PRO_HASH) { toast("That code didn't work. Check it and try again."); return; }
-    state.plan = "pro"; save(); $("dlgPro").close(); buildFilterGrid(); render(); toast("Pro unlocked on this device.");
+    state.plan = "pro"; state.proCode = true; save(); $("dlgPro").close(); buildFilterGrid(); render(); toast("Pro unlocked on this device.");
   });
 }
 function renderPlanCard() {
   var n = state.programs.length;
+  if (state.billing && state.billing.key) {
+    var b = state.billing;
+    $("planCard").innerHTML = "<h2>Plan: " + (isPro() ? "Pro" : "Free") + '</h2><p class="sub">' + esc(licenseLine()) + "</p>" +
+      '<div class="toolbar"><button class="small" data-billing="portal">Manage subscription</button><button class="small" data-billing="key">Copy license key</button>' +
+      (b.active ? "" : '<button class="small primary" data-pro="schools">See Pro</button>') + "</div>" +
+      '<p class="sub" style="margin-bottom:0">Your license key turns on Pro on another phone or computer. Keep it private.</p>';
+    return;
+  }
   $("planCard").innerHTML = isPro()
     ? '<h2>Plan: Pro</h2><p class="sub" style="margin:0">Everything is unlocked on this device.</p>'
     : '<h2>Plan: Free</h2><p class="sub">' + Math.min(n, FREE_LIMIT) + " of " + FREE_LIMIT + " free schools in use" + (n > FREE_LIMIT ? ". Schools after your first " + FREE_LIMIT + " are marked Pro." : ".") +
       ' Pro adds unlimited schools, the realistic outlook, players leaving at your position, goals, charts, X messages and every filter.</p><button class="small primary" data-pro="schools">See Pro</button>';
+}
+
+// ---------- billing: Stripe Checkout through the OpenSpot billing server ----------
+// BILLING_URL is the Cloudflare Worker in billing/worker. While it's blank, Pro is code-only and
+// none of this runs. The app never holds a Stripe key. It holds a license key, and the server
+// checks that key against the live subscription in Stripe.
+var BILLING_URL = String(window.OPENSPOT_BILLING_URL || "").replace(/\/$/, "");
+var LICENSE_RE = /^OS-[A-Za-z0-9]+-[0-9A-Za-z]{16}$/;
+function bill() { return state.billing || (state.billing = {}); }
+function billingCall(path, body) {
+  return fetch(BILLING_URL + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) })
+    .then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) { var e = new Error(j.error || "Billing isn't answering. Try again soon."); e.status = r.status; throw e; }
+        return j;
+      });
+    }, function () { throw new Error("You're offline. Connect to the internet and try again."); });
+}
+function pageUrl() { return location.href.replace(/[?#].*$/, ""); }
+function startCheckout(cycle, btn) {
+  if (!BILLING_URL) return;
+  var label = btn ? btn.textContent : "";
+  if (btn) { btn.disabled = true; btn.textContent = "Opening secure checkout…"; }
+  billingCall("/checkout", { cycle: cycle, return_to: pageUrl() }).then(function (j) {
+    bill().pending = { id: j.id, at: Date.now() }; save();
+    location.assign(j.url);
+  }).catch(function (e) { if (btn) { btn.disabled = false; btn.textContent = label; } toast(e.message); });
+}
+// Copies what the server said about the subscription into the app and sets the plan to match.
+function applyLicense(j) {
+  var b = bill(), was = isPro();
+  if (j.key) b.key = j.key;
+  b.active = !!j.active; b.status = j.status || ""; b.cycle = j.cycle || b.cycle || ""; b.renews = !!j.renews;
+  b.trial_end = j.trial_end || null; b.period_end = j.period_end || null; b.until = j.until || 0; b.checked = Date.now();
+  state.plan = j.active || state.proCode ? "pro" : "free";
+  save();
+  if (was !== isPro()) { buildFilterGrid(); render(); } else renderPlanCard();
+}
+function claimCheckout(id, quiet) {
+  return billingCall("/claim", { session_id: id }).then(function (j) {
+    if (!j.key) { if (j.status === "expired") { delete bill().pending; save(); } return; }
+    delete bill().pending;
+    applyLicense(j);
+    if ($("dlgPro").open) $("dlgPro").close();
+    toast(j.status === "trialing" ? "Pro is on. Your 21-day free trial started." : "Pro is on.");
+  }).catch(function (e) { if (!quiet) toast(e.message); });
+}
+// Checks the subscription twice a day at most. Offline, Pro stays on until the paid-through date.
+function refreshLicense(force) {
+  var b = bill();
+  if (!BILLING_URL || !b.key) return Promise.resolve();
+  if (!force && b.checked && Date.now() - b.checked < 12 * 3600 * 1000 && (!b.until || Date.now() < b.until)) return Promise.resolve();
+  return billingCall("/status", { key: b.key }).then(applyLicense).catch(function (e) {
+    if (e.status === 400 || e.status === 404) applyLicense({ active: false, status: "missing" });
+    else if (b.until && Date.now() > b.until && !state.proCode && state.plan === "pro") { state.plan = "free"; save(); buildFilterGrid(); render(); }
+  });
+}
+function billingOnLoad() {
+  if (!BILLING_URL) return;
+  var q = new URLSearchParams(location.search), sid = q.get("session_id"), done = q.get("checkout"), b = bill();
+  if (done) history.replaceState(null, "", pageUrl() + location.hash);
+  if (done === "canceled") { delete b.pending; save(); toast("Checkout canceled. Nothing was charged."); }
+  else if (sid) claimCheckout(sid, false);
+  // Covers a phone that closed the tab before Stripe sent it back here. Checkout links last 24 hours.
+  else if (b.pending && Date.now() - b.pending.at < 24 * 3600 * 1000) claimCheckout(b.pending.id, true);
+  else if (b.pending) { delete b.pending; save(); }
+  refreshLicense(false);
+}
+function openPortal(btn) {
+  if (btn) btn.disabled = true;
+  billingCall("/portal", { key: bill().key, return_to: pageUrl() }).then(function (j) { location.assign(j.url); })
+    .catch(function (e) { if (btn) btn.disabled = false; toast(e.message); });
+}
+function unlockLicense(key) {
+  if (!BILLING_URL) { toast("License keys work once Pro launches."); return; }
+  billingCall("/status", { key: key }).then(function (j) {
+    if (!j.active) { toast("That subscription has ended. Start a new trial to turn Pro back on."); return; }
+    applyLicense(j); $("dlgPro").close(); toast("Pro is on for this device.");
+  }).catch(function (e) { toast(e.message); });
+}
+function billDate(ms) { return new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
+function licenseLine() {
+  var b = bill(), price = b.cycle === "monthly" ? "$12.99 a month" : "$99 a year";
+  if (!b.active) return "Your Pro subscription has ended. Your schools and emails are still here.";
+  if (b.status === "past_due") return "Your last payment didn't go through. Update your card under Manage subscription to keep Pro.";
+  if (b.status === "trialing" && b.trial_end) return "Free trial until " + billDate(b.trial_end) + (b.renews ? ". Then " + price + "." : ". It won't renew.");
+  if (b.period_end) return (b.renews ? "Renews " + billDate(b.period_end) + " at " + price : "Ends " + billDate(b.period_end)) + ".";
+  return "Pro is on.";
 }
 
 // ---------- dates (local YYYY-MM-DD) ----------
@@ -2253,6 +2362,9 @@ function onClick(e) {
   var tab = t.closest("#tabs [data-tab]"); if (tab) { showTab(tab.getAttribute("data-tab")); return; }
   var sb0 = t.closest("[data-start]"); if (sb0) { onStart(sb0); return; }
   var pb = t.closest("[data-pro]"); if (pb) { openPro(pb.getAttribute("data-pro")); return; }
+  var ck = t.closest("[data-checkout]"); if (ck) { startCheckout(ck.getAttribute("data-checkout"), ck); return; }
+  var bb = t.closest("[data-billing]");
+  if (bb) { if (bb.getAttribute("data-billing") === "portal") openPortal(bb); else copy(bill().key, "License key copied. On your other device, open Pro and paste it."); return; }
   var mb = t.closest("[data-more]");
   if (mb) { var mid = mb.getAttribute("data-more"), row = mb.closest("tr"); openCards[mid] = !openCards[mid]; if (!openCards[mid]) delete openCards[mid];
     row.classList.toggle("open", !!openCards[mid]); mb.textContent = openCards[mid] ? "Hide details" : "View details"; mb.setAttribute("aria-expanded", openCards[mid] ? "true" : "false"); return; }
@@ -2428,6 +2540,7 @@ function init() {
   var pre = startFromHash();
   if (pre && !state.programs.length) openStart(pre);
   else if (shouldStart()) openStart(null);
+  billingOnLoad();
 }
 
 // ================= install as a phone app =================

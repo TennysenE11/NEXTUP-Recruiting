@@ -1,0 +1,8 @@
+#!/bin/sh
+# Blocks commits that add a Stripe secret key, restricted key or webhook signing secret.
+# Turn it on once per clone: git config core.hooksPath .githooks
+if git diff --cached -U0 --no-color | grep -E '^\+' | grep -qE '(sk|rk)_(test|live)_[0-9A-Za-z]{10,}|whsec_[0-9A-Za-z]{16,}'; then
+  echo "Commit blocked: it adds what looks like a Stripe key or webhook secret." >&2
+  echo "Keep keys in Cloudflare secrets (npx wrangler secret put) or environment variables." >&2
+  exit 1
+fi

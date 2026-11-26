@@ -1,0 +1,17 @@
+{
+  "name": "openspot-billing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "catalog": "node scripts/setup-catalog.mjs"
+  },
+  "dependencies": {
+    "stripe": "23.2.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.168.0"
+  }
+}

@@ -1,0 +1,17 @@
+# Cloudflare Worker for OpenSpot billing. Deploy with: npx wrangler deploy
+name = "openspot-billing"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+# The app page Checkout and the Customer Portal send people back to.
+APP_URL = "https://tennysene11.github.io/NEXTUP-Recruiting/recruiting/recruiting-tracker.html"
+# Pages allowed to call this server. Comma-separated, no trailing slash.
+ALLOWED_ORIGINS = "https://tennysene11.github.io"
+# Leave "false" until Stripe Tax has an active registration. See billing/README.md.
+AUTOMATIC_TAX = "false"
+
+# Secrets are set with `npx wrangler secret put NAME`, never in this file:
+#   STRIPE_SECRET_KEY      a restricted key (rk_...) with the permissions in billing/README.md
+#   STRIPE_WEBHOOK_SECRET  the whsec_... signing secret of the webhook endpoint
+#   LICENSE_SECRET         32+ random characters. Changing it breaks every license key.
