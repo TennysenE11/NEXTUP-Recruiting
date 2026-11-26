@@ -15,8 +15,8 @@ const PROMISES = [
 
 function Toggle({ cycle, setCycle, save }: { cycle: Cycle; setCycle: (c: Cycle) => void; save: number }) {
   return (
-    <div role="radiogroup" aria-label="Billing period" className="relative inline-grid grid-cols-2 rounded-full bg-foreground/[0.06] p-1">
-      <span aria-hidden className={cn("absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-card shadow-[0_1px_3px_rgba(20,20,19,0.12)] transition-transform duration-300 ease-[cubic-bezier(.2,.65,.2,1)]", cycle === "yearly" ? "translate-x-full" : "translate-x-0")} style={{ left: 4 }} />
+    <div role="radiogroup" aria-label="Billing period" className="relative inline-grid grid-cols-2 rounded-full border border-white/[.08] bg-white/[.04] p-1">
+      <span aria-hidden className={cn("absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-[hsl(var(--brand))] shadow-[0_6px_20px_-6px_hsl(var(--brand))] transition-transform duration-300 ease-[cubic-bezier(.2,.65,.2,1)]", cycle === "yearly" ? "translate-x-full" : "translate-x-0")} style={{ left: 4 }} />
       {(["monthly", "yearly"] as Cycle[]).map((c) => (
         <button key={c} role="radio" aria-checked={cycle === c} onClick={() => setCycle(c)}
           className={cn("relative z-10 h-10 rounded-full px-5 text-[14px] font-medium transition-colors", cycle === c ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
@@ -43,9 +43,9 @@ export function Pricing() {
 
       <section className="mx-auto grid max-w-6xl gap-6 px-5 sm:px-8 md:grid-cols-2">
         {/* Free */}
-        <article className="reveal flex flex-col rounded-[1.5rem] border border-foreground/10 bg-card p-8 sm:p-10" aria-labelledby="plan-free">
+        <article className="reveal panel-soft flex flex-col p-8 sm:p-10" aria-labelledby="plan-free">
           <h2 id="plan-free" className="text-[15px] font-medium">Free</h2>
-          <p className="display mt-6 text-[72px] leading-none">$0</p>
+          <p className="display grad mt-6 text-[72px] leading-none">$0</p>
           <p className="mt-2 text-[15px] text-muted-foreground">Forever.</p>
           <ul className="mt-8 flex-1 border-t border-foreground/10">
             {FREE_FEATURES.map((f) => <li key={f} className="border-b border-foreground/10 py-3 text-[15px]">{f}</li>)}
@@ -54,34 +54,34 @@ export function Pricing() {
         </article>
 
         {/* Pro */}
-        <article className="reveal relative flex flex-col overflow-hidden rounded-[1.5rem] bg-foreground p-8 text-background sm:p-10" style={{ ["--d" as string]: "100ms" }} aria-labelledby="plan-pro">
+        <article className="reveal panel relative flex flex-col overflow-hidden border-[hsl(var(--field)/.45)] p-8 sm:p-10" style={{ ["--d" as string]: "100ms" }} aria-labelledby="plan-pro">
           <div className="flex items-center justify-between gap-4">
             <h2 id="plan-pro" className="text-[15px] font-medium">Pro</h2>
-            <span className="rounded-full border border-background/25 px-3 py-1 text-[12px] font-medium">Coming 2027</span>
+            <span className="rounded-full border border-[hsl(var(--field)/.5)] text-[hsl(var(--field))] px-3 py-1 text-[12px] font-medium">Coming 2027</span>
           </div>
           <div className="mt-6 flex items-baseline gap-2">
-            <p key={cycle} className="display page-enter text-[72px] leading-none">{cycle === "monthly" ? money(PRO.monthly) : money(PRO.yearly)}</p>
-            <span className="text-[17px] text-background/60">{cycle === "monthly" ? "a month" : "a year"}</span>
+            <p key={cycle} className="display grad page-enter text-[72px] leading-none">{cycle === "monthly" ? money(PRO.monthly) : money(PRO.yearly)}</p>
+            <span className="text-[17px] text-muted-foreground">{cycle === "monthly" ? "a month" : "a year"}</span>
           </div>
-          <p className="mt-2 text-[15px] text-background/65">
+          <p className="mt-2 text-[15px] text-muted-foreground">
             {cycle === "monthly" ? "Billed monthly. Cancel anytime." : `${money(perMonthYearly)} a month, billed yearly. Save ${save}% vs monthly.`}
           </p>
-          <ul className="mt-8 flex-1 border-t border-background/15">
-            {PRO_FEATURES.map((f) => <li key={f} className="border-b border-background/15 py-3 text-[15px]">{f}</li>)}
+          <ul className="mt-8 flex-1 border-t border-white/10">
+            {PRO_FEATURES.map((f) => <li key={f} className="border-b border-white/10 py-3 text-[15px]">{f}</li>)}
           </ul>
           {waitlistHref ? (
-            <a href={waitlistHref} className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-background text-[15px] font-medium text-foreground transition-transform hover:-translate-y-0.5">Join the Pro waitlist</a>
+            <a href={waitlistHref} className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-white text-[15px] font-medium text-[#07090f] transition-transform hover:-translate-y-0.5">Join the Pro waitlist</a>
           ) : (
-            <button disabled className="mt-8 inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-background/15 text-[15px] font-medium text-background/80">Waitlist opens soon</button>
+            <button disabled className="mt-8 inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full border border-white/15 bg-white/[.05] text-[15px] font-medium text-white/75">Waitlist opens soon</button>
           )}
-          <p className="mt-4 text-[13px] leading-relaxed text-background/55">21-day free trial at launch. Nothing is charged now.</p>
+          <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">21-day free trial at launch. Nothing is charged now.</p>
         </article>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pt-24 sm:px-8 md:pt-32">
         <div className="grid gap-10 md:grid-cols-[1fr_1.6fr] md:gap-16">
           <div>
-            <h2 className="display reveal text-5xl sm:text-6xl">What families already pay</h2>
+            <h2 className="display grad reveal text-5xl sm:text-6xl">What families already pay</h2>
             <p className="reveal mt-5 text-[14px] text-muted-foreground">Reported ranges, late 2026.</p>
           </div>
           <div className="reveal">
@@ -112,7 +112,7 @@ export function Pricing() {
         <dl className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-4">
           {PROMISES.map(([t, d], i) => (
             <div key={t} className="reveal border-t border-foreground py-5" style={{ ["--d" as string]: `${i * 70}ms` }}>
-              <dt className="display text-[30px] leading-none">{t}</dt>
+              <dt className="display grad text-[30px] leading-none">{t}</dt>
               <dd className="mt-3 text-[15px] leading-relaxed text-muted-foreground">{d}</dd>
             </div>
           ))}
