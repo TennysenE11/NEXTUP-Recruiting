@@ -8,6 +8,8 @@ It gets its own icon, opens full screen, and works offline. No App Store and no 
 
 **Free and Pro.** The free plan covers your first 20 schools: profile and profile score, a personal email for each coach, two-tap sending, follow-up reminders, the basic filters (status, division, state, verify), and export and import. Pro ($12.99 a month or $99 a year, launching 2027) adds unlimited schools, the realistic outlook and fit ratings, players leaving at your position, goals and the weekly plan, charts, X messages and every filter. Locked items show a Pro tag; tap it to see what Pro adds. If you have a Pro code, enter it there under "Have a Pro code?". Pro is saved per device, so enter the code once on each phone or computer.
 
+**First time.** A fresh app opens a 60-second start: tap your position, your grad year, where you want to play, then add your 20 best open spots in one tap. Type your name and one key number, and your first email is ready on the Send tab. Links from the website's open-spots finder fill in your position and state for you. Add the rest of your profile any time; until then, emails leave out anything you haven't filled in.
+
 The app has five tabs.
 
 **Home.** Your setup checklist, the number of emails ready to send, goal progress, follow-ups due, and charts: list to offer, reply rate by division, and emails per week. Hover or tap a bar for its numbers, or open "Show as table".

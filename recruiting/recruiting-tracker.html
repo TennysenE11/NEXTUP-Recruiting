@@ -128,6 +128,34 @@ td select { width: auto; padding: 4px 6px; font-size: 15px; min-height: 34px; }
 .slogo.lg { width: 60px; height: 60px; border-radius: 15px; font-size: 19px; }
 .with-logo { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
 .with-logo > .t { min-width: 0; flex: 1; }
+/* 60-second start: one question per screen, big tap targets */
+.start { position: fixed; inset: 0; z-index: 60; overflow-y: auto; background: radial-gradient(700px 400px at 50% -10%, rgba(108,46,230,.45), transparent 70%), #07090f; }
+.start-inner { max-width: 560px; margin: 0 auto; padding: calc(18px + env(safe-area-inset-top)) 18px 48px; animation: stepIn .45s cubic-bezier(.2,.65,.2,1); }
+@keyframes stepIn { from { opacity: 0; transform: translateY(14px); } }
+.start-top { display: flex; justify-content: space-between; align-items: center; min-height: 40px; }
+.start-dots { display: flex; gap: 6px; } .start-dots i { width: 24px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.15); } .start-dots i.on { background: #b09cff; }
+.start-skip { border: 0; background: none; color: var(--muted); min-height: 40px; }
+.start-kicker { color: #b09cff; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; font-size: 12px; margin: 26px 0 0; }
+.start h2 { font: 700 36px/1.02 var(--display); text-transform: uppercase; margin: 10px 0 20px; }
+.chip-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.chip-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#startTitle:focus { outline: none; }
+.chip-btn { min-width: 0; white-space: normal; line-height: 1.2; padding: 10px 8px; min-height: 62px; font-size: 17px; font-weight: 600; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: var(--text); }
+.chip-btn.on { border-color: #b09cff; background: rgba(108,46,230,.38); box-shadow: 0 10px 30px -14px rgba(108,46,230,.9); }
+.start h3 { margin: 22px 0 10px; font: 700 14px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.start .go { width: 100%; min-height: 58px; font-size: 18px; margin-top: 20px; border-radius: 14px; }
+.start-count { color: var(--muted); margin: 18px 0 0; font-size: 15px; } .start-count b { color: var(--text); font-size: 22px; }
+.match { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+.match .t { flex: 1; min-width: 0; } .match strong { display: block; font-size: 15px; } .match .sub { font-size: 13px; }
+.start label { display: block; margin-top: 14px; color: var(--muted); font-size: 14px; } .start label input { margin-top: 6px; }
+.start .back { width: 100%; margin-top: 10px; border: 0; background: none; color: var(--muted); }
+/* one personal Pro pitch on Home for free users */
+#proTeaser { background: radial-gradient(420px 180px at 100% 0%, rgba(108,46,230,.5), transparent 70%), linear-gradient(180deg, #151030, #0d0f19); border-color: rgba(176,156,255,.35); }
+#proTeaser .big-n { font: 700 56px/1 var(--display); }
+#proTeaser p { margin: 8px 0 14px; }
+#proHook { margin-bottom: 10px; } #proHook .big-n { font: 700 44px/1 var(--display); color: #fff; }
+.pro-price { font-size: 17px; margin: 6px 0 4px; }
+
 /* school cards: a clean directory card per school */
 #programTable { display: block; width: 100%; border: 0; }
 #programTable #rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; }
@@ -311,8 +339,10 @@ dialog::backdrop { background: rgba(15, 27, 45, .55); }
 
   <div class="tiles" id="tiles" style="margin-bottom:14px"></div>
 
+  <section id="proTeaser" class="hide"></section>
+
   <div class="cols2">
-    <section>
+    <section id="homeGoalsSection">
       <h2>Goals</h2>
       <div class="stack" id="homeGoals"></div>
     </section>
@@ -322,7 +352,7 @@ dialog::backdrop { background: rgba(15, 27, 45, .55); }
     </section>
   </div>
 
-  <section>
+  <section id="outreachSection">
     <h2>Your outreach</h2>
     <p class="sub" style="margin-top:0">Replies, calls and offers count. Email opens aren't tracked.</p>
     <div class="cols3">
@@ -508,10 +538,14 @@ dialog::backdrop { background: rgba(15, 27, 45, .55); }
   </div>
 </dialog>
 
+<div id="start" class="start hide" role="dialog" aria-modal="true" aria-labelledby="startTitle"><div class="start-inner" id="startBody"></div></div>
+
 <dialog id="dlgPro">
   <div class="dlg-head"><h3>OpenSpot Pro</h3><button type="button" class="small" data-close>Close</button></div>
   <div class="dlg-body">
-    <p style="margin-top:0">$12.99 a month or $99 a year. Pro launches in 2027 with a 21-day free trial. The free plan keeps working for your first 20 schools.</p>
+    <div id="proHook"></div>
+    <p class="pro-price"><b>$99 a year</b> <span class="sub">($8.25 a month)</span> or $12.99 a month</p>
+    <p class="sub" style="margin-top:0">Pro launches in 2027 with a 21-day free trial. The free plan keeps working for your first 20 schools.</p>
     <ul class="pro-list" id="proList"></ul>
     <label>Have a Pro code?<input id="proCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="RT-XXXX-XXXX-XXXX"></label>
   </div>
@@ -656,7 +690,7 @@ var PROFILE_FIELDS = [
   ["video", "Highlight video link"], ["stats", "Key stats (e.g. .385 AVG, 22 SB or 42 IP, 2.10 ERA)"], ["metrics", "Other data, if you have it (spin, bat speed)"], ["phone", "Phone"], ["email", "Email"],
   ["hs_coach", "HS or club coach name + contact"], ["schedule", "Upcoming events / showcases"]
 ];
-var PROFILE_DEFAULTS = { grad_year: "2027", hand: "RHP", gpa: "", major: "Business" };
+var PROFILE_DEFAULTS = { grad_year: "2027", hand: "RHP", gpa: "", major: "" };
 
 // ---------- state ----------
 var state = load();
@@ -705,6 +739,7 @@ function lockHtml(key, title) {
 }
 function needPro(key) { if (isPro()) return false; openPro(key); return true; }
 function openPro(key) {
+  $("proHook").innerHTML = proHookHtml();
   $("proList").innerHTML = PRO_FEATURES.map(function (f) {
     return "<li" + (f[0] === key ? ' class="hl"' : "") + "><b>" + esc(f[1]) + '</b><span class="sub">' + esc(f[2]) + "</span></li>";
   }).join("");
@@ -985,8 +1020,21 @@ function autoLine(p) {
 }
 function personalLine(p) { return (p.personalization || "").trim() || autoLine(p); }
 
+// Details the player hasn't added yet are left out, so a new player's first email has no blanks.
+// With a full profile the wording is exactly as before.
 function academicSentence(p) {
-  var gpa = pf("gpa", "[GPA]"), major = pf("major", "[major]");
+  var gpa = pf("gpa", ""), major = pf("major", "");
+  if (!gpa) {
+    if (/^no/i.test(p.business_major)) return "Academics are a big part of my college decision.";
+    if (p.division === "NCAA D3") return "Academics matter as much as baseball to me" + (major ? ", and I plan to major in " + major.toLowerCase() + "." : ".");
+    if (p.division === "JUCO") return major ? "I plan to study " + major.toLowerCase() + " and transfer to a four-year school." : "I plan to transfer to a four-year school.";
+    return major ? "I plan to major in " + major.toLowerCase() + "." : "";
+  }
+  if (!major && !/^no/i.test(p.business_major)) {
+    if (p.division === "NCAA D3") return "Academics matter as much as baseball to me. I have a " + gpa + " GPA.";
+    if (p.division === "JUCO") return "I have a " + gpa + " GPA and plan to transfer to a four-year school.";
+    return "I have a " + gpa + " GPA.";
+  }
   if (/^no/i.test(p.business_major)) return "I have a " + gpa + " GPA, and academics are a big part of my college decision.";
   if (p.division === "NCAA D3") return "Academics matter as much as baseball to me. I have a " + gpa + " GPA and plan to major in " + major.toLowerCase() + ".";
   if (p.division === "JUCO") return "I have a " + gpa + " GPA and plan to study " + major.toLowerCase() + " and transfer to a four-year school.";
@@ -1003,7 +1051,8 @@ function askSentence(p) {
 function latestUpdate() { return state.updates[0] || null; }
 function newUpdateFor(p) { var u = latestUpdate(); return u && u.id !== p.last_update_id ? u : null; }
 function signature() {
-  var lines = ["", pf("name", "[Your name]"), pf("phone", "[phone]") + " | " + pf("email", "[email]")];
+  var contact = [pf("phone", ""), pf("email", "")].filter(Boolean).join(" | ");
+  var lines = ["", pf("name", "[Your name]")]; if (contact) lines.push(contact);
   if (pf("hs_coach", "")) lines.push("Coach reference: " + pf("hs_coach", ""));
   return lines;
 }
@@ -1023,7 +1072,7 @@ function buildBody(p, line) {
     L.push(u ? "Quick update: " + u.text : "I'm still very interested in " + p.school + " and wanted to follow up on my earlier email.");
     L.push("");
     L.push(keyLineFollowup());
-    L.push("- Video: " + pf("video", "[highlight video link]"));
+    if (pf("video", "")) L.push("- Video: " + pf("video", ""));
     if (pf("schedule", "")) L.push("- Where you can see me next: " + pf("schedule", ""));
     L.push("");
     L.push(pick(["Thank you for your time. I'd value any feedback on what you'd want to see from me next.",
@@ -1031,21 +1080,23 @@ function buildBody(p, line) {
                  "Thanks again for your time. Please let me know if there's anything else you'd like to see."], p, "c"));
     return L.concat(signature()).join("\n");
   }
+  var hs = pf("high_school", ""), town = pf("hometown", "");
+  var from = hs ? " from " + hs + (town ? " in " + town : "") : (town ? " from " + town : "");
+  var at = hs ? " at " + hs + (town ? " in " + town : "") : (town ? " from " + town : "");
   L.push(pick([
-    "My name is " + name + ", a class of " + pf("grad_year", "2027") + " " + posInfo().word + " from " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ".",
-    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().word + " at " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ".",
-    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().code + " at " + pf("high_school", "[high school]") + " in " + pf("hometown", "[city, state]") + ", and I'm very interested in " + p.school + " baseball."
+    "My name is " + name + ", a class of " + pf("grad_year", "2027") + " " + posInfo().word + from + ".",
+    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().word + at + ".",
+    "I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().code + at + ", and I'm very interested in " + p.school + " baseball."
   ], p, "o"));
   if (line) { L.push(""); L.push(line); }
+  var acad = academicSentence(p); if (acad) { L.push(""); L.push(acad); }
   L.push("");
-  L.push(academicSentence(p));
-  L.push("");
-  L.push("- Height/weight: " + pf("height", "[height]") + ", " + pf("weight", "[weight]"));
+  var hw = [pf("height", ""), pf("weight", "")].filter(Boolean).join(", "); if (hw) L.push("- Height/weight: " + hw);
   keyLines().forEach(function (x) { L.push(x); });
   if (pf("stats", "")) L.push("- Stats: " + pf("stats", ""));
   if (pf("metrics", "")) L.push("- " + (posInfo().group === "P" && !posInfo().twoWay ? "Pitch data" : "Other data") + ": " + pf("metrics", ""));
   if (pf("club_team", "")) L.push("- Club team: " + pf("club_team", ""));
-  L.push("- Video: " + pf("video", "[highlight video link]"));
+  if (pf("video", "")) L.push("- Video: " + pf("video", ""));
   if (pf("schedule", "")) L.push("- Where you can see me next: " + pf("schedule", ""));
   var u = latestUpdate(); if (u) L.push("- Latest: " + u.text);
   L.push("");
@@ -1142,15 +1193,16 @@ function xGreet(p) {
 function buildDM(p) {
   var name = pf("name", "[Your name]"), u = latestUpdate();
   var stats = [pf("height", ""), pf("weight", "")].filter(Boolean).join(", ");
-  var L = [xGreet(p) + " I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().code + " at " + pf("high_school", "[high school]") + " (" + pf("hometown", "[city, state]") + ")."];
+  var hs = pf("high_school", ""), town = pf("hometown", "");
+  var L = [xGreet(p) + " I'm " + name + ", a " + pf("grad_year", "2027") + " " + posInfo().code + (hs ? " at " + hs + (town ? " (" + town + ")" : "") : (town ? " from " + town : "")) + "."];
   var P_ = posInfo(), keys = [];
   if (P_.pitcher) keys.push("FB " + pf("fb_velo", "[velo]"));
   if (P_.hitter) hitFilled().slice(0, 2).forEach(function (k) { keys.push(HIT[k].short + " " + pf(k, "")); });
   L.push([stats].concat(keys, [pf("gpa", "") ? pf("gpa", "") + " GPA" : ""]).filter(Boolean).join(" | "));
   if (p.date_emailed) L.push("I emailed you on " + shortDate(p.date_emailed) + (u && u.id !== p.last_update_id ? ". Quick update: " + u.text : " and wanted to follow up here."));
   else { var f = (p.program_fact || "").trim(); L.push(f || ("I'm very interested in " + p.school + " baseball.")); }
-  L.push("Video: " + pf("video", "[video link]"));
-  L.push("I'd like to know what you look for in " + posInfo().plural + ". My email is " + pf("email", "[email]") + ". Thank you.");
+  if (pf("video", "")) L.push("Video: " + pf("video", ""));
+  L.push("I'd like to know what you look for in " + posInfo().plural + "." + (pf("email", "") ? " My email is " + pf("email", "") + "." : "") + " Thank you.");
   return L.join("\n\n");
 }
 function xWarnings(p, t) {
@@ -1453,6 +1505,130 @@ function quickFacts(p) {
   var f = collegeFacts(p);
   return [placeLine(p), f.control, f.admit ? f.admit + "% admitted" : "", f.cost_in ? money(f.cost_in) + "/yr" : (f.tuition_in ? money(f.tuition_in) + " tuition" : ""), f.enroll ? (+f.enroll).toLocaleString("en-US") + " students" : ""].filter(Boolean).join(" · ");
 }
+// ================= 60-second start =================
+// One question per screen, then the player's best open spots, then their first email. Shown once, on a fresh app.
+var START_POS = [["RHP", "Right-handed pitcher"], ["LHP", "Left-handed pitcher"], ["C", "Catcher"], ["INF", "Infielder"], ["OF", "Outfielder"], ["2W", "Two-way"]];
+var START_REGIONS = [["CA,OR,WA", "West Coast"], ["AZ,NM,NV,TX", "Southwest"], ["CO,ID,MT,UT,WY", "Mountain West"], ["IA,IL,IN,KS,MI,MN,MO,ND,NE,OH,SD,WI", "Midwest"], ["AL,AR,FL,GA,KY,LA,MS,NC,SC,TN,VA,WV", "Southeast"], ["CT,DE,MA,MD,ME,NH,NJ,NY,PA,RI,VT,DC", "Northeast"]];
+var START_DIVS = [["NCAA D1", "D1"], ["NCAA D2", "D2"], ["NCAA D3", "D3"], ["NAIA", "NAIA"], ["JUCO", "JUCO"]];
+var ST = { step: 0, regions: [], divs: [] };
+function shouldStart() { return !state.ui.onboarded && !state.programs.length && !(state.profile.name || "").trim(); }
+function setStartPos(code) {
+  var pr = state.profile; pr.position2 = "";
+  if (code === "RHP" || code === "LHP") { pr.position = code; pr.hand = code; }
+  else if (code === "2W") { pr.position = "RHP"; pr.hand = "RHP"; pr.position2 = "INF"; }
+  else { pr.position = code; }
+  ST.pos = code;
+}
+function startStates() { var a = []; ST.regions.forEach(function (r) { a = a.concat(r.split(",")); }); return a; }
+function startCandidates() {
+  var sts = startStates();
+  return natRows().filter(function (r) {
+    return (!sts.length || sts.indexOf(r.state) >= 0) && (!ST.divs.length || ST.divs.indexOf(r.division) >= 0) && emailOf(r) && !/verify/i.test(r.notes);
+  }).sort(function (a, b) { return openingRatio(b) - openingRatio(a) || a.school.localeCompare(b.school); });
+}
+function startDots(n) { return '<div class="start-dots" aria-hidden="true">' + [0, 1, 2, 3, 4].map(function (i) { return '<i class="' + (i <= n ? "on" : "") + '"></i>'; }).join("") + "</div>"; }
+function keyField() { var P = posInfo(); return P.group === "P" ? ["fb_velo", "Fastball (e.g. 84-86, T87)"] : P.group === "C" ? ["pop_time", "Pop time (e.g. 1.98)"] : ["exit_velo", "Exit velo (e.g. 90)"]; }
+function renderStart() {
+  var b = $("startBody"), html = '<div class="start-top">' + startDots(ST.step) + '<button class="start-skip" data-start="skip">Skip</button></div>';
+  if (ST.step === 0) {
+    html += '<p class="start-kicker">Find your open spots</p><h2 id="startTitle" tabindex="-1">What do you play?</h2><div class="chip-grid">' +
+      START_POS.map(function (x) { return '<button class="chip-btn' + (ST.pos === x[0] ? " on" : "") + '" data-start="pos" data-v="' + x[0] + '">' + x[1] + "</button>"; }).join("") + "</div>";
+  } else if (ST.step === 1) {
+    var y0 = new Date().getFullYear();
+    html += '<p class="start-kicker">Step 2 of 4</p><h2 id="startTitle" tabindex="-1">When do you graduate?</h2><div class="chip-grid">' +
+      [y0, y0 + 1, y0 + 2, y0 + 3].map(function (y) { return '<button class="chip-btn' + (pf("grad_year", "") === String(y) && ST.year ? " on" : "") + '" data-start="year" data-v="' + y + '">Class of ' + y + "</button>"; }).join("") + "</div>" +
+      '<button class="back" data-start="back">Back</button>';
+  } else if (ST.step === 2) {
+    var n = startCandidates().length;
+    html += '<p class="start-kicker">Step 3 of 4</p><h2 id="startTitle" tabindex="-1">Where do you want to play?</h2><div class="chip-grid">' +
+      START_REGIONS.map(function (x) { return '<button class="chip-btn' + (ST.regions.indexOf(x[0]) >= 0 ? " on" : "") + '" data-start="region" data-v="' + x[0] + '" aria-pressed="' + (ST.regions.indexOf(x[0]) >= 0) + '">' + x[1] + "</button>"; }).join("") + "</div>" +
+      '<h3>Level</h3><div class="chip-grid three">' +
+      START_DIVS.map(function (x) { return '<button class="chip-btn' + (ST.divs.indexOf(x[0]) >= 0 ? " on" : "") + '" data-start="div" data-v="' + x[0] + '" aria-pressed="' + (ST.divs.indexOf(x[0]) >= 0) + '">' + x[1] + "</button>"; }).join("") + "</div>" +
+      '<p class="start-count"><b>' + n.toLocaleString("en-US") + "</b> programs " + (ST.regions.length || ST.divs.length ? "match" : "nationwide") + ". Pick none for anywhere.</p>" +
+      '<button class="primary go" data-start="matches"' + (n ? "" : " disabled") + '>Show my best matches</button><button class="back" data-start="back">Back</button>';
+  } else if (ST.step === 3) {
+    var all = startCandidates(), room = Math.min(FREE_LIMIT, slotsLeft()), top = all.slice(0, room), P = posInfo();
+    ST.picks = top;
+    html += '<p class="start-kicker">Step 4 of 4</p><h2 id="startTitle" tabindex="-1">Your ' + top.length + " best open spots</h2>" +
+      '<p class="sub" style="margin-top:-8px">' + all.length.toLocaleString("en-US") + " programs match. These have the most " + esc(P.plural || "players") + " leaving, from their official rosters.</p>" +
+      top.map(function (r) {
+        var rr = rosterFor(r), open = rr && rr.t && rr.n / rr.t >= 0.3;
+        return '<div class="match">' + logoHtml(r) + '<div class="t"><strong>' + esc(r.school) + '</strong><div class="sub">' + esc([r.division, placeLine(r)].filter(Boolean).join(" · ")) + "</div></div>" +
+          (open ? '<span class="badge open">Opening</span>' : "") + "</div>";
+      }).join("") +
+      '<button class="primary go" data-start="add">Add these ' + top.length + " (free)</button>" + '<button class="back" data-start="back">Back</button>';
+  } else {
+    var k = keyField();
+    html += '<p class="start-kicker">Last step</p><h2 id="startTitle" tabindex="-1">Make the email yours</h2>' +
+      '<label>Your full name<input id="stName" autocomplete="name" value="' + esc(pf("name", "")) + '"></label>' +
+      '<label>' + esc(k[1]) + '<input id="stKey" inputmode="decimal" value="' + esc(pf(k[0], "")) + '"></label>' +
+      '<label>Highlight video link (optional)<input id="stVideo" inputmode="url" placeholder="https://youtube.com/..." value="' + esc(pf("video", "")) + '"></label>' +
+      '<button class="primary go" data-start="finish">Show my first email</button>';
+  }
+  b.innerHTML = html;
+  var t = $("startTitle"); if (t) t.focus({ preventScroll: true });
+}
+function openStart(pre) {
+  ST = { step: 0, regions: [], divs: [] };
+  if (pre && pre.pos) { setStartPos(pre.pos); ST.step = 1; }
+  if (pre && pre.st) { var want = pre.st.split(","); START_REGIONS.forEach(function (x) { if (x[0].split(",").some(function (s) { return want.indexOf(s) >= 0; })) ST.regions.push(x[0]); }); }
+  $("start").classList.remove("hide"); document.body.style.overflow = "hidden"; renderStart();
+}
+function closeStart() { $("start").classList.add("hide"); document.body.style.overflow = ""; state.ui.onboarded = true; save(); }
+function onStart(btn) {
+  var a = btn.getAttribute("data-start"), v = btn.getAttribute("data-v");
+  if (a === "skip") { closeStart(); render(); return; }
+  if (a === "back") { ST.step = Math.max(0, ST.step - 1); renderStart(); return; }
+  if (a === "pos") { setStartPos(v); ST.step = 1; }
+  else if (a === "year") { state.profile.grad_year = v; ST.year = true; ST.step = 2; }
+  else if (a === "region") { var i = ST.regions.indexOf(v); if (i >= 0) ST.regions.splice(i, 1); else ST.regions.push(v); }
+  else if (a === "div") { var j = ST.divs.indexOf(v); if (j >= 0) ST.divs.splice(j, 1); else ST.divs.push(v); }
+  else if (a === "matches") { ST.step = 3; }
+  else if (a === "add") {
+    (ST.picks || []).forEach(function (r) { state.programs.push(normalize(Object.assign({}, r, { status: "Not contacted", replied: "no", followups_sent: "0" }))); });
+    var sts = startStates(); if (sts.length) state.ui.states = sts;
+    ST.step = 4;
+  } else if (a === "finish") {
+    var k = keyField(), nm = $("stName").value.trim();
+    if (!nm) { toast("Add your name so coaches know who wrote."); $("stName").focus(); return; }
+    state.profile.name = nm; state.profile[k[0]] = $("stKey").value.trim(); state.profile.video = $("stVideo").value.trim();
+    closeStart(); buildProfileFormFields(); render(); showTab("send");
+    toast("Your first email is ready. Tap Send in Gmail.");
+    return;
+  }
+  save(); renderStart();
+}
+function startFromHash() {
+  var m = /^#start(?:\?(.*))?$/.exec(location.hash || ""); if (!m) return null;
+  var q = {}; (m[1] || "").split("&").forEach(function (kv) { var p2 = kv.split("="); if (p2[0]) q[p2[0]] = decodeURIComponent(p2[1] || ""); });
+  var pos = { P: "RHP", RHP: "RHP", LHP: "LHP", C: "C", IF: "INF", INF: "INF", OF: "OF", "2W": "2W" }[(q.pos || "").toUpperCase()] || "";
+  return { pos: pos, st: (q.st || "").toUpperCase().replace(/[^A-Z,]/g, "") };
+}
+
+// ================= Pro pitch built from the player's own numbers =================
+function openSpotsSummary() {
+  var P = posInfo(), g = P.group === "P" ? "P" : (P.hitGroup || P.group || "P"), sts = Array.isArray(state.ui.states) ? state.ui.states : [];
+  var n = 0, big = 0, total = 0;
+  natRows().forEach(function (r) {
+    if (sts.length && sts.indexOf(r.state) < 0) return;
+    var gr = parseGroups(r.roster_groups)[g]; if (!gr || !gr[0]) return;
+    n++; total += gr[1]; if (gr[1] >= 3) big++;
+  });
+  return { programs: n, big: big, leaving: total, plural: GROUP_PLURAL[g] || "players", where: sts.length && sts.length <= 12 ? "in " + sts.join(", ") : "nationwide" };
+}
+function proHookHtml() {
+  var o = openSpotsSummary();
+  return '<div class="big-n">' + o.big.toLocaleString("en-US") + '</div><p style="margin:6px 0 0">programs ' + esc(o.where) + " are losing 3 or more " + esc(o.plural) +
+    ". Pro shows you which ones, rates every school for you and keeps you on pace.</p>";
+}
+function renderProTeaser() {
+  var o = openSpotsSummary();
+  $("proTeaser").innerHTML = '<p class="sub" style="margin:0;text-transform:uppercase;letter-spacing:.16em;font-weight:700;color:#b09cff">Your open spots</p>' +
+    '<div class="big-n">' + o.big.toLocaleString("en-US") + "</div>" +
+    "<p>programs " + esc(o.where) + " are losing 3 or more " + esc(o.plural) + ". " + o.leaving.toLocaleString("en-US") + " " + esc(o.plural) + " leaving across " + o.programs.toLocaleString("en-US") + " official rosters.</p>" +
+    '<button class="primary big" data-pro="roster">See which ones with Pro</button>';
+}
+
 function renderSchools() {
   var list = filtered();
   $("rowCount").textContent = "(" + list.length + " of " + state.programs.length + ")";
@@ -1682,6 +1858,11 @@ function renderHome() {
   renderGoalsInto($("homeGoals"), true);
   renderWeekPlan();
   renderCharts();
+  // free: one personal Pro pitch instead of several locked cards
+  var free = !isPro();
+  ["weekPlan", "outreachSection", "homeOutlook", "homeGoalsSection"].forEach(function (id) { $(id).classList.toggle("hide", free); });
+  $("proTeaser").classList.toggle("hide", !free);
+  if (free) renderProTeaser();
 }
 
 // ================= goals =================
@@ -2070,6 +2251,7 @@ function hideTip() { $("tip").hidden = true; }
 function onClick(e) {
   var t = e.target;
   var tab = t.closest("#tabs [data-tab]"); if (tab) { showTab(tab.getAttribute("data-tab")); return; }
+  var sb0 = t.closest("[data-start]"); if (sb0) { onStart(sb0); return; }
   var pb = t.closest("[data-pro]"); if (pb) { openPro(pb.getAttribute("data-pro")); return; }
   var mb = t.closest("[data-more]");
   if (mb) { var mid = mb.getAttribute("data-more"), row = mb.closest("tr"); openCards[mid] = !openCards[mid]; if (!openCards[mid]) delete openCards[mid];
@@ -2243,6 +2425,9 @@ function init() {
   render();
   renderInstall();
   showTab(ui.tab || "home");
+  var pre = startFromHash();
+  if (pre && !state.programs.length) openStart(pre);
+  else if (shouldStart()) openStart(null);
 }
 
 // ================= install as a phone app =================
