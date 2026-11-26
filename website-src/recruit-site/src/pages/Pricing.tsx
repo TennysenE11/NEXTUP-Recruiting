@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Intro } from "@/components/site/Intro";
-import { APP_URL, CONTACT_EMAIL, FREE_FEATURES, MARKET, PRO, PRO_FEATURES, yearlySavingsPct } from "@/lib/site";
+import { APP_START, CONTACT_EMAIL, FREE_FEATURES, MARKET, PRO, PRO_FEATURES, yearlySavingsPct } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 type Cycle = "monthly" | "yearly";
@@ -50,7 +50,7 @@ export function Pricing() {
           <ul className="mt-8 flex-1 border-t border-foreground/10">
             {FREE_FEATURES.map((f) => <li key={f} className="border-b border-foreground/10 py-3 text-[15px]">{f}</li>)}
           </ul>
-          <a href={APP_URL} className="btn-line mt-8 w-full">Open the free app</a>
+          <a href={APP_START} className="btn-line mt-8 w-full">Start free</a>
         </article>
 
         {/* Pro */}

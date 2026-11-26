@@ -5,10 +5,11 @@ import { HeroPanel } from "@/components/site/HeroPanel";
 import { USMap } from "@/components/site/USMap";
 import { OpeningsChart } from "@/components/site/OpeningsChart";
 import { PositionDemo } from "@/components/site/PositionDemo";
+import { OpenSpotsFinder } from "@/components/site/OpenSpotsFinder";
 import { SectionHead } from "@/components/site/SectionHead";
 import { Marquee, Tilt } from "@/components/site/Motion";
 import { Link } from "@/lib/router";
-import { APP_URL, POSITIONS, SHOTS } from "@/lib/site";
+import { APP_START, POSITIONS, SHOTS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 // Headline words rise in one at a time.
@@ -79,21 +80,36 @@ function WeekScroller() {
   );
 }
 
+// On phones, a start button stays at the bottom once you scroll past the top.
+function StickyStart() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const on = () => setShow(window.scrollY > 900);
+    on(); window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  return (
+    <div className={cn("fixed inset-x-3 bottom-3 z-30 transition-[transform,opacity] duration-300 md:hidden", show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0")}>
+      <a href={APP_START} tabIndex={show ? 0 : -1} className="btn-ink h-14 w-full text-[16px]">Find my open spots, free</a>
+    </div>
+  );
+}
+
 export function Home() {
   return (
     <>
+      <StickyStart />
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-5 pb-16 pt-12 text-center sm:px-8 md:pb-24 md:pt-20">
+      <section className="mx-auto max-w-6xl px-5 pb-16 pt-5 text-center sm:px-8 sm:pt-12 md:pb-24 md:pt-20">
         <p className="eyebrow reveal justify-center"><span>College baseball</span><span className="sep">·</span><span>Every position</span></p>
-        <h1 className="display grad mx-auto mt-6 max-w-5xl text-[58px] sm:text-[88px] lg:text-[112px]">
+        <h1 className="display grad mx-auto mt-4 max-w-5xl text-[46px] sm:mt-6 sm:text-[88px] lg:text-[112px]">
           <Words parts={[{ t: "Every roster has an" }, { t: "open spot.", em: true }]} />
         </h1>
-        <p className="reveal mx-auto mt-6 max-w-xl text-[18px] leading-relaxed text-muted-foreground sm:text-[20px]" style={{ ["--d" as string]: "500ms" }}>
-          Find the programs losing players at your position. Email their coaches a line only they would recognize. Follow up on time.
+        <p className="reveal mx-auto mt-4 max-w-xl text-[17px] leading-relaxed text-muted-foreground sm:mt-6 sm:text-[20px]" style={{ ["--d" as string]: "500ms" }}>
+          Find the programs losing players at your position. Email their coaches in two taps.
         </p>
-        <div className="reveal mt-9 flex flex-wrap items-center justify-center gap-3" style={{ ["--d" as string]: "620ms" }}>
-          <a href={APP_URL} className="btn-ink">Start free</a>
-          <Link to="how-it-works" className="btn-line">How it works</Link>
+        <div className="reveal mt-6 sm:mt-9" style={{ ["--d" as string]: "620ms" }}>
+          <OpenSpotsFinder />
         </div>
         <div className="reveal mx-auto mt-14 max-w-3xl" style={{ ["--d" as string]: "760ms" }}>
           <HeroPanel />
@@ -170,11 +186,12 @@ export function Home() {
           <LogoMark arrowClassName="arrow-loop" className="relative mx-auto w-[150px] text-white sm:w-[190px]" />
           <h2 className="display grad relative mx-auto mt-8 max-w-3xl text-[48px] sm:text-[76px]">Your first ten emails can go out <em>tonight.</em></h2>
           <div className="relative mt-9 flex flex-wrap items-center justify-center gap-3">
-            <a href={APP_URL} className="btn-ink">Start free</a>
+            <a href={APP_START} className="btn-ink">Find my open spots, free</a>
             <Link to="pricing" className="btn-line">See pricing</Link>
           </div>
         </div>
       </section>
+      <div className="h-16 md:hidden" aria-hidden />
     </>
   );
 }

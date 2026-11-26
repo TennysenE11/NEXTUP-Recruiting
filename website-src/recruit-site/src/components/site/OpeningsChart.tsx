@@ -1,8 +1,8 @@
 // Players leaving each program before a 2027 grad arrives, by position and division.
 // Real numbers from the official 2026 and 2027 rosters in OpenSpot's national list.
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { LEAVING } from "@/lib/mapData";
-import { prefersReduced, useInView } from "@/components/site/Motion";
+import { Tween, useInView } from "@/components/site/Motion";
 import { cn } from "@/lib/utils";
 
 const POS = [
@@ -18,25 +18,6 @@ const DIVS = [
   { k: "NAIA", hsl: "24 95% 60%" },
   { k: "JUCO", hsl: "330 85% 68%" },
 ];
-
-// eases from the old value to the new one
-function Tween({ value, digits = 1 }: { value: number; digits?: number }) {
-  const [v, setV] = useState(value);
-  const from = useRef(value);
-  useEffect(() => {
-    if (prefersReduced()) { setV(value); from.current = value; return; }
-    const a = from.current, t0 = performance.now();
-    let raf = 0;
-    const step = (t: number) => {
-      const k = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - k, 3);
-      setV(a + (value - a) * e);
-      if (k < 1) raf = requestAnimationFrame(step); else from.current = value;
-    };
-    raf = requestAnimationFrame(step);
-    return () => { cancelAnimationFrame(raf); from.current = value; };
-  }, [value]);
-  return <>{v.toFixed(digits)}</>;
-}
 
 export function OpeningsChart() {
   const [pos, setPos] = useState<(typeof POS)[number]["k"]>("P");

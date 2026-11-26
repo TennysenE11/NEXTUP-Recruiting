@@ -101,3 +101,22 @@ export function Typewriter({ text, className, speed = 16 }: { text: string; clas
     </span>
   );
 }
+
+// eases from the old value to the new one
+export function Tween({ value, digits = 1 }: { value: number; digits?: number }) {
+  const [v, setV] = useState(value);
+  const from = useRef(value);
+  useEffect(() => {
+    if (prefersReduced()) { setV(value); from.current = value; return; }
+    const a = from.current, t0 = performance.now();
+    let raf = 0;
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - k, 3);
+      setV(a + (value - a) * e);
+      if (k < 1) raf = requestAnimationFrame(step); else from.current = value;
+    };
+    raf = requestAnimationFrame(step);
+    return () => { cancelAnimationFrame(raf); from.current = value; };
+  }, [value]);
+  return <>{v.toFixed(digits)}</>;
+}

@@ -3,6 +3,7 @@
 
 export const APP_NAME = "OpenSpot";
 export const APP_URL = "./recruiting/"; // the installable app, hosted next to this site
+export const APP_START = "./recruiting/recruiting-tracker.html#start"; // opens the 60-second start on a fresh app
 export const CONTACT_EMAIL = ""; // set before launch; when blank, buttons say the waitlist opens soon
 
 export const STATS = [

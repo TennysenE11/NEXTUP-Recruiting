@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRoute } from "@/lib/router";
-import { APP_URL, NAV } from "@/lib/site";
+import { APP_START, APP_URL, NAV } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { LogIn } from "lucide-react";
 import { Logo } from "./Logo";
@@ -63,7 +63,7 @@ export function Nav() {
               {n.label}
             </Link>
           ))}
-          <a href={APP_URL} tabIndex={open ? 0 : -1} className="btn-ink mt-8">Start free</a>
+          <a href={APP_START} tabIndex={open ? 0 : -1} className="btn-ink mt-8">Start free</a>
         </nav>
       </div>
     </>

@@ -1,7 +1,7 @@
 import { Apple, Smartphone } from "lucide-react";
 import { Intro } from "@/components/site/Intro";
 import { Phone } from "@/components/site/Phone";
-import { APP_URL, SHOTS } from "@/lib/site";
+import { APP_START, SHOTS } from "@/lib/site";
 import { Tilt } from "@/components/site/Motion";
 
 const STEPS = [
@@ -74,7 +74,7 @@ export function HowItWorks() {
           ))}
         </ul>
         <div className="reveal mt-14">
-          <a href={APP_URL} className="btn-ink">Start free</a>
+          <a href={APP_START} className="btn-ink">Start free</a>
         </div>
       </section>
     </>
